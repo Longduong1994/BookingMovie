@@ -9,6 +9,7 @@ import booking_movie.exception.RegisterException;
 import booking_movie.mapper.UserMapper;
 import booking_movie.repository.RoleRepository;
 import booking_movie.repository.UserRepository;
+import booking_movie.service.mail.MailService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,8 @@ public class UserServiceImpl  implements UserService{
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
+
+
 
     @Override
     public String register(RegisterRequestDto registerRequestDto) throws RegisterException {
