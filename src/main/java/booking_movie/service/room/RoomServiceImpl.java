@@ -73,6 +73,7 @@ public class RoomServiceImpl implements RoomService {
 
         // TODO : create Chair
         String string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        // Vòng lặp để in ra hình chữ nhật
 
 
         return null;
