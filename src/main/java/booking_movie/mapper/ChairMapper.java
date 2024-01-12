@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface ChairMapper {
     @Mapping(target = "room.id", source = "roomId")
+    @Mapping(target = "id",ignore = true)
     Chair toEntity(ChairRequest chairRequest) ;
     @Mapping(target = "roomName", source = "room.roomName")
     ChairResponseDto toResponse(Chair chair) ;
