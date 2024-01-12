@@ -22,4 +22,6 @@ public class Coupon {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
     private User user;
+    private Boolean status;
+    private Boolean isDelete;
 }

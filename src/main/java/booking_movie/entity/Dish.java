@@ -18,4 +18,6 @@ public class Dish {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+    private Boolean status;
+    private Boolean isDelete;
 }
