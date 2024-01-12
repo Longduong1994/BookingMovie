@@ -12,7 +12,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
-
     @Override
     public Role getRoleCustomer() {
         return roleRepository.findByRoleName(RoleName.CUSTOMER).orElseThrow(()-> new RuntimeException("Role not found"));

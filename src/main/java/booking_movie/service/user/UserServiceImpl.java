@@ -11,6 +11,7 @@ import booking_movie.exception.LoginException;
 import booking_movie.exception.RegisterException;
 import booking_movie.mapper.UserMapper;
 import booking_movie.repository.UserRepository;
+import booking_movie.service.mail.MailService;
 import booking_movie.security.jwt.JwtProvider;
 import booking_movie.security.user_principle.UserPrincipal;
 import booking_movie.service.mail.MailService;
@@ -38,6 +39,8 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationProvider authenticationProvider;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+
+
 
     @Override
     public String register(RegisterRequestDto registerRequestDto) throws RegisterException {
