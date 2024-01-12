@@ -1,5 +1,6 @@
 package booking_movie.advice;
 
+import booking_movie.exception.CategoryException;
 import booking_movie.exception.RegisterException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,10 @@ public class AdviceController {
     public ResponseEntity<String> registerFail(RegisterException registerException) {
         return new ResponseEntity<>(registerException.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
+    @ExceptionHandler(CategoryException.class)
+    public ResponseEntity<String> category(CategoryException categoryException){
+        return new ResponseEntity<>(categoryException.getMessage(),HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> invalidRegister(MethodArgumentNotValidException ex) {
