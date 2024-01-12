@@ -9,4 +9,6 @@ public interface MovieRepository extends JpaRepository<Movie,Long> {
     Page<Movie> findAllByMovieNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndIsDeleted(Pageable pageable,String keySearch,Boolean isDeleted);
 
     Page<Movie> findAllByMovieNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndIsDeletedAndMovieStatus(Pageable pageable, String keySearch, Boolean isDeleted, MovieStatus movieStatus);
+
+    Movie findMovieByIsDeleted(Boolean isDeleted);
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 public interface MovieService {
     Page<MovieResponseDto> getAllMovie(String keySearch, Pageable pageable);
     MovieResponseDto createMovie(MovieRequestDto movieRequestDto);
-
     Page<Movie> getAllMovieByMovieStatus(String keySearch, Pageable pageable, String movieStatus) throws MovieException;
+
+    void deleteMovie(Long idDelete);
 }
