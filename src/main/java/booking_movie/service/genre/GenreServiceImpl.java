@@ -56,5 +56,4 @@ public class GenreServiceImpl implements GenreService {
         }
         throw new GenreException("Genre not found");
     }
-
 }

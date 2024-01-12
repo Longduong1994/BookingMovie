@@ -25,7 +25,6 @@ public class MovieServiceImpl implements MovieService {
         }
         return listMovie.map(movieMapper::toResponseDto);
     }
-
     @Override
     public MovieResponseDto createMovie(MovieRequestDto movieRequestDto) {
           Movie movie=   movieMapper.toEntity(movieRequestDto);

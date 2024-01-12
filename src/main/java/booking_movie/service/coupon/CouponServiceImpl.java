@@ -8,6 +8,7 @@ import booking_movie.repository.CouponRepository;
 import booking_movie.repository.UserRepository;
 import booking_movie.security.user_principle.UserPrincipal;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
