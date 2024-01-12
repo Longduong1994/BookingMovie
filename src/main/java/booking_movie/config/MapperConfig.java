@@ -1,5 +1,8 @@
 package booking_movie.config;
+
 import booking_movie.mapper.GenreMapper;
+
+
 import booking_movie.mapper.LocationMapper;
 import booking_movie.mapper.MovieMapper;
 import booking_movie.mapper.UserMapper;
