@@ -15,8 +15,13 @@ public interface UserMapper {
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "roles", ignore = true)
     User toEntity(RegisterRequestDto requestDto);
-
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "card", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "password", ignore = true)
     User toEntity(CreateAccountDto createAccountDto);
-
+    @Mapping(target = "setRoles", ignore = true)
+    @Mapping(target = "token", ignore = true)
     UserResponseDto toResponseDto(User user);
 }
