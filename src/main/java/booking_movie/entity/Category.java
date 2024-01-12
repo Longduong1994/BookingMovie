@@ -2,6 +2,7 @@ package booking_movie.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 @Table(name = "CATEGORY")
 public class Category {
     @Id
@@ -17,3 +19,4 @@ public class Category {
     private String categoryName;
     private Boolean isDeleted;
 }
+
