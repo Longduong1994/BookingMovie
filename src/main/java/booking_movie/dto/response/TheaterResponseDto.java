@@ -6,9 +6,10 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@Data
-public class LocationResponseDto {
+@Builder
+public class TheaterResponseDto {
     private Long id ;
+    private String theaterName ;
+    private Boolean isDeleted;
     private String locationName ;
-    private Boolean isDelete = false ;
 }

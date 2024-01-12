@@ -6,8 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@Data
-public class LocationRequestDto {
-    private String locationName ;
-    private Boolean isDelete ;
+@Builder
+public class ChairTypeRequest {
+    private String chairType ;
 }
