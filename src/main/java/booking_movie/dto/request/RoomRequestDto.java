@@ -13,17 +13,17 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class RoomRequestDto {
-    @NotEmpty(message = "roomName is not empty")
-    @NotBlank(message = "roomName is not blank")
-    private String roomName ;
-    @NotNull(message = "numberOfSeatsInARow is not null")
-    private Integer numberOfSeatsInARow ;
-    @NotNull(message = "numberOfSeatsInAColumn is not null")
-    private Integer numberOfSeatsInAColumn ;
-    @NotEmpty(message = "roomType is not empty")
-    @NotBlank(message = "roomType is not blank")
-    private String roomType ;
-    @NotNull(message = "theaterId is not null")
-    private Long theaterId ;
-    private Boolean isDeleted ;
+        @NotEmpty(message = "roomName is not empty")
+        @NotBlank(message = "roomName is not blank")
+        private String roomName ;
+        @NotNull(message = "numberOfSeatsInARow is not null")
+        private Integer numberOfSeatsInARow ;
+        @NotNull(message = "numberOfSeatsInAColumn is not null")
+        private Integer numberOfSeatsInAColumn ;
+        @NotEmpty(message = "roomType is not empty")
+        @NotBlank(message = "roomType is not blank")
+        private String roomType ;
+        @NotNull(message = "theaterId is not null")
+        private Long theaterId ;
+        private Boolean isDeleted ;
 }

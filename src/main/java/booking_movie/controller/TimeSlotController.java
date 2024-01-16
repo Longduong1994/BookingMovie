@@ -4,6 +4,7 @@ import booking_movie.dto.request.TimeSlotRequestDto;
 import booking_movie.exception.CustomsException;
 import booking_movie.service.timeSlot.TimeSlotService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/booking/v1/timeSlot")
+@AllArgsConstructor
 public class TimeSlotController {
     private TimeSlotService timeSlotService ;
 
