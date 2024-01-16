@@ -6,6 +6,7 @@ import booking_movie.dto.request.category.CategoryUpdateRequestDto;
 import booking_movie.entity.Category;
 import booking_movie.entity.User;
 import booking_movie.exception.CategoryException;
+import booking_movie.mapper.CategoryMapper;
 import booking_movie.repository.CategoryRepository;
 import booking_movie.security.user_principle.UserPrincipal;
 import lombok.AllArgsConstructor;
@@ -14,12 +15,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     /**
      * create new category
@@ -43,9 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
         boolean isAdminOrManager = user.getRoles().stream()
                 .anyMatch(role -> role.getRoleName().equals(RoleName.ADMIN) || role.getRoleName().equals(RoleName.MANAGER));
         if (isAdminOrManager) {
-            Category category = Category.builder()
-                    .categoryName(categoryRequestDto.getCategoryName())
-                    .isDeleted(false).build();
+            Category category = categoryMapper.categoryRequestDtoIntoCategory(categoryRequestDto,user.getUsername());
             return categoryRepository.save(category);
         }
         throw new CategoryException("No permissions granted");
@@ -71,10 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
         boolean isAdminOrManager = user.getRoles().stream()
                 .anyMatch(role -> role.getRoleName().equals(RoleName.ADMIN) || role.getRoleName().equals(RoleName.MANAGER));
         if (isAdminOrManager) {
-            Category category = Category.builder()
-                    .id(categoryUpdateRequestDto.getId())
-                    .categoryName(categoryUpdateRequestDto.getCategoryName())
-                    .isDeleted(categoryUpdateRequestDto.getIsDeleted()).build();
+            Category category = categoryMapper.categoryUpdateRequestDtoIntoCategory(categoryUpdateRequestDto,user.getUsername());
             return categoryRepository.save(category);
         }
         throw new CategoryException("no permissions granted");
@@ -87,7 +85,7 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public Page<Category> findAll(int page, int size, String search) {
-        return categoryRepository.findAllByIsDeletedAndCategoryName(false,search, PageRequest.of(page,size));
+        return categoryRepository.findAllByIsDeleteAndCategoryName(false,search, PageRequest.of(page,size));
     }
 
     /**
@@ -108,7 +106,8 @@ public class CategoryServiceImpl implements CategoryService {
             Optional<Category> category = categoryRepository.findById(id);
             if (category.isPresent()) {
                 Category c = category.get();
-                c.setIsDeleted(true);
+                c.setIsDelete(true);
+                c.setUpdateTime(LocalDate.now());
                 categoryRepository.save(c);
                 return "Delete success";
             }

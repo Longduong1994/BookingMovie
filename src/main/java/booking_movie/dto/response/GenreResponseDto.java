@@ -8,5 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class GenreResponseDto {
+    private Long id;
     private String genreName;
+    private Boolean isDeleted;
 }

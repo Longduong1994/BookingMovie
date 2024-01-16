@@ -9,4 +9,5 @@ import lombok.*;
 @Data
 public class LocationRequestDto {
     private String locationName ;
+    private Boolean isDelete ;
 }

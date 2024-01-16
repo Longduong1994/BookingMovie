@@ -21,7 +21,7 @@ public class MovieServiceImpl implements MovieService {
         if(keySearch==null){
             listMovie = movieRepository.findAllByIsDeleted(pageable,false);
         }else {
-            listMovie = movieRepository.findAllByMovieNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndIsDeleted(pageable,keySearch,false);
+            listMovie = movieRepository.findAllByMovieNameIgnoreCaseContainingOrDescriptionIgnoreCaseContainingAndIsDeleted(pageable,keySearch,keySearch,false);
         }
         return listMovie.map(movieMapper::toResponseDto);
     }
@@ -34,19 +34,24 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Page<Movie> getAllMovieByMovieStatus(String keySearch, Pageable pageable, String movieStatus) throws MovieException {
-        switch (movieStatus) {
+        MovieStatus status;
+        switch (movieStatus.toUpperCase()) {
             case "SHOWING":
-                return movieRepository.findAllByMovieNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndIsDeletedAndMovieStatus(
-                        pageable, keySearch, false,MovieStatus.SHOWING);
+                status = MovieStatus.SHOWING;
+                break;
             case "UPCOMING":
-                return movieRepository.findAllByMovieNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndIsDeletedAndMovieStatus(
-                        pageable, keySearch, false, MovieStatus.UPCOMING);
+                status = MovieStatus.UPCOMING;
+                break;
             case "STOPPED":
-                return movieRepository.findAllByMovieNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndIsDeletedAndMovieStatus(
-                        pageable, keySearch, false, MovieStatus.STOPPED);
+                status = MovieStatus.STOPPED;
+                break;
             default:
-                throw new MovieException("movie not found");
+                throw new MovieException("Invalid movie status");
         }
+
+        return movieRepository.findAllByMovieNameIgnoreCaseContainingOrDescriptionIgnoreCaseContainingAndIsDeletedAndMovieStatus(
+                pageable, keySearch, keySearch, false, status);
     }
+
 
 }

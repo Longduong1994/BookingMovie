@@ -16,6 +16,8 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String roomName;
+    private Integer numberOfSeatsInARow ;
+    private Integer numberOfSeatsInAColumn ;
     @Enumerated(EnumType.STRING)
     private RoomType roomType;
     private Boolean isDeleted;

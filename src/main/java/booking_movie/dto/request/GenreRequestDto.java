@@ -10,5 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GenreRequestDto {
+    private Long id;
     private String genreName;
 }

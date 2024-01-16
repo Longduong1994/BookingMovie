@@ -38,6 +38,8 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.4.2.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.1.RELEASE'
+
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
 }
 
 tasks.named('bootBuildImage') {

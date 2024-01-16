@@ -1,6 +1,5 @@
 package booking_movie.service.user;
 
-import booking_movie.constants.RoleName;
 import booking_movie.dto.request.CreateAccountDto;
 import booking_movie.dto.request.LoginRequestDto;
 import booking_movie.dto.request.RegisterRequestDto;
@@ -14,7 +13,6 @@ import booking_movie.repository.UserRepository;
 import booking_movie.service.mail.MailService;
 import booking_movie.security.jwt.JwtProvider;
 import booking_movie.security.user_principle.UserPrincipal;
-import booking_movie.service.mail.MailService;
 import booking_movie.service.role.RoleService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -76,7 +74,7 @@ public class UserServiceImpl implements UserService {
             throw new LoginException("username or password invalid");
         }
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        if (userPrincipal.getUser().getStatus() == false) {
+        if (!userPrincipal.getUser().getStatus()) {
             throw new LoginException("Account is locked");
         }
         String token = jwtProvider.generateToken(userPrincipal);

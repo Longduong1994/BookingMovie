@@ -10,5 +10,5 @@ import lombok.*;
 public class LocationResponseDto {
     private Long id ;
     private String locationName ;
-    private Boolean isDelete = true ;
+    private Boolean isDelete = false ;
 }

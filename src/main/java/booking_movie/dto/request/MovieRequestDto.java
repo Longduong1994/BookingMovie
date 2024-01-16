@@ -1,5 +1,6 @@
 package booking_movie.dto.request;
 
+import booking_movie.entity.Format;
 import booking_movie.entity.Genre;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +21,7 @@ public class MovieRequestDto {
     private String cast;
     private Long runningTime;
     private LocalDate releaseDate;
+    private Set<Format> formats;
     private LocalDate stopDate;
     private String language;
     private String rated;
