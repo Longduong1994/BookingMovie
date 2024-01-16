@@ -2,7 +2,6 @@ package booking_movie.advice;
 
 
 import booking_movie.exception.*;
-import booking_movie.exception.CategoryException;
 import booking_movie.exception.LoginException;
 import booking_movie.exception.RegisterException;
 import org.springframework.http.HttpStatus;
@@ -22,10 +21,7 @@ public class AdviceController {
         return new ResponseEntity<>(registerException.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(CategoryException.class)
-    public ResponseEntity<String> category(CategoryException categoryException){
-        return new ResponseEntity<>(categoryException.getMessage(),HttpStatus.BAD_REQUEST);
-    }
+
 
 
     @ExceptionHandler(LoginException.class)
@@ -45,25 +41,11 @@ public class AdviceController {
     }
 
 
-    @ExceptionHandler(LocationException.class)
-    public ResponseEntity<String> locationErr(LocationException locationException) {
-        return new ResponseEntity<>(locationException.getMessage(), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(CustomsException.class)
+    public ResponseEntity<String> customException(CustomsException customsException) {
+        return new ResponseEntity<>(customsException.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(TheaterException.class)
-    public ResponseEntity<String> theaterErr(TheaterException theaterException) {
-        return new ResponseEntity<>(theaterException.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(RoomException.class)
-    public ResponseEntity<String> roomErr(RoomException roomException) {
-        return new ResponseEntity<>(roomException.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(ChairException.class)
-    public ResponseEntity<String> chairErr(ChairException chairException) {
-        return new ResponseEntity<>(chairException.getMessage(), HttpStatus.BAD_REQUEST);
-    }
 
 
 }

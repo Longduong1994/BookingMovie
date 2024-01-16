@@ -19,5 +19,6 @@ public class Dish {
     @JoinColumn(name = "category_id")
     private Category category;
     private Boolean status;
+
     private Boolean isDelete;
 }
