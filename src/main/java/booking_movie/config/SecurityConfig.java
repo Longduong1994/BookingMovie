@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-
 import java.util.List;
 
 @Configuration
@@ -56,6 +55,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) ->
                         auth.requestMatchers("/api/booking/v1/auth/**").permitAll()
                                 .requestMatchers("/test/**").permitAll()
+                                .requestMatchers("/api/booking/v1/users/**").permitAll()
+                                .requestMatchers("/api/booking/v1/payments/**").permitAll()
                                 .requestMatchers("/api/booking/v1/home/**").hasAuthority("CUSTOMER")
                                 .requestMatchers("/api/booking/v1/admin/**").hasAuthority("ADMIN")
                                 .anyRequest().authenticated())

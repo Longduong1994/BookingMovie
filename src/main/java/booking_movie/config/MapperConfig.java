@@ -38,15 +38,13 @@ public class MapperConfig {
     @Bean
     public ChairMapper chairMapper() {
         return Mappers.getMapper(ChairMapper.class);
-    }
 
+    }
     @Bean
     public GenreMapper genreMapper() {
-        return Mappers.getMapper(GenreMapper.class);
+        return Mappers.getMapper(GenreMapper.class) ;
     }
 
-    @Bean
-    public MovieMapper movieMapper() {
-        return Mappers.getMapper(MovieMapper.class);
-    }
+
+
 }

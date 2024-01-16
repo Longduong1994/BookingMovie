@@ -6,12 +6,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
+
 public interface MovieRepository extends JpaRepository<Movie, Long> {
+    List<Movie> findAllByIsDeleted(Boolean isDeleted);
     Page<Movie> findAllByIsDeleted(Pageable pageable, Boolean isDeleted);
+    Page<Movie> findAllByMovieNameContainingIgnoreCaseAndIsDeleted(
+            Pageable pageable, String movieName, Boolean isDeleted);
 
-    Page<Movie> findAllByMovieNameIgnoreCaseContainingOrDescriptionIgnoreCaseContainingAndIsDeleted(
-            Pageable pageable, String movieName, String description, Boolean isDeleted);
+    Movie findMovieByIdAndIsDeleted(Long idMovie,Boolean isDeleted );
+    Page<Movie> findAllByMovieNameContainingIgnoreCaseAndIsDeletedAndMovieStatus(
+            Pageable pageable, String movieName, Boolean isDeleted, MovieStatus movieStatus);
 
-    Page<Movie> findAllByMovieNameIgnoreCaseContainingOrDescriptionIgnoreCaseContainingAndIsDeletedAndMovieStatus(
-            Pageable pageable, String movieName, String description, Boolean isDeleted, MovieStatus movieStatus);
 }

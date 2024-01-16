@@ -1,5 +1,6 @@
 package booking_movie.dto.request;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GenreRequestDto {
-    private Long id;
+    @NotEmpty(message = "genreName is not empty")
     private String genreName;
+    private Boolean isDeleted =false;
 }

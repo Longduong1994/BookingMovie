@@ -61,6 +61,7 @@ public class AdviceController {
         return new ResponseEntity<>(chairException.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+
     /**
      * exception category
      *
@@ -89,6 +90,15 @@ public class AdviceController {
     @ExceptionHandler(PromtionException.class)
     public ResponseEntity<String> promtion(PromtionException promtionException){
         return new ResponseEntity<>(promtionException.getMessage(),HttpStatus.BAD_REQUEST);
+
+    @ExceptionHandler(GenreException.class)
+    public ResponseEntity<String> genreErr(GenreException genreException) {
+        return new ResponseEntity<>(genreException.getMessage(), HttpStatus.BAD_REQUEST);
+
     }
 
+    @ExceptionHandler(MovieException.class)
+    public ResponseEntity<String> movieErr(MovieException movieException) {
+        return new ResponseEntity<>(movieException.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
