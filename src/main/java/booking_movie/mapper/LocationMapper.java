@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 
 @Mapper
 public interface LocationMapper {
+    @Mapping(target = "id", ignore = true)
     Location toEntity(LocationRequestDto locationRequestDto) ;
     LocationResponseDto toResponse (Location location) ;
 }

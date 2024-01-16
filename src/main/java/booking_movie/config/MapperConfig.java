@@ -15,36 +15,36 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MapperConfig {
 
-@Bean
-public UserMapper userMapper(){
-    return Mappers.getMapper(UserMapper.class);
-}
+    @Bean
+    public UserMapper userMapper() {
+        return Mappers.getMapper(UserMapper.class);
+    }
 
-  @Bean
+    @Bean
     public LocationMapper locationMapper() {
-        return Mappers.getMapper(LocationMapper.class) ;
+        return Mappers.getMapper(LocationMapper.class);
     }
 
     @Bean
     public TheaterMapper theaterMapper() {
-        return Mappers.getMapper(TheaterMapper.class) ;
+        return Mappers.getMapper(TheaterMapper.class);
     }
 
     @Bean
     public RoomMapper roomMapper() {
-        return Mappers.getMapper(RoomMapper.class) ;
+        return Mappers.getMapper(RoomMapper.class);
     }
 
     @Bean
     public ChairMapper chairMapper() {
         return Mappers.getMapper(ChairMapper.class);
+
     }
     @Bean
     public GenreMapper genreMapper() {
         return Mappers.getMapper(GenreMapper.class) ;
     }
-    @Bean
-    public MovieMapper movieMapper() {
-        return Mappers.getMapper(MovieMapper.class) ;
-    }
+
+
+
 }

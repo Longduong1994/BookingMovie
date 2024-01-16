@@ -9,6 +9,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 @AllArgsConstructor
 @Service
 public class GenreServiceImpl implements GenreService {
@@ -26,9 +29,14 @@ public class GenreServiceImpl implements GenreService {
     }
     @Override
     public GenreResponseDto createGenre(GenreRequestDto genreRequestDto) {
+        List<Genre> genreList = genreRepository.findAllByIsDeleted(false);
+        if (genreList.stream().anyMatch(item -> item.getGenreName().equals(genreRequestDto.getGenreName()))) {
+            throw new GenreException("Duplicate genre");
+        }
         Genre genre = genreMapper.toEntity(genreRequestDto);
         return genreMapper.toResponseDto(genreRepository.save(genre));
     }
+
     @Override
     public void deleteGenre(Long idGenre) throws GenreException {
         Genre genreToDelete = genreRepository.findGenreByIdAndIsDeleted(idGenre, false);
@@ -53,7 +61,9 @@ public class GenreServiceImpl implements GenreService {
         if(genreEdit !=null){
             genreEdit.setGenreName(genreRequestDto.getGenreName());
             return genreMapper.toResponseDto( genreRepository.save(genreEdit));
+        }else {
+            throw new GenreException("Genre not found");
         }
-        throw new GenreException("Genre not found");
+
     }
 }

@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface TheaterMapper {
     @Mapping(target ="location.id" , source = "locationId")
+    @Mapping(target = "id",ignore = true)
     Theater toEntity(TheaterRequestDto theaterRequestDto) ;
 
     @Mapping(target = "locationName", source = "location.locationName")
