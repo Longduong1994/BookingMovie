@@ -1,5 +1,4 @@
 package booking_movie.repository;
-
 import booking_movie.constants.MovieStatus;
 import booking_movie.entity.Movie;
 import org.springframework.data.domain.Page;

@@ -1,9 +1,6 @@
 package booking_movie.controller;
-import booking_movie.dto.request.GenreRequestDto;
 import booking_movie.dto.request.MovieRequestDto;
-import booking_movie.dto.response.GenreResponseDto;
 import booking_movie.dto.response.MovieResponseDto;
-import booking_movie.exception.GenreException;
 import booking_movie.exception.MovieException;
 import booking_movie.service.movice.MovieService;
 import jakarta.validation.Valid;

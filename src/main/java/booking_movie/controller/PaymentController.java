@@ -18,9 +18,8 @@ public class PaymentController {
 
 
     @GetMapping("/create")
-    public String getPay(@RequestParam(defaultValue = "10000") long price,@RequestParam(defaultValue = "1") Long contractId) throws UnsupportedEncodingException{
+    public String getPay(@RequestParam(defaultValue = "10000") long price,@RequestParam(defaultValue = "1") Long contractId) throws UnsupportedEncodingException {
 
         return vnPayService.createPayment(price, contractId);
     }
-
 }

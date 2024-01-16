@@ -2,16 +2,32 @@ package booking_movie.mapper;
 
 import booking_movie.dto.request.TheaterRequestDto;
 import booking_movie.dto.response.TheaterResponseDto;
+import booking_movie.entity.Location;
 import booking_movie.entity.Theater;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import booking_movie.exception.CustomsException;
+import booking_movie.repository.LocationRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@Mapper
-public interface TheaterMapper {
-    @Mapping(target ="location.id" , source = "locationId")
-    @Mapping(target = "id",ignore = true)
-    Theater toEntity(TheaterRequestDto theaterRequestDto) ;
+@Component
+@AllArgsConstructor
+public class TheaterMapper {
+    private LocationRepository locationRepository ;
+    public TheaterResponseDto toResponse(Theater theater) {
+        return TheaterResponseDto.builder()
+                .id(theater.getId())
+                .theaterName(theater.getTheaterName())
+                .isDeleted(theater.getIsDeleted())
+                .locationName(theater.getLocation().getLocationName())
+                .build();
+    }
 
-    @Mapping(target = "locationName", source = "location.locationName")
-    TheaterResponseDto toResponse(Theater theater);
+    public Theater toEntity(TheaterRequestDto theaterRequestDto) throws CustomsException {
+        Location location = locationRepository.findById(theaterRequestDto.getLocationId()).orElseThrow(()-> new CustomsException("Location Not Found"));
+        return Theater.builder()
+                .theaterName(theaterRequestDto.getTheaterName())
+                .isDeleted(theaterRequestDto.getIsDeleted())
+                .location(location)
+                .build();
+    }
 }

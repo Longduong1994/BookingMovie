@@ -1,16 +1,43 @@
 package booking_movie.mapper;
 
+import booking_movie.constants.ChairType;
 import booking_movie.dto.request.ChairRequest;
 import booking_movie.dto.response.ChairResponseDto;
 import booking_movie.entity.Chair;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import booking_movie.entity.Room;
+import booking_movie.exception.CustomsException;
+import booking_movie.repository.RoomRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@Mapper
-public interface ChairMapper {
-    @Mapping(target = "room.id", source = "roomId")
-    @Mapping(target = "id",ignore = true)
-    Chair toEntity(ChairRequest chairRequest) ;
-    @Mapping(target = "roomName", source = "room.roomName")
-    ChairResponseDto toResponse(Chair chair) ;
+
+@Component
+@AllArgsConstructor
+public class ChairMapper {
+    private RoomRepository roomRepository ;
+    public ChairResponseDto toResponse(Chair chair) {
+        return ChairResponseDto.builder()
+                .id(chair.getId())
+                .chairName(chair.getChairName())
+                .chairType(chair.getChairType().name())
+                .roomName(chair.getRoom().getRoomName())
+                .isDeleted(chair.getIsDeleted())
+                .build();
+    }
+
+    public Chair toEntity(ChairRequest chairRequest) throws CustomsException {
+        Room room = roomRepository.findById(chairRequest.getRoomId()).orElseThrow(()-> new CustomsException("Room Not Found"));
+        ChairType chairType = switch (chairRequest.getChairType()) {
+            case "normal" -> ChairType.NORMAL;
+            case "VIP" -> ChairType.VIP;
+            default -> throw new CustomsException(chairRequest.getChairType() + " Not Found");
+        };
+        return Chair.builder()
+                .chairName(chairRequest.getChairName())
+                .chairType(chairType)
+                .isDeleted(chairRequest.getIsDeleted())
+                .room(room)
+                .build();
+    }
+
 }

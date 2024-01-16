@@ -6,6 +6,7 @@ import booking_movie.entity.Dish;
 import booking_movie.exception.DishException;
 import booking_movie.repository.CategoryRepository;
 import booking_movie.repository.DishRepository;
+import booking_movie.service.upload_image.UploadFileService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,13 +18,14 @@ import java.util.Optional;
 public class DishMapper {
     private final CategoryRepository categoryRepository;
     private final DishRepository dishRepository;
-
+    private final UploadFileService uploadFileService;
     public  Dish dishRequestDtoIntoDish(DishRequestDto dishRequestDto, String useName) {
         return Dish.builder()
                 .dishName(dishRequestDto.getDishName())
                 .category(categoryRepository.findById(dishRequestDto.getCategoryId()).get())
                 .price(dishRequestDto.getPrice())
                 .sold(0)
+                .image(uploadFileService.uploadFile(dishRequestDto.getImage()))
                 .createUser(useName)
                 .createTime(LocalDate.now())
                 .updateTime(LocalDate.now())
@@ -35,10 +37,11 @@ public class DishMapper {
             Dish dish1 = dish.get();
             dish1.setDishName(dishUpdateRequestDto.getDishName());
             dish1.setCategory(categoryRepository.findById(dishUpdateRequestDto.getCategoryId()).get());
+            dish1.setImage(uploadFileService.uploadFile(dishUpdateRequestDto.getImage()));
             dish1.setPrice(dishUpdateRequestDto.getPrice());
             dish1.setUpdateTime(LocalDate.now());
             dish1.setUpdateUser(userName);
             return dish1;
-        }throw new DishException("DishId Not found");
+        }throw new DishException("Dish Not found");
     }
 }

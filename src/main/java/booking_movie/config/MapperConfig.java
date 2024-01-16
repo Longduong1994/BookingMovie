@@ -19,27 +19,6 @@ public class MapperConfig {
     public UserMapper userMapper() {
         return Mappers.getMapper(UserMapper.class);
     }
-
-    @Bean
-    public LocationMapper locationMapper() {
-        return Mappers.getMapper(LocationMapper.class);
-    }
-
-    @Bean
-    public TheaterMapper theaterMapper() {
-        return Mappers.getMapper(TheaterMapper.class);
-    }
-
-    @Bean
-    public RoomMapper roomMapper() {
-        return Mappers.getMapper(RoomMapper.class);
-    }
-
-    @Bean
-    public ChairMapper chairMapper() {
-        return Mappers.getMapper(ChairMapper.class);
-
-    }
     @Bean
     public GenreMapper genreMapper() {
         return Mappers.getMapper(GenreMapper.class) ;

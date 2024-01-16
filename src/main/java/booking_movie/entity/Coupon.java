@@ -26,5 +26,6 @@ public class Coupon {
     @JoinColumn(name = "users_id")
     private User user;
     private Boolean status;
+
     private Boolean isDelete;
 }
