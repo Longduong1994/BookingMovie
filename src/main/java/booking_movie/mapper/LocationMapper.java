@@ -3,12 +3,24 @@ package booking_movie.mapper;
 import booking_movie.dto.request.LocationRequestDto;
 import booking_movie.dto.response.LocationResponseDto;
 import booking_movie.entity.Location;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@Mapper
-public interface LocationMapper {
-    @Mapping(target = "id", ignore = true)
-    Location toEntity(LocationRequestDto locationRequestDto) ;
-    LocationResponseDto toResponse (Location location) ;
+@Component
+@AllArgsConstructor
+public class LocationMapper {
+    public LocationResponseDto toResponse(Location location) {
+        return LocationResponseDto.builder()
+                .id(location.getId())
+                .locationName(location.getLocationName())
+                .isDelete(location.getIsDelete())
+                .build();
+    }
+
+    public Location toEntity(LocationRequestDto locationRequestDto) {
+        return Location.builder()
+                .locationName(locationRequestDto.getLocationName())
+                .isDelete(locationRequestDto.getIsDelete())
+                .build();
+    }
 }
