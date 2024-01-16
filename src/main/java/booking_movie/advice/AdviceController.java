@@ -22,10 +22,6 @@ public class AdviceController {
         return new ResponseEntity<>(registerException.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(CategoryException.class)
-    public ResponseEntity<String> category(CategoryException categoryException){
-        return new ResponseEntity<>(categoryException.getMessage(),HttpStatus.BAD_REQUEST);
-    }
 
 
     @ExceptionHandler(LoginException.class)
@@ -37,7 +33,7 @@ public class AdviceController {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> invalidRegister(MethodArgumentNotValidException ex) {
-        Map<String, String> error = new HashMap();
+        Map<String, String> error = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(c -> {
             error.put(c.getField(), c.getDefaultMessage());
         });
@@ -65,9 +61,40 @@ public class AdviceController {
         return new ResponseEntity<>(chairException.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+
+    /**
+     * exception category
+     *
+     * @author huyqt97
+     */
+    @ExceptionHandler(DishException.class)
+    public ResponseEntity<String> DishErr(DishException dishException){
+        return new ResponseEntity<>(dishException.getMessage(),HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * exception category
+     *
+     * @author huyqt97
+     */
+    @ExceptionHandler(CategoryException.class)
+    public ResponseEntity<String> categoryErr(CategoryException categoryException){
+        return new ResponseEntity<>(categoryException.getMessage(),HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * exception promtion
+     *
+     * @author huyqt97
+     */
+    @ExceptionHandler(PromtionException.class)
+    public ResponseEntity<String> promtion(PromtionException promtionException){
+        return new ResponseEntity<>(promtionException.getMessage(),HttpStatus.BAD_REQUEST);
+
     @ExceptionHandler(GenreException.class)
     public ResponseEntity<String> genreErr(GenreException genreException) {
         return new ResponseEntity<>(genreException.getMessage(), HttpStatus.BAD_REQUEST);
+
     }
 
     @ExceptionHandler(MovieException.class)

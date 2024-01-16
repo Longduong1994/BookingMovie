@@ -9,8 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @AllArgsConstructor
 @Data
-public class DishRequestDto {
-
+public class DishUpdateRequestDto {
+    private Long id;
     @NotEmpty
     private String dishName;
 
@@ -21,5 +21,4 @@ public class DishRequestDto {
 
     @Min(value = 0, message = "Price must be greater than or equal to 0")
     private Double price;
-
 }

@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests((auth) ->
                         auth.requestMatchers("/api/booking/v1/auth/**").permitAll()
+                                .requestMatchers("/test/**").permitAll()
                                 .requestMatchers("/api/booking/v1/users/**").permitAll()
                                 .requestMatchers("/api/booking/v1/payments/**").permitAll()
                                 .requestMatchers("/api/booking/v1/home/**").hasAuthority("CUSTOMER")
@@ -64,7 +65,6 @@ public class SecurityConfig {
                 .sessionManagement((auth) ->
                         auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
-                .build()
-                ;
+                .build();
     }
 }
