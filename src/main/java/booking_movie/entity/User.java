@@ -1,5 +1,6 @@
 package booking_movie.entity;
 
+import booking_movie.constants.RankName;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,9 @@ public class User {
     private String phone;
     private String dateOfBirth;
     private String card;
+    private Integer point;
+    @Enumerated(EnumType.STRING)
+    private RankName level;
     private Boolean status;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "USERS_ROLE",

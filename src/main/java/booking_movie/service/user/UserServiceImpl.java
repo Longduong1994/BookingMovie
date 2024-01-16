@@ -1,5 +1,6 @@
 package booking_movie.service.user;
 
+import booking_movie.constants.RankName;
 import booking_movie.constants.RoleName;
 import booking_movie.dto.request.CreateAccountDto;
 import booking_movie.dto.request.LoginRequestDto;
@@ -17,6 +18,8 @@ import booking_movie.security.user_principle.UserPrincipal;
 import booking_movie.service.mail.MailService;
 import booking_movie.service.role.RoleService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -41,6 +45,25 @@ public class UserServiceImpl implements UserService {
     private final JwtProvider jwtProvider;
 
 
+    @Override
+    public String changeStatus(Long id,Authentication authentication) throws LoginException {
+        User user = getUser(authentication);
+        if (!roleService.hasRoleAdmin(user)){
+            throw new RuntimeException("");
+        }
+        Optional<User> userChange = userRepository.findById(id);
+        if (!userChange.isPresent()){
+            throw new RuntimeException("not found");
+        }
+        userChange.get().setStatus(!userChange.get().getStatus());
+        userRepository.save(userChange.get());
+        return "Success";
+    }
+
+    @Override
+    public Page<User> findAllCustomer(int page, int size, String username) {
+        return userRepository.findAllCustomers(username,roleService.getRoleCustomer(),PageRequest.of(page,size));
+    }
 
     @Override
     public String register(RegisterRequestDto registerRequestDto) throws RegisterException {
@@ -56,6 +79,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCard(UUID.randomUUID().toString().substring(0, 9));
         user.setRoles(roles);
+        user.setPoint(0);
+        user.setLevel(RankName.COPPER);
         user.setStatus(true);
         userRepository.save(user);
         String emailContent = """
@@ -100,6 +125,5 @@ public class UserServiceImpl implements UserService {
         }
         return userPrincipal.getUser();
     }
-
 
 }
