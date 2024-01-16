@@ -1,19 +1,22 @@
 package booking_movie.service.movice;
+import booking_movie.constants.DateTimeComponent;
 import booking_movie.constants.MovieStatus;
 import booking_movie.dto.request.MovieRequestDto;
 import booking_movie.dto.response.MovieResponseDto;
-import booking_movie.entity.Genre;
 import booking_movie.entity.Movie;
+import booking_movie.entity.User;
 import booking_movie.exception.GenreException;
+import booking_movie.exception.LoginException;
 import booking_movie.exception.MovieException;
 import booking_movie.mapper.MovieMapper;
 import booking_movie.repository.MovieRepository;
+import booking_movie.service.user.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDate;
 import java.util.List;
@@ -23,6 +26,8 @@ import java.util.List;
 public class MovieServiceImpl implements MovieService {
     private  final MovieRepository movieRepository;
     private  final MovieMapper movieMapper;
+    private  final UserService  userService;
+    private final DateTimeComponent dateTimeComponent;
     @Override
     public Page<MovieResponseDto> getAllMovie(String keySearch, Pageable pageable) {
         Page<Movie> listMovie;
@@ -34,16 +39,18 @@ public class MovieServiceImpl implements MovieService {
         return listMovie.map(movieMapper::toResponseDto);
     }
     @Override
-    public MovieResponseDto createMovie(MovieRequestDto movieRequestDto) throws MovieException {
+    public MovieResponseDto createMovie(MovieRequestDto movieRequestDto, Authentication  authentication) throws MovieException, LoginException {
+        User user = userService.getUser(authentication);
         validateMovieRequest(movieRequestDto);
         List<Movie> genreList = movieRepository.findAllByIsDeleted(false);
         System.out.println(genreList);
         if (genreList.stream().anyMatch(item -> item.getMovieName().equals(movieRequestDto.getMovieName()))) {
             throw new GenreException("Duplicate movie");
         }
-          Movie movie=   movieMapper.toEntity(movieRequestDto);
-
-       return movieMapper.toResponseDto(movieRepository.save(movie));
+        Movie movie=   movieMapper.toEntity(movieRequestDto);
+        movie.setCreateUser(user.getUsername());
+        movie.setCreateDttm(dateTimeComponent.now());
+        return movieMapper.toResponseDto(movieRepository.save(movie));
     }
 
     @Override
@@ -68,7 +75,6 @@ public class MovieServiceImpl implements MovieService {
         return moviePage.map(movieMapper::toResponseDto);
     }
 
-
     @Override
     public void deleteMovie(Long idDelete) throws MovieException {
         Movie movieDelete = movieRepository.findMovieByIdAndIsDeleted(idDelete,false);
@@ -81,14 +87,20 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public MovieResponseDto updateMovie(MovieRequestDto movieRequestDto, Long idEdit) throws MovieException {
+    public MovieResponseDto updateMovie(MovieRequestDto movieRequestDto,Authentication authentication, Long idEdit) throws MovieException, LoginException {
+        User user = userService.getUser(authentication);
         validateMovieRequest(movieRequestDto);
         Movie movieEdit = movieRepository.findMovieByIdAndIsDeleted(idEdit,false);
         if(movieEdit ==null){
             throw new MovieException("movie not found");
         }else {
             movieEdit=  movieMapper.toEntity(movieRequestDto);
-              movieEdit.setId(idEdit);
+            movieEdit.setId(idEdit);
+            movieEdit.setCreateDttm(movieEdit.getCreateDttm());
+            movieEdit.setCreateUser(movieEdit.getCreateUser());
+            movieEdit.setUpdateDttm(dateTimeComponent.now());
+            movieEdit.setUpdateUser(user.getUsername());
+            movieEdit.setUpdateClass(2);
             movieRepository.save(movieEdit);
             return    movieMapper.toResponseDto(movieEdit) ;
         }
@@ -110,9 +122,8 @@ public class MovieServiceImpl implements MovieService {
         List<Movie> allMovies = movieRepository.findAllByIsDeleted(false);
         LocalDateTime currentDateTime = LocalDateTime.now();
         for (Movie movie : allMovies) {
-            // Kiểm tra và chuyển trạng thái dựa trên thời gian chiếu và ngày kết thúc
             if (movie.getReleaseDate() != null && movie.getStopDate() != null) {
-                LocalDateTime endDatePlusOneDay = movie.getStopDate().plusDays(1).atStartOfDay(); // Ngày kết thúc + 1 ngày để bao gồm cả ngày đó
+                LocalDateTime endDatePlusOneDay = movie.getStopDate().plusDays(1).atStartOfDay();
 
                 if (currentDateTime.isAfter(movie.getReleaseDate().atStartOfDay()) && currentDateTime.isBefore(endDatePlusOneDay)) {
                     movie.setMovieStatus(MovieStatus.SHOWING);
