@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 @Component
 @AllArgsConstructor
 public class MovieMapper {
- private  final GenreRepository genreRepository;
-private  final UploadFileService uploadFileService;
+    private  final GenreRepository genreRepository;
+    private  final UploadFileService uploadFileService;
     public MovieResponseDto toResponseDto(Movie movie) {
         Set<String> genreNames = movie.getGenres().stream()
                 .map(Genre::getGenreName)
@@ -40,7 +40,7 @@ private  final UploadFileService uploadFileService;
         Set<Genre> genres = movieRequestDto.getGenreId().stream()
                 .map(item -> genreRepository.findGenreByIdAndIsDeleted(item,false))
                 .collect(Collectors.toSet());
-        return Movie.builder()
+        Movie movie= Movie.builder()
                 .movieName(movieRequestDto.getMovieName())
                 .movieImage(uploadFileService.uploadFile(movieRequestDto.getMovieImage()))
                 .director(movieRequestDto.getDirector())
@@ -52,9 +52,11 @@ private  final UploadFileService uploadFileService;
                 .stopDate(movieRequestDto.getStopDate())
                 .language(movieRequestDto.getLanguage())
                 .rated(movieRequestDto.getRated())
-                .isDeleted(false)
+
                 .genres(genres)
                 .movieStatus(MovieStatus.SHOWING)
                 .build();
+        movie.setIsDeleted(false);
+        return movie;
     }
 }
