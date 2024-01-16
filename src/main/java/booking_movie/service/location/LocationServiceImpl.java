@@ -15,10 +15,8 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class LocationServiceImpl implements LocationService {
-
     private LocationRepository locationRepository ;
     private LocationMapper locationMapper ;
-
     @Override
     public Page<LocationResponseDto> findAll(String search, Pageable pageable) {
         Page<Location> locationPage ;
@@ -54,7 +52,6 @@ public class LocationServiceImpl implements LocationService {
         locationRepository.save(location);
         return locationMapper.toResponse(location);
     }
-
     @Override
     public void delete(Long id) throws LocationException {
         Location location = locationRepository.findById(id).orElseThrow(() -> new LocationException("Location Not Fount"));

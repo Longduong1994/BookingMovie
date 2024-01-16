@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @Data
 @Builder
 @Table(name = "COUPON")
+
 public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -8,7 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 public interface MovieService {
     Page<MovieResponseDto> getAllMovie(String keySearch, Pageable pageable);
-    MovieResponseDto createMovie(MovieRequestDto movieRequestDto);
-
-    Page<Movie> getAllMovieByMovieStatus(String keySearch, Pageable pageable, String movieStatus) throws MovieException;
+    MovieResponseDto createMovie(MovieRequestDto movieRequestDto) throws MovieException;
+    Page<MovieResponseDto> getAllMovieByMovieStatus(String keySearch, Pageable pageable, String movieStatus) throws MovieException;
+    void deleteMovie(Long idDelete) throws MovieException;
+    MovieResponseDto updateMovie(MovieRequestDto movieRequestDto ,Long idEdit) throws MovieException;
 }
