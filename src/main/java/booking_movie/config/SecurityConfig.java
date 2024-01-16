@@ -54,6 +54,8 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests((auth) ->
                         auth.requestMatchers("/api/booking/v1/auth/**").permitAll()
+                                .requestMatchers("/api/booking/v1/users/**").permitAll()
+                                .requestMatchers("/api/booking/v1/payments/**").permitAll()
                                 .requestMatchers("/api/booking/v1/home/**").hasAuthority("CUSTOMER")
                                 .requestMatchers("/api/booking/v1/admin/**").hasAuthority("ADMIN")
                                 .anyRequest().authenticated())

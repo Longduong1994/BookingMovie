@@ -13,10 +13,11 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
 
-    @Query("SELECT U FROM User U WHERE NOT :adminRole MEMBER OF U.roles AND U.username LIKE %:username%")
-    Page<User> findAllByRoles(@Param("username") String username,
-                              @Param("adminRole") Role adminRole,
-                              Pageable pageable);
+    @Query("SELECT U FROM User U WHERE :customerRole MEMBER OF U.roles AND U.username LIKE %:username%")
+    Page<User> findAllCustomers(@Param("username") String username,
+                                @Param("customerRole") Role customerRole,
+                                Pageable pageable);
+
 
     User findByEmail(String email);
 

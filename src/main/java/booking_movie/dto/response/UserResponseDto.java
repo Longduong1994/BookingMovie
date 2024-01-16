@@ -16,6 +16,7 @@ public class UserResponseDto {
     private String username;
     private String email;
     private String phone;
+    private Integer point;
     private LocalDate dateOfBirth;
     private Set<String> setRoles;
     private String token;

@@ -15,4 +15,6 @@ public interface RoleRepository extends JpaRepository<Role,Long> {
 
     @Query("SELECT Role FROM Role WHERE roleName ='ADMIN'")
     boolean checkRoleAdmin(Set<Role> roles);
+
+
 }
