@@ -88,8 +88,9 @@ public class AdviceController {
      * @author huyqt97
      */
     @ExceptionHandler(PromtionException.class)
-    public ResponseEntity<String> promtion(PromtionException promtionException){
-        return new ResponseEntity<>(promtionException.getMessage(),HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> promtion(PromtionException promtionException) {
+        return new ResponseEntity<>(promtionException.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(GenreException.class)
     public ResponseEntity<String> genreErr(GenreException genreException) {
