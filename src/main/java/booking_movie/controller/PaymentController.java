@@ -19,10 +19,7 @@ public class PaymentController {
 
     @GetMapping("/create")
     public String getPay(@RequestParam(defaultValue = "10000") long price,@RequestParam(defaultValue = "1") Integer contractId) throws UnsupportedEncodingException{
-
-
-
-        return paymentUrl;
+        return null;
     }
 
 }
