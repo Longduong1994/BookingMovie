@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -24,4 +25,6 @@ public class Theater {
     private Boolean isDeleted;
     @ManyToOne(fetch = FetchType.LAZY)
     private Location location;
+    @OneToMany(mappedBy = "theater")
+    private Set<Room> rooms ;
 }

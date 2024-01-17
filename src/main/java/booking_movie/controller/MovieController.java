@@ -2,7 +2,7 @@ package booking_movie.controller;
 import booking_movie.dto.request.MovieRequestDto;
 import booking_movie.dto.response.MovieResponseDto;
 import booking_movie.exception.MovieException;
-import booking_movie.service.movice.MovieService;
+import booking_movie.service.movie.MovieService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;

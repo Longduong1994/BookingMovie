@@ -1,8 +1,7 @@
-package booking_movie.service.movice;
+package booking_movie.service.movie;
 
 import booking_movie.dto.request.MovieRequestDto;
 import booking_movie.dto.response.MovieResponseDto;
-import booking_movie.entity.Movie;
 import booking_movie.exception.MovieException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

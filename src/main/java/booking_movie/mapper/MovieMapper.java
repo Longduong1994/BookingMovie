@@ -1,13 +1,17 @@
 package booking_movie.mapper;
 import booking_movie.constants.MovieStatus;
+import booking_movie.constants.RoomType;
 import booking_movie.dto.request.MovieRequestDto;
 import booking_movie.dto.response.MovieResponseDto;
 import booking_movie.entity.Genre;
 import booking_movie.entity.Movie;
+import booking_movie.exception.CustomsException;
 import booking_movie.repository.GenreRepository;
 import booking_movie.service.upload_image.UploadFileService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 @Component
@@ -36,10 +40,12 @@ private  final UploadFileService uploadFileService;
                 .genreName(genreNames)
                 .build();
     }
-    public Movie toEntity(MovieRequestDto movieRequestDto) {
+    public Movie toEntity(MovieRequestDto movieRequestDto)  {
         Set<Genre> genres = movieRequestDto.getGenreId().stream()
                 .map(item -> genreRepository.findGenreByIdAndIsDeleted(item,false))
                 .collect(Collectors.toSet());
+
+
         return Movie.builder()
                 .movieName(movieRequestDto.getMovieName())
                 .movieImage(uploadFileService.uploadFile(movieRequestDto.getMovieImage()))
@@ -55,6 +61,7 @@ private  final UploadFileService uploadFileService;
                 .isDeleted(false)
                 .genres(genres)
                 .movieStatus(MovieStatus.SHOWING)
+
                 .build();
     }
 }

@@ -1,8 +1,7 @@
-package booking_movie.service.movice;
+package booking_movie.service.movie;
 import booking_movie.constants.MovieStatus;
 import booking_movie.dto.request.MovieRequestDto;
 import booking_movie.dto.response.MovieResponseDto;
-import booking_movie.entity.Genre;
 import booking_movie.entity.Movie;
 import booking_movie.exception.GenreException;
 import booking_movie.exception.MovieException;
@@ -41,7 +40,7 @@ public class MovieServiceImpl implements MovieService {
         if (genreList.stream().anyMatch(item -> item.getMovieName().equals(movieRequestDto.getMovieName()))) {
             throw new GenreException("Duplicate movie");
         }
-          Movie movie=   movieMapper.toEntity(movieRequestDto);
+          Movie movie= movieMapper.toEntity(movieRequestDto);
 
        return movieMapper.toResponseDto(movieRepository.save(movie));
     }

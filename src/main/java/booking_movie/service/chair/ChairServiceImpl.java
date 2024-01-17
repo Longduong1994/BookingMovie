@@ -1,21 +1,22 @@
 package booking_movie.service.chair;
 
 import booking_movie.constants.ChairType;
+import booking_movie.constants.RoomType;
 import booking_movie.dto.request.ChairRequest;
 import booking_movie.dto.request.ChairTypeRequest;
+import booking_movie.dto.request.query.DateTimeAndLocationAndTypeAndTimeSlotRequest;
 import booking_movie.dto.response.ChairResponseDto;
-import booking_movie.entity.Chair;
-import booking_movie.entity.Room;
+import booking_movie.entity.*;
 import booking_movie.exception.CustomsException;
 import booking_movie.mapper.ChairMapper;
-import booking_movie.repository.ChairRepository;
-import booking_movie.repository.RoomRepository;
+import booking_movie.repository.*;
 import booking_movie.security.user_principle.UserPrincipal;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +27,9 @@ public class ChairServiceImpl implements ChairService{
     private ChairRepository chairRepository ;
     private RoomRepository roomRepository ;
     private ChairMapper chairMapper ;
+    private LocationRepository locationRepository ;
+    private MovieRepository movieRepository ;
+    private TimeSlotRepository timeSlotRepository ;
 
     @Override
     public List<ChairResponseDto> findAll() {
@@ -101,6 +105,24 @@ public class ChairServiceImpl implements ChairService{
         LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
         List<Chair> list = chairRepository.findAllByIsDeletedTrueAndUpdateTimeBefore(oneMonthAgo);
         chairRepository.deleteAll(list);
+    }
+
+    @Override
+    public List<ChairResponseDto> findByMovieAndDateBookingAndLocationAndTypeAndTimeSlot(Long idMovie, DateTimeAndLocationAndTypeAndTimeSlotRequest request) throws CustomsException {
+        Movie movie = movieRepository.findById(idMovie).orElseThrow(()-> new CustomsException("Movie Not Found"));
+        Location location = locationRepository.findById(request.getIdLocation()).orElseThrow(() -> new CustomsException("Location Not Found"));
+        TimeSlot timeSlot = timeSlotRepository.findById(request.getIdTimeSlot()).orElseThrow(()-> new CustomsException("TimeSlot Not Found"));
+        RoomType roomType = switch (request.getType()){
+            case "2D" -> RoomType.TWO_D;
+            case "3D" -> RoomType.THREE_D;
+            case "4D" -> RoomType.FOUR_D;
+            default -> throw new  CustomsException(request.getType() + " Not Found");
+        };
+        if (request.getDateBooking() == null) {
+            request.setDateBooking(LocalDate.now());
+        }
+        List<Chair> list = chairRepository.findByMovieAndDateBookingAndLocationAndTypeAndTimeSlot(idMovie, request.getDateBooking(), request.getIdLocation(), roomType, request.getIdTimeSlot());
+        return list.stream().map(item -> chairMapper.toResponse(item)).collect(Collectors.toList());
     }
 
 }

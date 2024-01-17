@@ -4,15 +4,12 @@ import booking_movie.constants.ChairType;
 import booking_movie.constants.RoomType;
 import booking_movie.dto.request.RoomRequestDto;
 import booking_movie.dto.request.RoomUpdateRequestDto;
+import booking_movie.dto.request.query.DateTimeAndLocationAndTypeAndTimeSlotRequest;
 import booking_movie.dto.response.RoomResponseDto;
-import booking_movie.entity.Chair;
-import booking_movie.entity.Room;
-import booking_movie.entity.Theater;
+import booking_movie.entity.*;
 import booking_movie.exception.CustomsException;
 import booking_movie.mapper.RoomMapper;
-import booking_movie.repository.ChairRepository;
-import booking_movie.repository.RoomRepository;
-import booking_movie.repository.TheaterRepository;
+import booking_movie.repository.*;
 import booking_movie.security.user_principle.UserPrincipal;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,6 +29,9 @@ public class RoomServiceImpl implements RoomService {
     private RoomMapper roomMapper;
     private ChairRepository chairRepository ;
     private TheaterRepository theaterRepository ;
+    private LocationRepository locationRepository;
+    private TimeSlotRepository timeSlotRepository ;
+    private MovieRepository movieRepository ;
 
     @Override
     public Page<RoomResponseDto> findAll(String search, Pageable pageable) {
@@ -51,7 +52,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomResponseDto save(Authentication authentication, RoomRequestDto roomRequestDto) throws  CustomsException {
-        if (roomRepository.existsByRoomName(roomRequestDto.getRoomName())){
+        if (roomRepository.existsByRoomNameAndTheaterId(roomRequestDto.getRoomName(), roomRequestDto.getTheaterId())){
             throw new CustomsException("Exits RoomName") ;
         }
         if (roomRequestDto.getNumberOfSeatsInARow() < 0 && roomRequestDto.getNumberOfSeatsInAColumn() < 0 ) {
@@ -124,5 +125,23 @@ public class RoomServiceImpl implements RoomService {
         LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
         List<Room> list = roomRepository.findAllByIsDeletedTrueAndUpdateTimeBefore(oneMonthAgo);
         roomRepository.deleteAll(list);
+    }
+
+    @Override
+    public RoomResponseDto findByMovieAndDateBookingAndLocationAndTypeAndTimeSlot(Long idMovie, DateTimeAndLocationAndTypeAndTimeSlotRequest request) throws CustomsException {
+        Movie movie = movieRepository.findById(idMovie).orElseThrow(()-> new CustomsException("Movie Not Found"));
+        Location location = locationRepository.findById(request.getIdLocation()).orElseThrow(()-> new CustomsException("Location Not Found"));
+        TimeSlot timeSlot = timeSlotRepository.findById(request.getIdTimeSlot()).orElseThrow(()-> new CustomsException("TimeSlot Not Found"));
+        RoomType roomType = switch (request.getType()){
+            case "2D" -> RoomType.TWO_D;
+            case "3D" -> RoomType.THREE_D;
+            case "4D" -> RoomType.FOUR_D;
+            default -> throw new  CustomsException(request.getType() + " Not Found");
+        };
+        if (request.getDateBooking() == null) {
+            request.setDateBooking(LocalDate.now());
+        }
+        Room room = roomRepository.findByMovieAndDateBookingAndLocationAndTypeAndTimeSlot(idMovie,request.getDateBooking(), request.getIdLocation(), roomType, request.getIdTimeSlot());
+        return roomMapper.toResponse(room);
     }
 }
