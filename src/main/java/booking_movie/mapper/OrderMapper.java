@@ -22,7 +22,6 @@ public class OrderMapper {
                 .createUser(user.getUsername())
                 .theater(orderRequestDto.getTheaterId())
                 .payment(null)
-                .promotion(promotionRepository.findById(orderRequestDto.getPromotionId()).orElse(null))
                 .isDelete(false).build();
     }
 }

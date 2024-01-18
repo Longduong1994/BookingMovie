@@ -9,5 +9,10 @@ import org.mapstruct.Mapping;
 public interface GenreMapper {
     GenreResponseDto toResponseDto(Genre genre);
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createDttm", ignore = true)
+    @Mapping(target = "updateDttm", ignore = true)
+    @Mapping(target = "createUser", ignore = true)
+    @Mapping(target = "updateUser", ignore = true)
+    @Mapping(target = "updateClass", ignore = true)
     Genre toEntity(GenreRequestDto genreRequestDto);
 }

@@ -3,16 +3,15 @@ package booking_movie.entity;
 import booking_movie.constants.MovieStatus;
 import booking_movie.constants.RoomType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@EqualsAndHashCode(callSuper=false)
 @Builder
 @Table(name = "MOVIE")
 public class Movie extends BaseEntity {

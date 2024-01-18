@@ -14,13 +14,18 @@ import org.mapstruct.Mapping;
 
 @Mapper
 public interface UserMapper {
-//    @Mapping(target = "id", ignore = true)
-//    @Mapping(target = "card", ignore = true)
-//    @Mapping(target = "status", ignore = true)
-//    @Mapping(target = "roles", ignore = true)
-//    @Mapping(target = "point", ignore = true)
-//    @Mapping(target = "level", ignore = true)
-//    @Mapping(target = "theaterId", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "card", ignore = true)
+    @Mapping(target = "point", ignore = true)
+    @Mapping(target = "avatar", ignore = true)
+    @Mapping(target = "address", ignore = true)
+    @Mapping(target = "theaterId", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "level", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "theater", ignore = true)
+
     User toEntity(RegisterRequestDto requestDto);
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "card", ignore = true)
@@ -29,12 +34,31 @@ public interface UserMapper {
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "point", ignore = true)
     @Mapping(target = "level", ignore = true)
+    @Mapping(target = "avatar", ignore = true)
+    @Mapping(target = "city", ignore = true)
+    @Mapping(target = "address", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "theater", ignore = true)
     User toEntity(CreateAccountDto createAccountDto);
     @Mapping(target = "setRoles", ignore = true)
     @Mapping(target = "token", ignore = true)
     UserResponseDto toResponseDto(User user);
 
-
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "username", ignore = true)
+    @Mapping(target = "email", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "dateOfBirth", ignore = true)
+    @Mapping(target = "card", ignore = true)
+    @Mapping(target = "point", ignore = true)
+    @Mapping(target = "avatar", ignore = true)
+    @Mapping(target = "address", ignore = true)
+    @Mapping(target = "theaterId", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "level", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "theater", ignore = true)
    User toEntity(UpdateUserDto updateUserDto);
     @Mapping(target = "gender", expression = "java(mapGender(user))")
     CustomerResponse toCustomer(User user);

@@ -104,4 +104,5 @@ public class CategoryServiceImpl implements CategoryService {
         }
         throw new CategoryException("no permissions granted");
     }
+
 }

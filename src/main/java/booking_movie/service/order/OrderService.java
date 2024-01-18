@@ -3,9 +3,11 @@ package booking_movie.service.order;
 import booking_movie.dto.request.OrderRequestDto;
 
 import booking_movie.dto.response.OrderResponseDto;
+import booking_movie.entity.Order;
 import booking_movie.exception.CustomsException;
 import booking_movie.exception.LoginException;
 import booking_movie.exception.NotFoundException;
+import booking_movie.exception.OrderException;
 import org.springframework.security.core.Authentication;
 
 public interface OrderService {
@@ -15,5 +17,5 @@ public interface OrderService {
 
 //     Order create(OrderRequestDto orderRequestDto, Authentication authentication) throws OrderException, UserException;
 //     Order update(Authentication authentication) throws OrderException, UserException;
-//     Order findById(Long id)throws OrderException;
+     Order findById(Long id)throws OrderException;
 }

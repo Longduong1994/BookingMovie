@@ -7,6 +7,7 @@ import booking_movie.entity.*;
 import booking_movie.exception.CustomsException;
 import booking_movie.exception.LoginException;
 import booking_movie.exception.NotFoundException;
+import booking_movie.exception.OrderException;
 import booking_movie.repository.*;
 import booking_movie.service.user.UserService;
 import jakarta.transaction.Transactional;
@@ -18,19 +19,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import booking_movie.constants.Status;
-import booking_movie.dto.request.OrderRequestDto;
 import booking_movie.entity.Order;
 import booking_movie.entity.User;
-import booking_movie.exception.OrderException;
-import booking_movie.exception.UserException;
-import booking_movie.mapper.OrderMapper;
 import booking_movie.repository.OrderRepository;
-import booking_movie.service.user.UserService;
-import lombok.AllArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+
 
 
 
@@ -52,14 +45,14 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDto create(Authentication authentication, OrderRequestDto orderRequestDto) throws LoginException, CustomsException, NotFoundException {
         User user = userService.getUser(authentication);
         Location location = locationRepository.findById(orderRequestDto.getLocationId()).orElseThrow(() -> new NotFoundException("Location not found"));
-        Theater theater = theaterRepository.findById(orderRequestDto.getTheaterId()).orElseThrow(() -> new NotFoundException("Theater not found"));;
-        Room room = roomRepository.findById(orderRequestDto.getRoomId()).orElseThrow(() -> new NotFoundException("Room not found"));;
-        Movie movie = movieRepository.findById(orderRequestDto.getMovieId()).orElseThrow(() -> new NotFoundException("Movie not found"));;
-        Payment payment = paymentRepository.findById(orderRequestDto.getPaymentId()).orElseThrow(() -> new NotFoundException("Payment not found"));;
+        Theater theater = theaterRepository.findById(orderRequestDto.getTheaterId()).orElseThrow(() -> new NotFoundException("Theater not found"));
+        Room room = roomRepository.findById(orderRequestDto.getRoomId()).orElseThrow(() -> new NotFoundException("Room not found"));
+        Movie movie = movieRepository.findById(orderRequestDto.getMovieId()).orElseThrow(() -> new NotFoundException("Movie not found"));
+        Payment payment = paymentRepository.findById(orderRequestDto.getPaymentId()).orElseThrow(() -> new NotFoundException("Payment not found"));
         Set<Chair> chairSet = orderRequestDto.getChairIds().stream()
                 .map(chair -> {
                     try {
-                        return chairRepository.findById(chair).orElseThrow(()-> new NotFoundException("Chair not found"));
+                        return chairRepository.findById(chair).orElseThrow(() -> new NotFoundException("Chair not found"));
                     } catch (NotFoundException e) {
                         throw new RuntimeException(e);
                     }
@@ -102,6 +95,7 @@ public class OrderServiceImpl implements OrderService {
                 .paymentMethod(order.getPayment().getPaymentMethod())
                 .total(order.getTotal())
                 .build();
+    }
 
 
 //     private final OrderRepository orderRepository;
@@ -124,22 +118,22 @@ public class OrderServiceImpl implements OrderService {
 //         return orderRepository.save(order1);
 //     }
 
-//     /**
-//      * find by id
-//      *
-//      * @author huyqt97
-//      */
-//     @Override
-//     public Order findById(Long id) throws OrderException {
-//         Optional<Order> order = orderRepository.findById(id);
-//         if (order.isPresent()) {
-//             if (order.get().getIsDelete()) {
-//                 return order.get();
+     /**
+      * find by id
+      *
+      * @author huyqt97
+      */
+     @Override
+     public Order findById(Long id) throws OrderException {
+         Optional<Order> order = orderRepository.findById(id);
+         if (order.isPresent()) {
+             if (order.get().getIsDelete()) {
+                 return order.get();
 
-//             }
-//         }
-//         throw new OrderException("Order not found");
-//     }
+             }
+         }
+         throw new OrderException("Order not found");
+     }
 
 //     /**
 //      * update order
@@ -157,4 +151,6 @@ public class OrderServiceImpl implements OrderService {
 // //        Order order1 = order.get();
 //         return null;
 //     }
+
+
 }

@@ -3,6 +3,7 @@ package booking_movie.controller;
 import booking_movie.dto.request.OrderRequestDto;
 import booking_movie.exception.CustomsException;
 import booking_movie.exception.LoginException;
+import booking_movie.exception.NotFoundException;
 import booking_movie.service.order.OrderService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    private ResponseEntity<?> createOrder(@Valid @RequestBody OrderRequestDto orderRequestDto, Authentication authentication) throws CustomsException, LoginException {
+    private ResponseEntity<?> createOrder(@Valid @RequestBody OrderRequestDto orderRequestDto, Authentication authentication) throws CustomsException, LoginException, NotFoundException {
         return new ResponseEntity<>(orderService.create(authentication,orderRequestDto), HttpStatus.OK);
     }
 }

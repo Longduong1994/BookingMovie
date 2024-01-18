@@ -35,8 +35,5 @@ public interface CategoryService {
      * @author huyt97
      */
     String delete(Long id,Authentication  authentication) throws CategoryException, UserException;
-    Category create(CategoryRequestDto categoryRequestDto, Authentication authentication) throws CategoryException;
-    Category update(CategoryUpdateRequestDto categoryUpdateRequestDto, Authentication authentication) throws CategoryException;
-    Page<Category> findAll(int page, int size, String search);
-    String delete(Long id, Authentication authentication) throws CategoryException;
+
 }

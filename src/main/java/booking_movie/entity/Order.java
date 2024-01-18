@@ -54,10 +54,6 @@ public class Order {
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id")
-    private User user;
-
     private Double menuPrice;
 
     private Double moviePrice;
