@@ -1,5 +1,6 @@
 package booking_movie.entity;
 
+import booking_movie.constants.RoomType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -26,6 +28,7 @@ public class TimeSlot {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
+    @Column(columnDefinition = "TIME")
     private LocalTime startTime;
     public LocalDateTime createTime;
     public LocalDateTime updateTime;

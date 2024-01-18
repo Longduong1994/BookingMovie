@@ -1,4 +1,6 @@
-package booking_movie.service.movice;
+
+package booking_movie.service.movie;
+
 import booking_movie.constants.DateTimeComponent;
 import booking_movie.constants.MovieStatus;
 import booking_movie.dto.request.MovieRequestDto;

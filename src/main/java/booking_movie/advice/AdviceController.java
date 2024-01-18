@@ -83,4 +83,8 @@ public class AdviceController {
     public ResponseEntity<String> movieErr(MovieException movieException) {
         return new ResponseEntity<>(movieException.getMessage(), HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> notFound(NotFoundException notFoundException) {
+        return new ResponseEntity<>(notFoundException.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

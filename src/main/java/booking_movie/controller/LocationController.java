@@ -11,6 +11,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,7 +42,8 @@ public class LocationController {
      * TODO : param ( locationRequest )
      * */
     @PostMapping()
-    public ResponseEntity<?> create(@Valid Authentication authentication,  @RequestBody LocationRequestDto requestDto) throws CustomsException {
+    public ResponseEntity<?> create(@Valid Authentication authentication, @RequestBody LocationRequestDto requestDto) throws CustomsException {
+
         return new ResponseEntity<>(locationService.save(authentication,requestDto), HttpStatus.CREATED);
     }
 
@@ -61,6 +64,7 @@ public class LocationController {
         String success = "Location Deleted" ;
         return new ResponseEntity<>(success, HttpStatus.OK);
     }
+
 
 //    @DeleteMapping()
 //    public ResponseEntity<?> delete(){
