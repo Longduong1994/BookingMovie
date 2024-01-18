@@ -59,6 +59,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/booking/v1/payments/**").permitAll()
                                 .requestMatchers("/api/booking/v1/home/**").hasAuthority("CUSTOMER")
                                 .requestMatchers("/api/booking/v1/admin/**").hasAuthority("ADMIN")
+                                .requestMatchers("/api/booking/v1/staff/**").hasAuthority("EMPLOYER")
                                 .anyRequest().authenticated())
                 .exceptionHandling((auth) ->
                         auth.authenticationEntryPoint(jwtEntryPoint))

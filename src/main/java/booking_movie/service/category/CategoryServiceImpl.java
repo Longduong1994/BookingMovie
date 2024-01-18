@@ -6,9 +6,12 @@ import booking_movie.dto.request.category.CategoryUpdateRequestDto;
 import booking_movie.entity.Category;
 import booking_movie.entity.User;
 import booking_movie.exception.CategoryException;
+import booking_movie.exception.DishException;
+import booking_movie.exception.UserException;
 import booking_movie.mapper.CategoryMapper;
 import booking_movie.repository.CategoryRepository;
 import booking_movie.security.user_principle.UserPrincipal;
+import booking_movie.service.user.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +26,7 @@ import java.util.Optional;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final UserService  userService;
 
     /**
      * create new category
@@ -30,15 +34,8 @@ public class CategoryServiceImpl implements CategoryService {
      * @author huyqt97
      */
     @Override
-    public Category create(CategoryRequestDto categoryRequestDto, Authentication authentication) throws CategoryException {
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-
-        if (userPrincipal == null || userPrincipal.getUser() == null) {
-            throw new CategoryException("User not found");
-        }
-
-        User user = userPrincipal.getUser();
-
+    public Category create(CategoryRequestDto categoryRequestDto, Authentication authentication) throws CategoryException, UserException {
+        User user = userService.userById(authentication);
         if (categoryRepository.existsByCategoryName(categoryRequestDto.getCategoryName())) {
             throw new CategoryException("CategoryName already exist");
         }
@@ -47,6 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .anyMatch(role -> role.getRoleName().equals(RoleName.ADMIN) || role.getRoleName().equals(RoleName.MANAGER));
         if (isAdminOrManager) {
             Category category = categoryMapper.categoryRequestDtoIntoCategory(categoryRequestDto,user.getUsername());
+            category.setTheater(user.getTheater());
             return categoryRepository.save(category);
         }
         throw new CategoryException("No permissions granted");
@@ -58,14 +56,8 @@ public class CategoryServiceImpl implements CategoryService {
      * @author huyqt97
      */
     @Override
-    public Category update(CategoryUpdateRequestDto categoryUpdateRequestDto, Authentication authentication) throws CategoryException {
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-
-        if (userPrincipal == null || userPrincipal.getUser() == null) {
-            throw new CategoryException("User not found");
-        }
-        User user = userPrincipal.getUser();
-
+    public Category update(CategoryUpdateRequestDto categoryUpdateRequestDto, Authentication authentication) throws CategoryException, UserException {
+        User user= userService.userById(authentication);
         if (categoryRepository.existsByCategoryName(categoryUpdateRequestDto.getCategoryName())) {
             throw new CategoryException("CategoryName already exist");
         }
@@ -84,8 +76,9 @@ public class CategoryServiceImpl implements CategoryService {
      * @author huyqt97
      */
     @Override
-    public Page<Category> findAll(int page, int size, String search) {
-        return categoryRepository.findAllByIsDeleteAndCategoryName(false,search, PageRequest.of(page,size));
+    public Page<Category> findAll(Integer page, Integer size, String search,Authentication authentication) throws CategoryException, UserException {
+        User user = userService.userById(authentication);
+        return categoryRepository.findAllByIsDeleteAndCategoryName(false,user.getTheater(),search, PageRequest.of(page,size));
     }
 
     /**
@@ -94,12 +87,8 @@ public class CategoryServiceImpl implements CategoryService {
      * @author huyqt97
      */
     @Override
-    public String delete(Long id, Authentication authentication) throws CategoryException {
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        if (userPrincipal == null || userPrincipal.getUser() == null) {
-            throw new CategoryException("User not found");
-        }
-        User user = userPrincipal.getUser();
+    public String delete(Long id, Authentication authentication) throws CategoryException, UserException {
+        User user = userService.userById(authentication);
         boolean isAdminOrManager = user.getRoles().stream()
                 .anyMatch(role -> role.getRoleName().equals(RoleName.ADMIN) || role.getRoleName().equals(RoleName.MANAGER));
         if (isAdminOrManager) {
@@ -108,6 +97,7 @@ public class CategoryServiceImpl implements CategoryService {
                 Category c = category.get();
                 c.setIsDelete(true);
                 c.setUpdateTime(LocalDate.now());
+                c.setUpdateUser(user.getUsername());
                 categoryRepository.save(c);
                 return "Delete success";
             }

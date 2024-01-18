@@ -43,5 +43,7 @@ public class Dish {
     private LocalDate updateTime;
 
     private Boolean isDelete;
+
+    private Long theater;
 //
 }

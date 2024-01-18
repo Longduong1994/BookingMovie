@@ -11,7 +11,9 @@ import booking_movie.dto.response.UserResponseDto;
 import booking_movie.entity.Role;
 import booking_movie.entity.User;
 import booking_movie.exception.LoginException;
+import booking_movie.exception.PromtionException;
 import booking_movie.exception.RegisterException;
+import booking_movie.exception.UserException;
 import booking_movie.mapper.UserMapper;
 import booking_movie.repository.UserRepository;
 import booking_movie.service.mail.MailService;
@@ -124,6 +126,20 @@ public class UserServiceImpl implements UserService {
         if (userPrincipal == null) {
             throw new LoginException("You must log in to use the service");
         }
+        return userPrincipal.getUser();
+    }
+    /**
+     * find by authentication User
+     *
+     * @author huyqt97
+     */
+    public User userById(Authentication authentication)throws UserException {
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+
+        if (userPrincipal == null || userPrincipal.getUser() == null) {
+            throw new UserException("User not found");
+        }
+
         return userPrincipal.getUser();
     }
 
