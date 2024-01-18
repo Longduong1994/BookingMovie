@@ -28,6 +28,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public Role getRoleAdmin() {
+        return roleRepository.findByRoleName(RoleName.ADMIN).orElseThrow(()-> new RuntimeException("Role not found"));
+    }
+
+    @Override
     public  Boolean hasRoleAdmin(User user) {
         if (user != null && user.getRoles() != null) {
             return user.getRoles().stream().anyMatch(role -> RoleName.ADMIN.equals(role.getRoleName()));
@@ -35,4 +40,20 @@ public class RoleServiceImpl implements RoleService {
         return false;
     }
 
+    @Override
+    public Boolean hasRoleManager(User user) {
+        if (user != null && user.getRoles() != null) {
+            return user.getRoles().stream().anyMatch(role -> RoleName.MANAGER.equals(role.getRoleName()));
+        }
+        return false;
+    }
+
+
+    @Override
+    public Boolean hasRoleEmployer(User user) {
+        if (user != null && user.getRoles() != null) {
+            return user.getRoles().stream().anyMatch(role -> RoleName.EMPLOYER.equals(role.getRoleName()));
+        }
+        return false;
+    }
 }

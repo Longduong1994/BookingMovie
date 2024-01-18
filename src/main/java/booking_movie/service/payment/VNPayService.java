@@ -2,8 +2,10 @@ package booking_movie.service.payment;
 
 
 import booking_movie.config.VNPayConfig;
-import booking_movie.dto.response.PaymentResponseDto;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -79,5 +81,26 @@ public class VNPayService {
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
         return paymentUrl;
+    }
+
+    public void result(Map<String,String> queryParams, HttpServletResponse response) throws IOException {
+        String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
+        String contractId = queryParams.get("orderId");
+        if(contractId!= null && !contractId.equals("")) {
+            if ("00".equals(vnp_ResponseCode)) {
+                // Giao dịch thành công
+                // Thực hiện các xử lý cần thiết, ví dụ: cập nhật CSDL
+//                Contract contract = orderRepository.findById(Integer.parseInt(queryParams.get("contractId")))
+//                        .orElseThrow(() -> new NotFoundException("Không tồn tại hợp đồng này của sinh viên"));
+//                contract.setStatus(1);
+//                orderRepository.save(contract);
+                response.sendRedirect("http://localhost:4200/payment-success");
+            } else {
+                // Giao dịch thất bại
+                // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL\
+                response.sendRedirect("http://localhost:4200/payment-failed");
+
+            }
+        }
     }
 }

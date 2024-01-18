@@ -30,4 +30,12 @@ public class RegisterRequestDto {
     @NotNull(message = "The dateOfBirth field cannot be left blank.")
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dateOfBirth;
+    @NotEmpty(message = "Username is not empty")
+    @NotBlank(message = "Password is not blank")
+    private String city;
+    @NotNull(message = "Username is not empty")
+    private Long gender;
+    @NotEmpty(message = "Username is not empty")
+    @NotBlank(message = "Password is not blank")
+    private String captcha;
 }

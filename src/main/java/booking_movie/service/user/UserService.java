@@ -1,26 +1,30 @@
 package booking_movie.service.user;
 
-import booking_movie.dto.request.CreateAccountDto;
-import booking_movie.dto.request.LoginRequestDto;
-import booking_movie.dto.request.RegisterRequestDto;
+import booking_movie.dto.request.*;
+import booking_movie.dto.response.CustomerResponse;
+import booking_movie.dto.response.EmployerResponse;
+import booking_movie.dto.response.ManagerResponse;
 import booking_movie.dto.response.UserResponseDto;
 import booking_movie.entity.User;
+import booking_movie.exception.NotFoundException;
+import booking_movie.exception.CustomsException;
 import booking_movie.exception.LoginException;
 import booking_movie.exception.RegisterException;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 
 public interface UserService {
-
-    Page<User> findAllCustomer(int page,int size,String username);
-    String register(RegisterRequestDto registerRequestDto) throws RegisterException;
-
-    UserResponseDto login(LoginRequestDto loginRequestDto) throws LoginException;
-
-    String createAccountCustomer(CreateAccountDto createAccountDto, Authentication authentication) throws LoginException;
-
+    Page<CustomerResponse> findAllCustomer(int page,int size,String username);
+    Page<ManagerResponse> findAllManager(int page, int size, String username);
+    Page<EmployerResponse> findAllEmployer(int page, int size, String username);
+    String register( RegisterRequestDto registerRequestDto,HttpSession session) throws RegisterException;
+    UserResponseDto login(LoginRequestDto loginRequestDto,HttpSession session) throws LoginException;
+    String createAccount(CreateAccountDto createAccountDto, Authentication authentication) throws LoginException, RegisterException, NotFoundException;
     User getUser(Authentication authentication) throws LoginException;
-
     String changeStatus(Long id,Authentication authentication) throws LoginException;
-
+    void registerAdmin(CreateAccountDto createAccountDto) throws CustomsException;
+    CustomerResponse updateCustomer(Long id,Authentication authentication, UpdateUserDto updateUserDto) throws CustomsException, LoginException;
+    String getLink(PasswordRetrievalDto passwordRetrievalDto,HttpSession session) throws CustomsException;
+    String retrievalPassword(NewPasswordDto newPasswordDto,String email) throws NotFoundException, CustomsException;
 }

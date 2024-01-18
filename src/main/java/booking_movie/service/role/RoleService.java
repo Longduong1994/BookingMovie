@@ -9,6 +9,8 @@ public interface RoleService {
     Role getRoleCustomer();
     Role getRoleManager();
     Role getRoleEmployee();
+    Role getRoleAdmin();
     Boolean hasRoleAdmin(User user);
-
+    Boolean hasRoleManager(User user);
+    Boolean hasRoleEmployer(User user);
 }
