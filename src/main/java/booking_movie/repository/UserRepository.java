@@ -1,5 +1,6 @@
 package booking_movie.repository;
 
+import booking_movie.constants.RoleName;
 import booking_movie.entity.Role;
 import booking_movie.entity.User;
 import org.springframework.data.domain.Page;
@@ -19,10 +20,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
                                 Pageable pageable);
 
 
-    User findByEmail(String email);
+    Optional<User> findByEmail(String email);
 
     Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
     Boolean existsByPhone(String phone);
+
+
+    @Query("SELECT DISTINCT u FROM User u JOIN u.roles r WHERE r.roleName = :roleName AND u.username LIKE %:userName%")
+    Page<User> findAllByRolesAndUserName(@Param("roleName") RoleName roleName, @Param("userName") String userName, Pageable pageable);
+
+    @Query("SELECT DISTINCT u FROM User u JOIN u.roles r WHERE r.roleName = :roleName ")
+    Page<User> findAllByRoles(@Param("roleName") RoleName roleName , Pageable pageable) ;
 }
