@@ -8,5 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface GenreMapper {
     GenreResponseDto toResponseDto(Genre genre);
+    @Mapping(target = "id", ignore = true)
     Genre toEntity(GenreRequestDto genreRequestDto);
 }

@@ -1,6 +1,7 @@
 package booking_movie.entity;
 
 import booking_movie.constants.MovieStatus;
+import booking_movie.constants.RoomType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +15,7 @@ import java.util.Set;
 @Data
 @Builder
 @Table(name = "MOVIE")
-public class Movie {
+public class Movie extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

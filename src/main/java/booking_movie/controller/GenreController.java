@@ -3,6 +3,7 @@ package booking_movie.controller;
 import booking_movie.dto.request.GenreRequestDto;
 import booking_movie.dto.response.GenreResponseDto;
 import booking_movie.exception.GenreException;
+import booking_movie.exception.LoginException;
 import booking_movie.service.genre.GenreService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,12 +28,12 @@ public class GenreController {
         return ResponseEntity.ok(genrePage);
     }
     @PostMapping
-    public  ResponseEntity<GenreResponseDto> createGenre(@Valid @RequestBody GenreRequestDto genreRequestDto){
-        return new ResponseEntity<>( genreService.createGenre(genreRequestDto), HttpStatus.CREATED);
+    public  ResponseEntity<GenreResponseDto> createGenre(@Valid @RequestBody GenreRequestDto genreRequestDto, Authentication authentication) throws LoginException {
+        return new ResponseEntity<>( genreService.createGenre(genreRequestDto,authentication), HttpStatus.CREATED);
     }
     @PutMapping("/{idEdit}")
-    public ResponseEntity<GenreResponseDto> updateGenre(@Valid @PathVariable Long idEdit,@RequestBody GenreRequestDto genreRequestDto) throws GenreException {
-        return new ResponseEntity<>(genreService.updateGenre(genreRequestDto,idEdit), HttpStatus.OK);
+    public ResponseEntity<GenreResponseDto> updateGenre(@Valid @PathVariable Long idEdit,@RequestBody GenreRequestDto genreRequestDto,Authentication authentication) throws GenreException, LoginException {
+        return new ResponseEntity<>(genreService.updateGenre(genreRequestDto,idEdit,authentication), HttpStatus.OK);
     }
     @DeleteMapping("/{idDelete}")
     public ResponseEntity<?> deleteGenre(@PathVariable Long idDelete) throws GenreException {

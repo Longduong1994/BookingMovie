@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -32,6 +33,13 @@ public class User {
     private String card;
 
     private Integer point;
+
+    private String avatar;
+    private String city;
+    private String address;
+    private Long gender;
+    private Long theaterId;
+    private LocalDate createdDate;
 
     @Enumerated(EnumType.STRING)
     private RankName level;

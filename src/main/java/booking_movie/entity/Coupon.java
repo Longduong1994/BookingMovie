@@ -36,7 +36,6 @@ public class Coupon {
 
     private Boolean status;
 
-    //
     private String createUser;
 
     private LocalDate createTime;
@@ -48,5 +47,4 @@ public class Coupon {
     private Boolean isDelete;
 
     private Long theater;
-//
 }

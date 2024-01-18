@@ -33,7 +33,6 @@ public class Dish {
 
     private Boolean status;
 
-    //
     private String createUser;
 
     private LocalDate createTime;
@@ -45,5 +44,5 @@ public class Dish {
     private Boolean isDelete;
 
     private Long theater;
-//
+
 }

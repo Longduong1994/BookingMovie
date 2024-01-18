@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,4 +26,10 @@ public class CreateAccountDto {
     @NotNull(message = "The dateOfBirth field cannot be left blank.")
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dateOfBirth;
+    @NotEmpty(message = "Username is not empty")
+    @NotBlank(message = "Password is not blank")
+    private String role;
+    @NotNull(message = "Gender is not empty")
+    private Long gender;
+    private Long theaterId;
 }

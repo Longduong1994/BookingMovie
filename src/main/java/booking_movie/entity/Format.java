@@ -15,5 +15,6 @@ public class Format {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String formatName;
+
     private Boolean isDeleted;
 }

@@ -2,7 +2,6 @@ package booking_movie.advice;
 
 
 import booking_movie.exception.*;
-import booking_movie.exception.CategoryException;
 import booking_movie.exception.LoginException;
 import booking_movie.exception.RegisterException;
 import org.springframework.http.HttpStatus;
@@ -23,12 +22,10 @@ public class AdviceController {
     }
 
 
-
     @ExceptionHandler(LoginException.class)
     public ResponseEntity<String> loginFail(LoginException loginException) {
         return new ResponseEntity<>(loginException.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -41,24 +38,9 @@ public class AdviceController {
     }
 
 
-    @ExceptionHandler(LocationException.class)
-    public ResponseEntity<String> locationErr(LocationException locationException) {
-        return new ResponseEntity<>(locationException.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(TheaterException.class)
-    public ResponseEntity<String> theaterErr(TheaterException theaterException) {
-        return new ResponseEntity<>(theaterException.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(RoomException.class)
-    public ResponseEntity<String> roomErr(RoomException roomException) {
-        return new ResponseEntity<>(roomException.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(ChairException.class)
-    public ResponseEntity<String> chairErr(ChairException chairException) {
-        return new ResponseEntity<>(chairException.getMessage(), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(CustomsException.class)
+    public ResponseEntity<String> customException(CustomsException customsException) {
+        return new ResponseEntity<>(customsException.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 
@@ -130,5 +112,9 @@ public class AdviceController {
     @ExceptionHandler(MovieException.class)
     public ResponseEntity<String> movieErr(MovieException movieException) {
         return new ResponseEntity<>(movieException.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> notFound(NotFoundException notFoundException) {
+        return new ResponseEntity<>(notFoundException.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
