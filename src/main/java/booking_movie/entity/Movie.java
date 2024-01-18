@@ -15,7 +15,7 @@ import java.util.Set;
 @Data
 @Builder
 @Table(name = "MOVIE")
-public class Movie {
+public class Movie extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
