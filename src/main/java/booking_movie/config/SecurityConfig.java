@@ -58,6 +58,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/booking/v1/users/**").permitAll()
                                 .requestMatchers("/api/booking/v1/payments/**").permitAll()
                                 .requestMatchers("/api/booking/v1/movie/**").hasAuthority("ADMIN")
+                                .requestMatchers("/api/booking/v1/orders/**").hasAuthority("ADMIN")
                                 .requestMatchers("/api/booking/v1/room/**").hasAuthority("ADMIN")
                                 .requestMatchers("/api/booking/v1/timeSlot/**").hasAuthority("ADMIN")
                                 .requestMatchers("/api/booking/v1/home/**").hasAuthority("CUSTOMER")

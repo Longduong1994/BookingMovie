@@ -45,7 +45,6 @@ public class MovieServiceImpl implements MovieService {
         User user = userService.getUser(authentication);
         validateMovieRequest(movieRequestDto);
         List<Movie> genreList = movieRepository.findAllByIsDeleted(false);
-        System.out.println(genreList);
         if (genreList.stream().anyMatch(item -> item.getMovieName().equals(movieRequestDto.getMovieName()))) {
             throw new GenreException("Duplicate movie");
         }

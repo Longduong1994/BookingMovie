@@ -34,7 +34,7 @@ public class MovieRequestDto {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate releaseDate;
 
-    private Set<Format> formats;
+    private Set<Long> formats;
 
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate stopDate;
