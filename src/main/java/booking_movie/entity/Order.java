@@ -7,9 +7,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
+import java.time.LocalDate;
+
 
 @Entity
 @NoArgsConstructor
@@ -21,6 +24,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String theaterName;
     private String roomName;
     private String locationName;
@@ -41,13 +45,37 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "promotion_id")
     private Promotion promotion;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id")
     private Payment payment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "users_id")
+    private User user;
+
+    private Double menuPrice;
+
+    private Double moviePrice;
+
     private Double total;
+
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    private String createUser;
+
+    private LocalDate createTime;
+
+    private String updateUser;
+
+    private LocalDate updateTime;
+
+    private Boolean isDelete;
+
+    private Long theater;
 }

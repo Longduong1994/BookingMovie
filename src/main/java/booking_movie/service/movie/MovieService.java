@@ -17,4 +17,6 @@ public interface MovieService {
 
     void deleteMovie(Long idDelete) throws MovieException;
     MovieResponseDto updateMovie(MovieRequestDto movieRequestDto,Authentication authentication ,Long idEdit) throws MovieException, LoginException;
+
+    MovieResponseDto getMovieById(Long idMovie) throws MovieException;
 }

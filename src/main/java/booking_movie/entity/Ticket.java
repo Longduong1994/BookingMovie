@@ -18,7 +18,7 @@ public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+  
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_movie_id")
     private Order order;

@@ -30,7 +30,7 @@ public class Promotion {
     private LocalDate startDate;
 
     private LocalDate endDate;
-    //
+//
     private String createUser;
 
     private LocalDate createTime;
@@ -40,5 +40,6 @@ public class Promotion {
     private LocalDate updateTime;
 
     private Boolean isDelete;
+
 //
 }

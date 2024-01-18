@@ -2,9 +2,9 @@ package booking_movie.service.payment;
 
 
 import booking_movie.config.VNPayConfig;
+import booking_movie.entity.Payment;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

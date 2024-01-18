@@ -6,10 +6,11 @@ import booking_movie.dto.request.dish.DishUpdateRequestDto;
 import booking_movie.entity.Dish;
 import booking_movie.entity.User;
 import booking_movie.exception.DishException;
+import booking_movie.exception.UserException;
 import booking_movie.mapper.DishMapper;
 import booking_movie.repository.CategoryRepository;
 import booking_movie.repository.DishRepository;
-import booking_movie.security.user_principle.UserPrincipal;
+import booking_movie.service.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ public class DishServiceImpl implements DishService {
     private final DishRepository dishRepository;
     private final CategoryRepository categoryRepository;
     private final DishMapper dishMapper;
+    private final UserService userService;
 
     /**
      * Create dish
@@ -34,8 +36,8 @@ public class DishServiceImpl implements DishService {
      * @author huyqt97
      */
     @Override
-    public Dish create(DishRequestDto dishRequestDto, Authentication authentication) throws DishException {
-        User user = userById(authentication);
+    public Dish create(DishRequestDto dishRequestDto, Authentication authentication) throws DishException, UserException {
+        User user = userService.userById(authentication);
         if (dishRepository.existsByDishName(dishRequestDto.getDishName())) {
             throw new DishException("Dish is exist");
         }
@@ -46,7 +48,9 @@ public class DishServiceImpl implements DishService {
         boolean isAdminOrManager = user.getRoles().stream()
                 .anyMatch(role -> role.getRoleName().equals(RoleName.ADMIN) || role.getRoleName().equals(RoleName.MANAGER));
         if (isAdminOrManager) {
-            return dishRepository.save(dishMapper.dishRequestDtoIntoDish(dishRequestDto, user.getUsername()));
+            Dish dish = dishMapper.dishRequestDtoIntoDish(dishRequestDto, user.getUsername());
+            dish.setTheater(user.getTheater());
+            return dishRepository.save(dish);
         }
         throw new DishException("No permissions granted");
     }
@@ -58,9 +62,9 @@ public class DishServiceImpl implements DishService {
      */
 
     @Override
-    public Dish update(DishUpdateRequestDto dishUpdateRequestDto, Authentication authentication) throws DishException {
+    public Dish update(DishUpdateRequestDto dishUpdateRequestDto, Authentication authentication) throws DishException, UserException {
 
-        User user = userById(authentication);
+        User user = userService.userById(authentication);
 
         if (dishRepository.existsByDishName(dishUpdateRequestDto.getDishName())) {
             throw new DishException("Dish is exist");
@@ -81,8 +85,9 @@ public class DishServiceImpl implements DishService {
      * @author huyqt97
      */
     @Override
-    public Page<Dish> findAll(int page, int size, String search) {
-        return dishRepository.findAllByIsDelete(false,search, PageRequest.of(page,size));
+    public Page<Dish> findAll(int page, int size, String search,Authentication authentication) throws DishException, UserException {
+        User user = userService.userById(authentication);
+        return dishRepository.findAllByIsDeleteAndTheater(false,user.getTheater(),search, PageRequest.of(page,size));
     }
 
     /**
@@ -91,31 +96,26 @@ public class DishServiceImpl implements DishService {
      * @author huyqt97
      */
     @Override
-    public String delete(Long id,Authentication authentication) throws DishException {
-        User user = userById(authentication);
-        Optional<Dish> dish = dishRepository.findById(id);
-        if (dish.isPresent()){
-            Dish dish1 =dish.get();
+    public String delete(Long id,Authentication authentication) throws DishException, UserException {
+        User user = userService.userById(authentication);
+            Dish dish1 = findById(id);
             dish1.setIsDelete(true);
             dish1.setUpdateTime(LocalDate.now());
             dish1.setUpdateUser(user.getUsername());
             dishRepository.save(dish1);
-        }throw new DishException("Dish not found");
+            return "Delete success";
     }
 
     /**
-     * find By id user
-     * return {@Link User}
+     * find by id
      *
      * @author huyqt97
      */
-    public User userById(Authentication authentication)throws DishException{
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-
-        if (userPrincipal == null || userPrincipal.getUser() == null) {
-            throw new DishException("User not found");
-        }
-
-        return userPrincipal.getUser();
+    @Override
+    public Dish findById(Long id) throws DishException {
+        Optional<Dish> dish = dishRepository.findById(id);
+        if (dish.isPresent()){
+            return dish.get();
+        }throw new DishException("Dish not found");
     }
 }

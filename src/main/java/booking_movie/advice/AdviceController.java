@@ -74,6 +74,36 @@ public class AdviceController {
         return new ResponseEntity<>(promtionException.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * exception promtion
+     *
+     * @author huyqt97
+     */
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<String> user(UserException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     *exception order
+     *
+     * @author huyqt97
+     */
+    @ExceptionHandler(OrderException.class)
+    public ResponseEntity<String> order(OrderException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     *exception Menu
+     *
+     * @author huyqt97
+     */
+    @ExceptionHandler(MenuException.class)
+    public ResponseEntity<String> menu(MenuException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(GenreException.class)
     public ResponseEntity<String> genreErr(GenreException genreException) {
         return new ResponseEntity<>(genreException.getMessage(), HttpStatus.BAD_REQUEST);
