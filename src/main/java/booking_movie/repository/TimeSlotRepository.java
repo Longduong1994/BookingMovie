@@ -26,4 +26,5 @@ public interface TimeSlotRepository extends JpaRepository<TimeSlot , Long> {
                                                                                             @Param("dateBooking") LocalDate dateBooking,
                                                                                             @Param("idLocation") Long idLocation,
                                                                                             @Param("type")RoomType type );
+
 }

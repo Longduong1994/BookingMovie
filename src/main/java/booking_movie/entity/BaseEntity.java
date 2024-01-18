@@ -21,5 +21,4 @@ public abstract class BaseEntity {
     private Integer updateClass;
     @Column(name = "DELETE_FLAG")
     private Boolean isDeleted;
-
 }
