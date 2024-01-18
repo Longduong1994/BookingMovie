@@ -107,6 +107,18 @@ public class MovieServiceImpl implements MovieService {
 
     }
 
+    @Override
+    public MovieResponseDto getMovieById(Long idMovie) throws MovieException {
+      Movie movie=  movieRepository.findMovieByIdAndIsDeleted(idMovie,false);
+        if(movie!=null){
+            return    movieMapper.toResponseDto(movie) ;
+        }else {
+            throw new MovieException("movie not found");
+        }
+
+
+    }
+
     private void validateMovieRequest(MovieRequestDto movieRequestDto) throws MovieException {
         LocalDateTime currentDate = LocalDateTime.now();
         if (movieRequestDto.getReleaseDate() != null && movieRequestDto.getReleaseDate().isBefore(ChronoLocalDate.from(currentDate))) {

@@ -1,9 +1,7 @@
 package booking_movie.controller;
-import booking_movie.dto.request.GenreRequestDto;
+
 import booking_movie.dto.request.MovieRequestDto;
-import booking_movie.dto.response.GenreResponseDto;
 import booking_movie.dto.response.MovieResponseDto;
-import booking_movie.exception.GenreException;
 import booking_movie.exception.LoginException;
 import booking_movie.exception.MovieException;
 import booking_movie.service.movice.MovieService;
@@ -50,6 +48,11 @@ public class MovieController {
         movieService.deleteMovie(idDelete);
         return new ResponseEntity<>("xóa thành công",HttpStatus.OK) ;
     }
+    @GetMapping("/{idMovie}")
+    public ResponseEntity<MovieResponseDto> getMovieById(@PathVariable Long idMovie) throws MovieException {
+
+        return new ResponseEntity<>(movieService.getMovieById(idMovie),HttpStatus.OK) ;
+    }
 
     @PutMapping("/{idEdit}")
     public ResponseEntity<?> updateMovie(@Valid @PathVariable Long idEdit, @ModelAttribute MovieRequestDto movieRequestDto,Authentication authentication, BindingResult bindingResult) throws MovieException, LoginException {
@@ -58,6 +61,7 @@ public class MovieController {
         }
         return new ResponseEntity<>(movieService.updateMovie(movieRequestDto,authentication,idEdit), HttpStatus.OK);
     }
+
     private ResponseEntity<String> handleValidationErrors(BindingResult bindingResult) {
         StringBuilder errorMessages = new StringBuilder();
         for (FieldError error : bindingResult.getFieldErrors()) {
