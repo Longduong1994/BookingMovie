@@ -2,6 +2,7 @@ package booking_movie.service.chair;
 
 import booking_movie.dto.request.ChairRequest;
 import booking_movie.dto.request.ChairTypeRequest;
+import booking_movie.dto.request.query.DateTimeAndLocationAndTypeAndTimeSlotRequest;
 import booking_movie.dto.response.ChairResponseDto;
 import booking_movie.exception.CustomsException;
 import org.springframework.security.core.Authentication;
@@ -16,4 +17,5 @@ public interface ChairService {
     ChairResponseDto update(Authentication authentication,Long id , ChairRequest chairRequest) throws CustomsException;
     void isDelete(Authentication authentication,Long id) throws CustomsException;
     void delete();
+    List<ChairResponseDto> findByMovieAndDateBookingAndLocationAndTypeAndTimeSlot(Long idMovie , DateTimeAndLocationAndTypeAndTimeSlotRequest request) throws CustomsException;
 }

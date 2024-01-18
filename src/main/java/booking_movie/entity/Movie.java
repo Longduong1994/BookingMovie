@@ -1,6 +1,7 @@
 package booking_movie.entity;
 
 import booking_movie.constants.MovieStatus;
+import booking_movie.constants.RoomType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
