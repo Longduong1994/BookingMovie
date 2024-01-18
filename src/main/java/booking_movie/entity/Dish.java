@@ -43,4 +43,6 @@ public class Dish {
 
     private Boolean isDelete;
 
+    private Long theater;
+
 }

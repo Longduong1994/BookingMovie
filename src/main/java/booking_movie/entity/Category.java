@@ -30,6 +30,8 @@ public class Category{
     private LocalDate updateTime;
 
     private Boolean isDelete;
+
+    private Long theater;
 //
 }
 
