@@ -3,9 +3,11 @@ import booking_movie.constants.MovieStatus;
 import booking_movie.constants.RoomType;
 import booking_movie.dto.request.MovieRequestDto;
 import booking_movie.dto.response.MovieResponseDto;
+import booking_movie.entity.Format;
 import booking_movie.entity.Genre;
 import booking_movie.entity.Movie;
 import booking_movie.exception.CustomsException;
+import booking_movie.repository.FormatRepository;
 import booking_movie.repository.GenreRepository;
 import booking_movie.service.upload_image.UploadFileService;
 import lombok.AllArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class MovieMapper {
     private  final GenreRepository genreRepository;
     private  final UploadFileService uploadFileService;
+    private final FormatRepository formatRepository;
     public MovieResponseDto toResponseDto(Movie movie) {
         Set<String> genreNames = movie.getGenres().stream()
                 .map(Genre::getGenreName)
@@ -44,6 +47,9 @@ public class MovieMapper {
         Set<Genre> genres = movieRequestDto.getGenreId().stream()
                 .map(item -> genreRepository.findGenreByIdAndIsDeleted(item,false))
                 .collect(Collectors.toSet());
+        Set<Format> formats = movieRequestDto.getFormats().stream()
+                .map(item -> formatRepository.findFormatById(item))
+                .collect(Collectors.toSet());
 
         Movie movie= Movie.builder()
                 .movieName(movieRequestDto.getMovieName())
@@ -57,6 +63,7 @@ public class MovieMapper {
                 .stopDate(movieRequestDto.getStopDate())
                 .language(movieRequestDto.getLanguage())
                 .rated(movieRequestDto.getRated())
+                .formats(formats)
                 .genres(genres)
                 .movieStatus(MovieStatus.SHOWING)
                 .build();

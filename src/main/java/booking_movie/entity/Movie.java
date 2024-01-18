@@ -30,8 +30,10 @@ public class Movie extends BaseEntity {
     private LocalDate stopDate;
     private String language;
     private String rated;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "format_id")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "MOVIE_FORMAT",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "format_id"))
     private Set<Format> formats;
     private Boolean isDeleted;
     @ManyToMany(fetch = FetchType.EAGER)
