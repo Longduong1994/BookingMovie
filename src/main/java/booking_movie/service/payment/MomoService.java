@@ -1,5 +1,15 @@
 package booking_movie.service.payment;
 
+import booking_movie.config.MomoConfig;
+import booking_movie.service.crypto.MomoEncoderUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -7,62 +17,122 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class MomoService {
 
-    private final String endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
-    private final String partnerCode = "MOMOBKUN20180529";
-    private final String accessKey = "klm05TvNBzhg7h7j";
-    private final String secretKey = "at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa";
-    private final String redirectUrl = "http://localhost:82/Java/payment/momo/success";
-    private final String ipnUrl = "http://localhost:82/Java/payment/momo/success";
+    public Map<String, Object> createPayment(HttpServletRequest request,  Long amount,
+                                            Long order_id)
+            throws InvalidKeyException, NoSuchAlgorithmException, ClientProtocolException, IOException {
+        JSONObject json = new JSONObject();
+        String partnerCode = MomoConfig.PARTNER_CODE;
+        String accessKey = MomoConfig.ACCESS_KEY;
+        String secretKey = MomoConfig.SECRET_KEY;
+        String returnUrl = MomoConfig.REDIRECT_URL;
+        String notifyUrl = MomoConfig.NOTIFY_URL;
+        json.put("partnerCode", partnerCode);
+        json.put("accessKey", accessKey);
+        json.put("requestId", String.valueOf(System.currentTimeMillis()));
+        json.put("amount", amount.toString());
+        json.put("orderId", order_id.toString());
+        json.put("orderInfo", "Thanh toan don hang " + order_id.toString());
+        json.put("returnUrl", returnUrl);
+        json.put("notifyUrl", notifyUrl);
+        json.put("requestType", "captureMoMoWallet");
 
-    public String makePayment(String orderId, String orderInfo, String orderPrice) {
-        String extraData = "";
-        String requestId = String.valueOf(System.currentTimeMillis());
-        String requestType = "payWithATM";
+        String data = "partnerCode=" + partnerCode
+                + "&accessKey=" + accessKey
+                + "&requestId=" + json.get("requestId")
+                + "&amount=" + amount.toString()
+                + "&orderId=" + json.get("orderId")
+                + "&orderInfo=" + json.get("orderInfo")
+                + "&returnUrl=" + returnUrl
+                + "&notifyUrl=" + notifyUrl
+                + "&extraData=";
 
-        String rawHash = "accessKey=" + accessKey + "&amount=" + orderPrice + "&extraData=" + extraData +
-                "&ipnUrl=" + ipnUrl + "&orderId=" + orderId + "&orderInfo=" + orderInfo +
-                "&partnerCode=" + partnerCode + "&redirectUrl=" + redirectUrl + "&requestId=" + requestId +
-                "&requestType=" + requestType;
+        String hashData = MomoEncoderUtils.signHmacSHA256(data, secretKey);
+        json.put("signature", hashData);
+        CloseableHttpClient client = HttpClients.createDefault();
+        HttpPost post = new HttpPost(MomoConfig.CREATE_ORDER_URL);
+        StringEntity stringEntity = new StringEntity(json.toString());
+        post.setHeader("content-type", "application/json");
+        post.setEntity(stringEntity);
 
-        String signature = org.apache.commons.codec.digest.DigestUtils.sha256Hex(rawHash);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("partnerCode", partnerCode);
-        data.put("partnerName", "Test");
-        data.put("storeId", "MomoTestStore");
-        data.put("requestId", requestId);
-        data.put("amount", orderPrice);
-        data.put("orderId", orderId);
-        data.put("orderInfo", orderInfo);
-        data.put("redirectUrl", redirectUrl);
-        data.put("ipnUrl", ipnUrl);
-        data.put("lang", "vi");
-        data.put("extraData", extraData);
-        data.put("requestType", requestType);
-        data.put("signature", signature);
-
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(data, headers);
-
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.postForEntity(endpoint, requestEntity, String.class);
-
-        return response.getBody();
-    }
-
-    public String handlePaymentResult(String vnpResponseCode, String resultCode) {
-        if ("00".equals(vnpResponseCode) || "00".equals(resultCode)) {
-            return "http://localhost:6789/api/booking/payments/success";
-        } else {
-            return "http://localhost:6789/api/booking/payments/error";
+        CloseableHttpResponse res = client.execute(post);
+        BufferedReader rd = new BufferedReader(new InputStreamReader(res.getEntity().getContent()));
+        StringBuilder resultJsonStr = new StringBuilder();
+        String line;
+        while ((line = rd.readLine()) != null) {
+            resultJsonStr.append(line);
         }
+        JSONObject result = new JSONObject(resultJsonStr.toString());
+        Map<String, Object> kq = new HashMap<>();
+        kq.put("requestType", result.get("requestType"));
+        kq.put("orderId", result.get("orderId"));
+        kq.put("signature", result.get("signature"));
+        kq.put("requestId", result.get("requestId"));
+        kq.put("errorCode", result.get("errorCode"));
+        kq.put("message", result.get("message"));
+        kq.put("localMessage", result.get("localMessage"));
+
+        if (result.get("errorCode").toString().equalsIgnoreCase("0")) {
+            kq.put("payUrl", result.get("payUrl"));
+        }
+        return kq;
     }
+
+    // truy vấn lại trạng thái thanh toán
+    public Map<String, Object> transactionStatus(HttpServletRequest request, String requestId,
+                                                  String orderId)
+            throws InvalidKeyException, NoSuchAlgorithmException, ClientProtocolException, IOException {
+        JSONObject json = new JSONObject();
+        String partnerCode = MomoConfig.PARTNER_CODE;
+        String accessKey = MomoConfig.ACCESS_KEY;
+        String secretKey = MomoConfig.SECRET_KEY;
+        json.put("partnerCode", partnerCode);
+        json.put("accessKey", accessKey);
+        json.put("requestId", requestId);
+        json.put("orderId", orderId);
+        json.put("requestType", "transactionStatus");
+
+        String data = "partnerCode=" + partnerCode + "&accessKey=" + accessKey + "&requestId=" + json.get("requestId")
+                + "&orderId=" + json.get("orderId") + "&requestType=" + json.get("requestType");
+        String hashData = MomoEncoderUtils.signHmacSHA256(data, secretKey);
+        json.put("signature", hashData);
+        CloseableHttpClient client = HttpClients.createDefault();
+        HttpPost post = new HttpPost(MomoConfig.CREATE_ORDER_URL);
+        StringEntity stringEntity = new StringEntity(json.toString());
+        post.setHeader("content-type", "application/json");
+        post.setEntity(stringEntity);
+
+        CloseableHttpResponse res = client.execute(post);
+        BufferedReader rd = new BufferedReader(new InputStreamReader(res.getEntity().getContent()));
+        StringBuilder resultJsonStr = new StringBuilder();
+        String line;
+        while ((line = rd.readLine()) != null) {
+            resultJsonStr.append(line);
+        }
+        JSONObject result = new JSONObject(resultJsonStr.toString());
+        Map<String, Object> kq = new HashMap<>();
+        kq.put("requestId", result.get("requestId"));
+        kq.put("orderId", result.get("orderId"));
+        kq.put("extraData", result.get("extraData"));
+        kq.put("amount", Long.parseLong(result.get("amount").toString()));
+        kq.put("transId", result.get("transId"));
+        kq.put("payType", result.get("payType"));
+        kq.put("errorCode", result.get("errorCode"));
+        kq.put("message", result.get("message"));
+        kq.put("localMessage", result.get("localMessage"));
+        kq.put("requestType", result.get("requestType"));
+        kq.put("signature", result.get("signature"));
+        return kq;
+    }
+
 }

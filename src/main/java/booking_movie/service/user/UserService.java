@@ -1,10 +1,7 @@
 package booking_movie.service.user;
 
 import booking_movie.dto.request.*;
-import booking_movie.dto.response.CustomerResponse;
-import booking_movie.dto.response.EmployerResponse;
-import booking_movie.dto.response.ManagerResponse;
-import booking_movie.dto.response.UserResponseDto;
+import booking_movie.dto.response.*;
 import booking_movie.entity.User;
 import booking_movie.exception.NotFoundException;
 import booking_movie.exception.CustomsException;
@@ -18,6 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 
 public interface UserService {
+
+    String changePassword(ChangePasswordDto changePasswordDto,Authentication authentication) throws LoginException, CustomsException;
+    UserProfileDto profile(Authentication authentication) throws LoginException;
     Page<CustomerResponse> findAllCustomer(int page,int size,String username);
     Page<ManagerResponse> findAllManager(int page, int size, String username);
     Page<EmployerResponse> findAllEmployer(int page, int size, String username);

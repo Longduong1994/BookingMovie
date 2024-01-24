@@ -3,17 +3,22 @@ package booking_movie.controller;
 import booking_movie.service.payment.MomoService;
 import booking_movie.service.payment.PayPalService;
 import booking_movie.service.payment.VNPayService;
+import booking_movie.service.payment.ZaLoPayService;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.apache.http.client.ClientProtocolException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @RestController
@@ -23,17 +28,28 @@ public class PaymentController {
     private final VNPayService vnPayService;
     private final PayPalService paypalService;
     private final MomoService momoService;
+    private final ZaLoPayService zaLoPayService;
 
 
+
+    //Momo
     @PostMapping("/payMomo")
-    public ResponseEntity<String> createPayment(@RequestParam String orderId,
-                                                @RequestParam String orderInfo,
-                                                @RequestParam String orderPrice) {
-        return ResponseEntity.status(HttpStatus.OK).body(momoService.makePayment(orderId, orderInfo, orderPrice));
+    public ResponseEntity<?> createPayment(HttpServletRequest request,
+                                                @RequestParam Long amount,
+                                                @RequestParam Long orderId) throws NoSuchAlgorithmException, IOException, InvalidKeyException {
+        return new ResponseEntity<>(momoService.createPayment(request,amount,orderId),HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/transactionStatus")
+    public Map<String, Object> transactionStatus(HttpServletRequest request, @RequestParam String requestId,
+                                                 @RequestParam String orderId)
+            throws InvalidKeyException, NoSuchAlgorithmException, ClientProtocolException, IOException {
+        return momoService.transactionStatus(request, requestId, orderId);
     }
 
 
 
+    // Paypal
         @PostMapping("/create")
     public ResponseEntity<String> createPayment(@RequestParam Double total,
                                                 @RequestParam(defaultValue = "USD") String currency,
@@ -76,6 +92,8 @@ public class PaymentController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Payment unsuccessful");
     }
 
+
+    //VNPay
     @GetMapping("/pay")
     public String getPay(@RequestParam(defaultValue = "10000") long price,@RequestParam(defaultValue = "1") Long orderId) throws UnsupportedEncodingException {
 
@@ -85,5 +103,23 @@ public class PaymentController {
     @GetMapping("payment-callback")
     public void paymentCallback(@RequestParam Map<String, String> queryParams, HttpServletResponse response) throws IOException {
 
+    }
+
+
+
+    // ZaLoPay
+
+    @PostMapping(value = "/create-order")
+    public Map<String, Object> createPayment(HttpServletRequest request,
+                                             @RequestParam(name = "appuser") String appuser,
+                                             @RequestParam(name = "amount") Long amount,
+                                             @RequestParam(name ="order_id") Long order_id) throws Exception {
+        return zaLoPayService.createPayment(request, appuser, amount, order_id);
+    }
+
+    @GetMapping(value = "/getstatusbyapptransid")
+    public Map<String, Object> getStatusByApptransid(HttpServletRequest request,
+                                                     @RequestParam(name = "apptransid") String apptransid) throws Exception {
+        return zaLoPayService.getStatusByApptransid(request, apptransid);
     }
 }

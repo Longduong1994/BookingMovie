@@ -48,6 +48,7 @@ public class SecurityConfig {
                     CorsConfiguration config = new CorsConfiguration();
                     config.setAllowedOrigins(List.of("*"));
                     config.setAllowedMethods(List.of("*"));
+                    config.setAllowedHeaders(List.of("*"));
                     return config;
                 }))
                 .csrf(AbstractHttpConfigurer::disable)
@@ -57,7 +58,7 @@ public class SecurityConfig {
                                 .requestMatchers("/test/**").permitAll()
                                 .requestMatchers("/api/booking/v1/users/**").permitAll()
                                 .requestMatchers("/api/booking/v1/payments/**").permitAll()
-                                .requestMatchers("/api/booking/v1/movie/**").hasAuthority("ADMIN")
+                                .requestMatchers("/api/booking/v1/movie/**").permitAll()
                                 .requestMatchers("/api/booking/v1/orders/**").hasAuthority("ADMIN")
                                 .requestMatchers("/api/booking/v1/room/**").hasAuthority("ADMIN")
                                 .requestMatchers("/api/booking/v1/timeSlot/**").hasAuthority("ADMIN")
