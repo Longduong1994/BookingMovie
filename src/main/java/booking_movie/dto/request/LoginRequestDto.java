@@ -16,7 +16,7 @@ public class LoginRequestDto {
     private String username;
     @NotEmpty(message = "Password is not empty")
     private String password;
-    @NotEmpty(message = "Username is not empty")
-    @NotBlank(message = "Password is not blank")
-    private String captcha;
+//    @NotEmpty(message = "Username is not empty")
+//    @NotBlank(message = "Password is not blank")
+//    private String captcha;
 }

@@ -1,5 +1,6 @@
 package booking_movie.controller;
 
+import booking_movie.dto.request.ChangePasswordDto;
 import booking_movie.dto.request.NewPasswordDto;
 import booking_movie.dto.request.PasswordRetrievalDto;
 import booking_movie.dto.request.UpdateUserDto;
@@ -22,6 +23,17 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserController {
     private final UserService userService;
+
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> profile(Authentication authentication) throws LoginException {
+        return new ResponseEntity<>(userService.profile(authentication),HttpStatus.OK);
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<?> changPassword(Authentication authentication, @Valid @RequestBody ChangePasswordDto changePasswordDto) throws LoginException, CustomsException {
+        return new ResponseEntity<>(userService.changePassword(changePasswordDto,authentication),HttpStatus.OK);
+    }
 
     @GetMapping("/customers")
     public ResponseEntity<?> findAllCustomer(@RequestParam(defaultValue = "")String username,

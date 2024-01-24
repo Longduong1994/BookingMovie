@@ -200,6 +200,20 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    public String changePassword(ChangePasswordDto changePasswordDto, Authentication authentication) throws LoginException, CustomsException {
+        User user = getUser(authentication);
+        if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
+            throw new CustomsException("Old password does not match");
+        }
+        if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getConfirmNewPassword())){
+            throw new CustomsException("Confirm new password does not match");
+        }
+        user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+        userRepository.save(user);
+        return "Change Password Successfully";
+    }
+
+    @Override
     public String retrievalPassword(NewPasswordDto newPasswordDto,String email) throws NotFoundException, CustomsException {
         Optional<User> user = userRepository.findByEmail(email);
         if (!user.isPresent()) {
@@ -255,6 +269,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserProfileDto profile( Authentication authentication) throws LoginException {
+        User user = getUser(authentication);
+        return userMapper.toProfile(user);
+    }
+
+    @Override
     public Page<EmployerResponse> findAllEmployer(int page, int size, String username) {
         Page<User> customers = userRepository.findAllCustomers(username,roleService.getRoleEmployee(),PageRequest.of(page,size));
         return customers.map(userMapper::toEmployer);
@@ -269,10 +289,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public String register(RegisterRequestDto registerRequestDto,HttpSession session) throws RegisterException {
-        if (!validateCaptcha(session,registerRequestDto.getCaptcha())) {
-            throw new RegisterException("Invalid captcha");
-        }
-        session.removeAttribute("captchaCode");
+//        if (!validateCaptcha(session,registerRequestDto.getCaptcha())) {
+//            throw new RegisterException("Invalid captcha");
+//        }
+//        session.removeAttribute("captchaCode");
         if (userRepository.existsByUsername(registerRequestDto.getUsername()))
             throw new RegisterException("Username already exists");
         if (userRepository.existsByEmail(registerRequestDto.getEmail()))
@@ -300,11 +320,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto login(LoginRequestDto loginRequestDto,HttpSession session) throws LoginException {
-        if (!validateCaptcha(session,loginRequestDto.getCaptcha())) {
-            session.removeAttribute("captchaCode");
-            throw new LoginException("Invalid captcha");
-        }
-        session.removeAttribute("captchaCode");
+//        if (!validateCaptcha(session,loginRequestDto.getCaptcha())) {
+//            session.removeAttribute("captchaCode");
+//            throw new LoginException("Invalid captcha");
+//        }
+//        session.removeAttribute("captchaCode");
         Authentication authentication;
         try {
             authentication = authenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDto.getUsername(), loginRequestDto.getPassword()));
