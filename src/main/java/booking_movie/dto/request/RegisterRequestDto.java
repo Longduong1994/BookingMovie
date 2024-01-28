@@ -28,14 +28,6 @@ public class RegisterRequestDto {
     @Pattern(regexp = "^(09|01[2|6|8|9])[0-9]{8}$", message = "Phone number invalid")
     private String phone;
     @NotNull(message = "The dateOfBirth field cannot be left blank.")
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
-//    @NotEmpty(message = "Username is not empty")
-//    @NotBlank(message = "Password is not blank")
-//    private String city;
-//    @NotNull(message = "Username is not empty")
-//    private Long gender;
-//    @NotEmpty(message = "Username is not empty")
-//    @NotBlank(message = "Password is not blank")
-//    private String captcha;
 }

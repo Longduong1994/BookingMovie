@@ -2,6 +2,7 @@ package booking_movie.controller;
 
 import booking_movie.dto.request.GenreRequestDto;
 import booking_movie.dto.response.GenreResponseDto;
+import booking_movie.exception.CustomsException;
 import booking_movie.exception.GenreException;
 import booking_movie.exception.LoginException;
 import booking_movie.service.genre.GenreService;
@@ -23,9 +24,19 @@ public class GenreController {
     private final GenreService genreService;
     @GetMapping
     public ResponseEntity<Page<GenreResponseDto>> getAllGenre( @RequestParam(defaultValue = "") String search,
-                                                              @PageableDefault(size = 2, page = 0, sort = "genreName", direction = Sort.Direction.ASC) Pageable pageable) {
+                                                              @PageableDefault(size = 2, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         Page<GenreResponseDto> genrePage = genreService.getAllGenre(search, pageable);
         return ResponseEntity.ok(genrePage);
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getALl () {
+        return new ResponseEntity<>(genreService.findAllNoSearch(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById( @PathVariable Long id) throws CustomsException {
+       return new ResponseEntity<>(genreService.findById(id), HttpStatus.OK);
     }
     @PostMapping
     public  ResponseEntity<GenreResponseDto> createGenre(@Valid @RequestBody GenreRequestDto genreRequestDto, Authentication authentication) throws LoginException {

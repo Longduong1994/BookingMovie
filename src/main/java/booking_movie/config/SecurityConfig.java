@@ -46,25 +46,18 @@ public class SecurityConfig {
         return http
                 .cors(auth -> auth.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("*"));
+                    config.setAllowedOrigins(List.of("http://localhost:3000/"));
                     config.setAllowedMethods(List.of("*"));
+                    config.setAllowCredentials(true);
                     config.setAllowedHeaders(List.of("*"));
+                    config.setExposedHeaders(List.of("Authorization"));
                     return config;
                 }))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests((auth) ->
                         auth.requestMatchers("/api/booking/v1/auth/**").permitAll()
-                                .requestMatchers("/test/**").permitAll()
-                                .requestMatchers("/api/booking/v1/users/**").permitAll()
-                                .requestMatchers("/api/booking/v1/payments/**").permitAll()
-                                .requestMatchers("/api/booking/v1/movie/**").permitAll()
-                                .requestMatchers("/api/booking/v1/orders/**").hasAuthority("ADMIN")
-                                .requestMatchers("/api/booking/v1/room/**").hasAuthority("ADMIN")
-                                .requestMatchers("/api/booking/v1/timeSlot/**").hasAuthority("ADMIN")
-                                .requestMatchers("/api/booking/v1/home/**").hasAuthority("CUSTOMER")
-                                .requestMatchers("/api/booking/v1/admin/**").hasAuthority("ADMIN")
-                                .requestMatchers("/api/booking/v1/staff/**").hasAuthority("EMPLOYER")
+
                                 .anyRequest().authenticated())
                 .exceptionHandling((auth) ->
                         auth.authenticationEntryPoint(jwtEntryPoint))

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -42,6 +43,12 @@ public class RoomServiceImpl implements RoomService {
             roomPage = roomRepository.findAllByRoomNameContainingIgnoreCaseAndIsDeletedFalse(search, pageable);
         }
         return roomPage.map(item -> roomMapper.toResponse(item));
+    }
+
+    @Override
+    public List<RoomResponseDto> finAllNoSearch() {
+        List<Room> list = roomRepository.findAll();
+        return list.stream().map(item -> roomMapper.toResponse(item)).collect(Collectors.toList());
     }
 
     @Override

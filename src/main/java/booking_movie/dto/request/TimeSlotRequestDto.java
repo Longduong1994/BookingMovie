@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,4 +24,9 @@ public class TimeSlotRequestDto {
     @JsonFormat(pattern = "HH:mm")
     private LocalTime startTime ;
     private Boolean isDeleted;
+    public void setStartTime(String startTime) {
+        // Chuyển đổi chuỗi 'HH:mm' thành LocalTime
+        this.startTime = LocalTime.parse(startTime, DateTimeFormatter.ofPattern("HH:mm"));
+    }
+
 }

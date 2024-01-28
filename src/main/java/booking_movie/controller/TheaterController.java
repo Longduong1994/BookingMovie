@@ -24,6 +24,10 @@ public class TheaterController {
                                      @PageableDefault(size = 6, page = 0, sort = "id", direction = Sort.Direction.ASC)Pageable pageable) {
         return new ResponseEntity<>(theaterService.findAll(search,pageable), HttpStatus.OK);
     }
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getALlNoSearch(){
+        return new ResponseEntity<>(theaterService.finAllNoSearch(), HttpStatus.OK);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) throws CustomsException {

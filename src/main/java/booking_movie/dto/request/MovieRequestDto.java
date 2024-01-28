@@ -1,6 +1,7 @@
 package booking_movie.dto.request;
 
 import booking_movie.entity.Format;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -31,12 +32,12 @@ public class MovieRequestDto {
     @Max(value = 240, message = "runningTime must be at most 240 minutes")
     private Long runningTime;
 
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
 
     private Set<Long> formats;
 
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate stopDate;
 
     @NotEmpty(message = "language is not empty")

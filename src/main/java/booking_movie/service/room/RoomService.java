@@ -9,8 +9,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
+import java.util.List;
+
 public interface RoomService {
     Page<RoomResponseDto> findAll(String search, Pageable pageable) ;
+    List<RoomResponseDto> finAllNoSearch();
 
     RoomResponseDto findById(Long id) throws CustomsException;
 

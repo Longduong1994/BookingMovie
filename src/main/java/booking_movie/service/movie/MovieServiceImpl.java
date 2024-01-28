@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -40,6 +41,13 @@ public class MovieServiceImpl implements MovieService {
         }
         return listMovie.map(movieMapper::toResponseDto);
     }
+
+    @Override
+    public List<MovieResponseDto> findAll() {
+        List<Movie> list = movieRepository.findAll();
+        return list.stream().map(item -> movieMapper.toResponseDto(item)).collect(Collectors.toList());
+    }
+
     @Override
     public MovieResponseDto createMovie(MovieRequestDto movieRequestDto, Authentication  authentication) throws MovieException, LoginException {
         User user = userService.getUser(authentication);

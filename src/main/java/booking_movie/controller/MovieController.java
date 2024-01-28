@@ -36,6 +36,11 @@ public class MovieController {
         Page<MovieResponseDto> listMovie = movieService.getAllMovie(search, pageable);
         return ResponseEntity.ok(listMovie);
     }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAllNoSearch(){
+        return new ResponseEntity<>(movieService.findAll(), HttpStatus.OK);
+    }
     @GetMapping("/status")
     public ResponseEntity<Page<MovieResponseDto>> getAllMovieByMovieStatus(@RequestParam(defaultValue = "") String search,
                                                                            @RequestParam(defaultValue = "showing") String status,
@@ -54,12 +59,12 @@ public class MovieController {
         return new ResponseEntity<>(movieService.getMovieById(idMovie),HttpStatus.OK) ;
     }
 
-    @PutMapping("/{idEdit}")
-    public ResponseEntity<?> updateMovie(@Valid @PathVariable Long idEdit, @ModelAttribute MovieRequestDto movieRequestDto,Authentication authentication, BindingResult bindingResult) throws MovieException, LoginException {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateMovie(@Valid @PathVariable Long id, @ModelAttribute MovieRequestDto movieRequestDto,Authentication authentication, BindingResult bindingResult) throws MovieException, LoginException {
         if (bindingResult.hasErrors()) {
             return handleValidationErrors(bindingResult);
         }
-        return new ResponseEntity<>(movieService.updateMovie(movieRequestDto,authentication,idEdit), HttpStatus.OK);
+        return new ResponseEntity<>(movieService.updateMovie(movieRequestDto,authentication,id), HttpStatus.OK);
     }
 
     private ResponseEntity<String> handleValidationErrors(BindingResult bindingResult) {

@@ -19,6 +19,7 @@ public class UserResponseDto {
     private Integer point;
     private LocalDate dateOfBirth;
     private Set<String> setRoles;
+    private String level;
     private String token;
 
 }

@@ -30,6 +30,11 @@ public class LocationController {
         return new ResponseEntity<>(locationService.findAll(search, pageable), HttpStatus.OK);
     }
 
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAllNoSearch() {
+        return new ResponseEntity<>(locationService.finAllNoSearch(), HttpStatus.OK);
+    }
+
     /*
      * TODO : param ( idLocation )
      * */

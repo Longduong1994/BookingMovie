@@ -45,6 +45,12 @@ public class TheaterServiceImpl implements TheaterService {
     }
 
     @Override
+    public List<TheaterResponseDto> finAllNoSearch() {
+        List<Theater> list = theaterRepository.findAll();
+        return list.stream().map(item -> theaterMapper.toResponse(item)).collect(Collectors.toList());
+    }
+
+    @Override
     public TheaterResponseDto findById(Long id) throws CustomsException {
         Theater theater = theaterRepository.findById(id).orElseThrow(()-> new CustomsException("Theater Not Found")) ;
         return theaterMapper.toResponse(theater);

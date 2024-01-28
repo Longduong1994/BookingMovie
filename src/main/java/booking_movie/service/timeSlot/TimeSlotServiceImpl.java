@@ -10,18 +10,32 @@ import booking_movie.mapper.TimeSlotMapper;
 import booking_movie.repository.*;
 import booking_movie.security.user_principle.UserPrincipal;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class TimeSlotServiceImpl implements TimeSlotService {
+    @Override
+    public Page<TimeSlotResponseDto> findALl(String search, Pageable pageable) {
+        Page<TimeSlot> page ;
+        if (search.isEmpty()) {
+            page = timeSlotRepository.findAllByIsDeletedFalse(pageable);
+        } else {
+            page = timeSlotRepository.findAllByStartTimeAndIsDeletedFalse(LocalTime.parse(search), pageable);
+        }
+        return page.map(item -> timeSlotMapper.toResponse(item));
+    }
+
     private TimeSlotRepository timeSlotRepository ;
     private MovieRepository movieRepository ;
     private TheaterRepository theaterRepository ;
@@ -30,7 +44,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
     private TimeSlotMapper timeSlotMapper ;
 
     @Override
-    public List<TimeSlotResponseDto> findAll() {
+    public List<TimeSlotResponseDto> findAllNoSearch() {
         List<TimeSlot> list = timeSlotRepository.findAllByIsDeletedFalse();
         return list.stream().map(item -> timeSlotMapper.toResponse(item)).collect(Collectors.toList());
     }

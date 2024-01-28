@@ -7,9 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
+import java.util.List;
+
 
 public interface LocationService {
     Page<LocationResponseDto> findAll(String locationName , Pageable pageable) ;
+    List<LocationResponseDto> finAllNoSearch();
     LocationResponseDto findById (Long id) throws  CustomsException;
 
     LocationResponseDto save (Authentication authentication, LocationRequestDto locationRequestDto) throws CustomsException;

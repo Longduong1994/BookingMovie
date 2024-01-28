@@ -26,6 +26,11 @@ public class RoomController {
         return new ResponseEntity<>(roomService.findAll(search,pageable), HttpStatus.OK);
     }
 
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAllNoSearch() {
+        return new ResponseEntity<>(roomService.finAllNoSearch(), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) throws CustomsException {
         return new ResponseEntity<>(roomService.findById(id), HttpStatus.OK);

@@ -4,6 +4,7 @@ import booking_movie.dto.request.GenreRequestDto;
 import booking_movie.dto.response.GenreResponseDto;
 import booking_movie.entity.Genre;
 import booking_movie.entity.User;
+import booking_movie.exception.CustomsException;
 import booking_movie.exception.GenreException;
 import booking_movie.exception.LoginException;
 import booking_movie.mapper.GenreMapper;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -35,6 +37,19 @@ public class GenreServiceImpl implements GenreService {
         }
         return listGenre.map(genreMapper::toResponseDto);
     }
+
+    @Override
+    public List<GenreResponseDto> findAllNoSearch() {
+        List<Genre> list = genreRepository.findAll();
+        return list.stream().map(genreMapper::toResponseDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public GenreResponseDto findById(Long id) throws CustomsException {
+        Genre genre = genreRepository.findById(id).orElseThrow(() -> new CustomsException("Genre Not Fount"));
+        return genreMapper.toResponseDto(genre);
+    }
+
     @Override
     public GenreResponseDto createGenre(GenreRequestDto genreRequestDto, Authentication authentication) throws LoginException {
         User user= userService.getUser(authentication);

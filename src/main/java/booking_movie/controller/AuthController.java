@@ -11,16 +11,19 @@ import booking_movie.service.verification.VerificationService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/booking/v1/auth")
-@AllArgsConstructor
+@CrossOrigin("*")
 public class AuthController {
-    private final UserService userService;
-    private final VerificationService verificationService;
+    @Autowired
+    private  UserService userService;
+    @Autowired
+    private  VerificationService verificationService;
 
     @GetMapping("/captcha")
     public String generateRandomCaptcha(HttpSession session) {

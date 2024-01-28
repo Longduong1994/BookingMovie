@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +25,13 @@ public class LocationServiceImpl implements LocationService {
     private LocationRepository locationRepository ;
     private ChairRepository chairRepository ;
     private LocationMapper locationMapper ;
+
+    @Override
+    public List<LocationResponseDto> finAllNoSearch() {
+        List<Location> list = locationRepository.findAll();
+        return list.stream().map(item -> locationMapper.toResponse(item)).collect(Collectors.toList());
+    }
+
     @Override
     public Page<LocationResponseDto> findAll(String search, Pageable pageable) {
         Page<Location> locationPage ;

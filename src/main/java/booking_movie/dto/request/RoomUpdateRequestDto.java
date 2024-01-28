@@ -21,4 +21,5 @@ public class RoomUpdateRequestDto {
     private String roomType ;
     @NotNull(message = "theaterId is not null")
     private Long theaterId;
+    private Boolean isDelete ;
 }
