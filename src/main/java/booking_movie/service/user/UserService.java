@@ -18,11 +18,12 @@ public interface UserService {
 
     String changePassword(ChangePasswordDto changePasswordDto,Authentication authentication) throws LoginException, CustomsException;
     UserProfileDto profile(Authentication authentication) throws LoginException;
-    Page<CustomerResponse> findAllCustomer(int page,int size,String username);
+    UserProfileDto uploadAvatar(Authentication authentication,AvatarUploadDto avatarUploadDto) throws LoginException;
+    Page<CustomerResponse> findAllCustomer(int page,String username);
     Page<ManagerResponse> findAllManager(int page, int size, String username);
     Page<EmployerResponse> findAllEmployer(int page, int size, String username);
-    String register( RegisterRequestDto registerRequestDto,HttpSession session) throws RegisterException;
-    UserResponseDto login(LoginRequestDto loginRequestDto,HttpSession session) throws LoginException;
+    String register( RegisterRequestDto registerRequestDto) throws RegisterException;
+    UserResponseDto login(LoginRequestDto loginRequestDto) throws LoginException;
     String createAccount(CreateAccountDto createAccountDto, Authentication authentication) throws LoginException, RegisterException, NotFoundException;
     User getUser(Authentication authentication) throws LoginException;
     String changeStatus(Long id,Authentication authentication) throws LoginException;
@@ -34,8 +35,10 @@ public interface UserService {
      */
     public User userById(Authentication authentication)throws UserException;
 
+    public String setRole(Authentication authentication,String roleName,Long id) throws LoginException, CustomsException, NotFoundException;
+
     void registerAdmin(CreateAccountDto createAccountDto) throws CustomsException;
-    CustomerResponse updateCustomer(Long id,Authentication authentication, UpdateUserDto updateUserDto) throws CustomsException, LoginException;
-    String getLink(PasswordRetrievalDto passwordRetrievalDto,HttpSession session) throws CustomsException;
+    CustomerResponse updateCustomer(Authentication authentication, UpdateUserDto updateUserDto) throws CustomsException, LoginException;
+    String getLink(PasswordRetrievalDto passwordRetrievalDto) throws CustomsException;
     String retrievalPassword(NewPasswordDto newPasswordDto,String email) throws NotFoundException, CustomsException;
 }

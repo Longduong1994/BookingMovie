@@ -16,11 +16,10 @@ import java.util.Optional;
 public class PromotionMapper {
     private final PromotionRepository promotionRepository;
 
-    public Promotion promotionRequestDtoIntoPromotion(PromotionRequestDto promotionRequestDto, String userName) {
+    public Promotion promotionRequestDtoIntoPromotion(PromotionRequestDto promotionRequestDto, String userName,String code) {
         return Promotion.builder()
                 .eventName(promotionRequestDto.getEventName())
-                .eventCode(promotionRequestDto.getEventCode())
-                .salePercent(promotionRequestDto.getSalePercent())
+                .eventCode(code)
                 .salePrice(promotionRequestDto.getSalePrice())
                 .startDate(promotionRequestDto.getStartDate())
                 .endDate(promotionRequestDto.getEndDate())

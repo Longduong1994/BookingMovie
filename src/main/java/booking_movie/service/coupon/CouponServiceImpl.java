@@ -3,20 +3,20 @@ package booking_movie.service.coupon;
 import booking_movie.dto.request.CouponRequestDto;
 import booking_movie.dto.response.CouponResponseDto;
 import booking_movie.entity.Coupon;
+import booking_movie.entity.Notification;
 import booking_movie.entity.User;
 import booking_movie.repository.CouponRepository;
 import booking_movie.repository.UserRepository;
 import booking_movie.security.user_principle.UserPrincipal;
+import booking_movie.service.notification.NotificationService;
+import booking_movie.service.notification.NotificationServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +24,7 @@ public class CouponServiceImpl implements CouponService{
 
     private final CouponRepository couponRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     /**
      * search coupon by code
@@ -39,11 +40,28 @@ public class CouponServiceImpl implements CouponService{
         }
         Coupon coupon = Coupon.builder().code(codeNew)
                 .description(couponRequestDto.getDescription())
-                .endDate(LocalDate.now())
+                .endDate(couponRequestDto.getEffectDate())
+                .salePrice(couponRequestDto.getSalePrice())
                 .isDelete(false)
                 .user(user.get())
                 .status(true).build();
         Coupon c = couponRepository.save(coupon);
+        String message ="\"Bạn nhận được 1 voucher giá trị \"+couponRequestDto.getSalePrice() +\"." +
+                " Có hiệu lực từ ngày "+ LocalDate.now()+" đến "+couponRequestDto.getEffectDate()+" ." +
+                " Mã của bạn là :"+codeNew +" ."+
+                " Chương trình áp lục cho tất cả các phim . Chào bạn !!!\"";
+
+        Set<User> users = new HashSet<>();
+        users.add(user.get());
+
+        Notification notification = new Notification();
+        notification.setTitle(couponRequestDto.getDescription());
+        notification.setMessage(message);
+        notification.setCreatedAt(LocalDate.now());
+        notification.setRead(true);
+        notification.setUsers(users);
+        notificationService.create(notification);
+
         return mapper(c);
     }
 

@@ -2,23 +2,19 @@ package booking_movie.service.verification;
 
 import booking_movie.entity.User;
 import booking_movie.entity.Verification;
+import booking_movie.exception.CustomsException;
 import booking_movie.repository.VerificationRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
 import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 public class VerificationServiceImpl implements VerificationService {
-    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private static final int CAPTCHA_LENGTH = 6;
     private final VerificationRepository verificationRepository;
 
     @Override
@@ -26,7 +22,8 @@ public class VerificationServiceImpl implements VerificationService {
         Verification verification = new Verification();
         verification.setUser(user);
         verification.setVerificationCode(UUID.randomUUID().toString().substring(0, 6));
-        verification.setCreatAt(LocalDate.now());
+        verification.setCreatAt(LocalDateTime.now());
+        verification.setStatus(true);
         verificationRepository.save(verification);
         return verification;
     }
@@ -37,24 +34,41 @@ public class VerificationServiceImpl implements VerificationService {
     }
 
     @Override
-    public boolean isExpired(Date date) {
-        Instant currentInstant = Instant.now();
-        Instant targetInstant = date.toInstant();
-
-        Duration duration = Duration.between(targetInstant, currentInstant);
-        long minutesDifference = duration.toMinutes();
-
-        return minutesDifference >= 5;
-    }
-
-    public String generateRandomCaptcha() {
-        SecureRandom random = new SecureRandom();
-        StringBuilder captcha = new StringBuilder();
-        for (int i = 0; i < CAPTCHA_LENGTH; i++) {
-            int randomIndex = random.nextInt(CHARACTERS.length());
-            captcha.append(CHARACTERS.charAt(randomIndex));
+    public boolean isExpired(String verificationCode) throws CustomsException {
+        Verification verification = verificationRepository.findByVerificationCode(verificationCode);
+        if (verification == null) {
+            throw new CustomsException("Mã không đúng");
         }
-        return captcha.toString();
+        LocalDateTime createdAt = verification.getCreatAt();
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        Duration duration = Duration.between(createdAt, currentDateTime);
+        long minutesDifference = duration.toMinutes();
+        return minutesDifference < 5;
     }
+
+    @Override
+    public void resetVerification(String code) throws CustomsException {
+        Verification verification = verificationRepository.findByVerificationCode(code);
+        if (verification == null) {
+            throw new CustomsException("Mã không đúng");
+        }
+        verification.setStatus(false);
+        verificationRepository.save(verification);
+    }
+
+    @Override
+    public boolean isVerification(String verification, User user) {
+        List<Verification> verifications = verificationRepository.findByUser(user);
+        if (!verifications.isEmpty()) {
+            Verification latestVerification = verifications.get(verifications.size() - 1);
+            if (latestVerification.isStatus() == false) {
+                return false;
+            }
+            return latestVerification.getVerificationCode().equals(verification);
+        }
+        return false;
+    }
+
+
 
 }
