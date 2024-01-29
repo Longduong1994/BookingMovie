@@ -1,5 +1,6 @@
 package booking_movie.dto.request;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class UpdateUserDto {
     private String city;
     private String address;
-    private Long gender;
+    private String gender;
+    @Pattern(regexp = "^(09|01[2|6|8|9])[0-9]{8}$", message = "Số điện thoại sai định dạng.")
     private String phone;
 }

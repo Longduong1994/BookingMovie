@@ -1,12 +1,12 @@
 package booking_movie.dto.response;
 
-import booking_movie.entity.Payment;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
 
@@ -24,7 +24,7 @@ public class OrderResponseDto {
     private String rated;
     private Set<String> chairs;
     private LocalTime startTime;
-    private LocalDateTime bookingDate;
+    private LocalDate bookingDate;
     private String promotion;
     private String coupon;
     private String paymentMethod;

@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Builder
 
 public class BookingMovieRequest {
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "yyyy/MM/dd")
     LocalDate selectDate;
     String roomType;
     String locationName;

@@ -3,9 +3,12 @@ package booking_movie.service.role;
 
 import booking_movie.entity.Role;
 import booking_movie.entity.User;
+import booking_movie.exception.NotFoundException;
 
 
 public interface RoleService {
+
+    Role findByRoleName(String roleName) throws NotFoundException;
     Role getRoleCustomer();
     Role getRoleManager();
     Role getRoleEmployee();

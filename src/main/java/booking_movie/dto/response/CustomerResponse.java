@@ -18,8 +18,8 @@ public class CustomerResponse {
     private String username;
     private String email;
     private String phone;
-    private String dateOfBirth;
-    private String card;
+    private LocalDate dateOfBirth;
+    private LocalDate createdAt;
     private Integer point;
     private String avatar;
     private String city;

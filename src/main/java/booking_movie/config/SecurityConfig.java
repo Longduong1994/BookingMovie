@@ -18,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -46,24 +48,23 @@ public class SecurityConfig {
         return http
                 .cors(auth -> auth.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("http://localhost:3000/"));
-                    config.setAllowedMethods(List.of("*"));
+                    config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+                    config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","PATCH", "OPTIONS"));
+                    config.setAllowedHeaders(Arrays.asList("*"));
                     config.setAllowCredentials(true);
-                    config.setAllowedHeaders(List.of("*"));
-                    config.setExposedHeaders(List.of("Authorization"));
                     return config;
                 }))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests((auth) ->
-                        auth.requestMatchers("/api/booking/v1/auth/**", "/api/booking/v1/movie/getAll").permitAll()
-
+                        auth.requestMatchers("/api/booking/v1/**", "/api/booking/v1/movie/getAll", "/api/booking/v1/movie/status").permitAll()
                                 .anyRequest().authenticated())
+                .authenticationProvider(authenticationProvider())
                 .exceptionHandling((auth) ->
                         auth.authenticationEntryPoint(jwtEntryPoint))
                 .sessionManagement((auth) ->
-                        auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        auth.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 }

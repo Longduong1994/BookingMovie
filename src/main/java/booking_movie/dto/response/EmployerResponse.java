@@ -13,12 +13,15 @@ public class EmployerResponse {
     private String username;
     private String email;
     private String phone;
-    private String dateOfBirth;
+    private LocalDate dateOfBirth;
     private String card;
     private String avatar;
-    private String city;
     private LocalDate createdDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String city;
     private String address;
     private String gender;
     private Boolean status;
+    private String theater;
 }

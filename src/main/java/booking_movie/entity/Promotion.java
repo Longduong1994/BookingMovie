@@ -22,6 +22,7 @@ public class Promotion {
     private String eventName;
 
     private String eventCode;
+    private String description;
 
     private Double salePrice;
 

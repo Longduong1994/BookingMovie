@@ -30,6 +30,6 @@ public class CreateAccountDto {
     @NotBlank(message = "Password is not blank")
     private String role;
     @NotNull(message = "Gender is not empty")
-    private Long gender;
+    private String gender;
     private Long theaterId;
 }

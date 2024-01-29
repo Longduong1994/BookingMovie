@@ -1,6 +1,8 @@
 package booking_movie.dto.request.promotion;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,16 +11,14 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 public class PromotionRequestDto {
-    @NotEmpty
+    @NotNull(message="Chưa thêm tên sự kiện")
     private String eventName;
-
-    private String eventCode;
-
+    private String description;
     private Double salePrice;
-
-    private Integer salePercent;
-
+    @NotNull(message = "Chưa thêm ngày bắt đầu")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate startDate;
-
+    @NotNull(message = "Chưa thêm ngày hết hạn")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate endDate;
 }
