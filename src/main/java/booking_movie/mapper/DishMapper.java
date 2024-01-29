@@ -29,6 +29,7 @@ public class DishMapper {
                 .createUser(useName)
                 .createTime(LocalDate.now())
                 .updateTime(LocalDate.now())
+                .status(true)
                 .isDelete(false).build();
     }
     public Dish dishUpdateRequestDtoInto(DishUpdateRequestDto dishUpdateRequestDto, String userName) throws DishException{
@@ -37,7 +38,6 @@ public class DishMapper {
             Dish dish1 = dish.get();
             dish1.setDishName(dishUpdateRequestDto.getDishName());
             dish1.setCategory(categoryRepository.findById(dishUpdateRequestDto.getCategoryId()).get());
-            dish1.setImage(uploadFileService.uploadFile(dishUpdateRequestDto.getImage()));
             dish1.setPrice(dishUpdateRequestDto.getPrice());
             dish1.setUpdateTime(LocalDate.now());
             dish1.setUpdateUser(userName);

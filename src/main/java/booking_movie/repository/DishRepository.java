@@ -9,10 +9,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface DishRepository extends JpaRepository<Dish, Long> {
     Boolean existsByDishName(String name);
-    @Query("SELECT D FROM Dish D LEFT JOIN D.category C WHERE D.isDelete = :isDeleted AND D.theater = :theater AND (LOWER(D.dishName) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(C.categoryName) LIKE LOWER(CONCAT('%', :search, '%')))")
-    Page<Dish> findAllByIsDeleteAndTheater(@Param("isDeleted") Boolean isDeleted, @Param("theater") Long theater, @Param("search") String search, Pageable pageable);
-
+    Page<Dish> findAllByIsDeleteAndTheater(Boolean aBoolean,Long theater,Pageable pageable);
+    Page<Dish> findAllByIsDeleteAndTheaterAndDishNameContainingIgnoreCase(Boolean isDelete,Long theater,Pageable pageable,String search);
+    Boolean existsByTheater(Long id);
 }
