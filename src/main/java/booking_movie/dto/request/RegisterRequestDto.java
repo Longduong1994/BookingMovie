@@ -32,6 +32,6 @@ public class RegisterRequestDto {
     @Pattern(regexp = "^(09|01[2|6|8|9])[0-9]{8}$", message = "Phone number invalid")
     private String phone;
     @NotNull(message = "Không được để trống.")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dateOfBirth;
 }
