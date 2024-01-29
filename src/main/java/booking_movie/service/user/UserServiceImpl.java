@@ -2,19 +2,18 @@ package booking_movie.service.user;
 
 
 
-import booking_movie.constants.RankName;
+import java.time.Instant;
+import java.util.Base64;
 import booking_movie.dto.request.*;
 import booking_movie.dto.response.*;
 import booking_movie.entity.Role;
 import booking_movie.entity.User;
 import booking_movie.exception.CustomsException;
 import booking_movie.exception.LoginException;
-import booking_movie.exception.PromtionException;
 import booking_movie.exception.NotFoundException;
 import booking_movie.exception.RegisterException;
 import booking_movie.exception.UserException;
-import booking_movie.mapper.UserMapper;
-import booking_movie.repository.TheaterRepository;
+import booking_movie.mapper.UsersMapper;
 import booking_movie.repository.UserRepository;
 import booking_movie.service.mail.MailService;
 import booking_movie.security.jwt.JwtProvider;
@@ -35,11 +34,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,7 +42,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
-    private final UserMapper userMapper;
+    private final UsersMapper userMapper;
     private final MailService mailService;
     private final AuthenticationProvider authenticationProvider;
     private final PasswordEncoder passwordEncoder;
@@ -60,15 +55,15 @@ public class UserServiceImpl implements UserService {
     public String changeStatus(Long id,Authentication authentication) throws LoginException {
         User user = getUser(authentication);
         if (!roleService.hasRoleAdmin(user)){
-            throw new RuntimeException("");
+            throw new RuntimeException("Bạn không có quyền.");
         }
         Optional<User> userChange = userRepository.findById(id);
         if (!userChange.isPresent()){
-            throw new RuntimeException("not found");
+            throw new RuntimeException("Không tìm thấy tài khoản.");
         }
         userChange.get().setStatus(!userChange.get().getStatus());
         userRepository.save(userChange.get());
-        return "Success";
+        return "Thay đổi trạng thái thành công.";
     }
 
 
@@ -116,10 +111,12 @@ public class UserServiceImpl implements UserService {
                 throw new NotFoundException("You have no rights");
             }
         }
+        String password =createAccountDto.getUsername() + UUID.randomUUID().toString().substring(0, 5);
+
 
         User newUser = userMapper.toEntity(createAccountDto);
         newUser.setRoles(roles);
-        newUser.setPassword(passwordEncoder.encode("123456"));
+        newUser.setPassword(passwordEncoder.encode(password));
         newUser.setStatus(true);
         userRepository.save(newUser);
         return "success";
@@ -150,53 +147,49 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getLink(PasswordRetrievalDto passwordRetrievalDto, HttpSession session) throws CustomsException {
-        if (!validateCaptcha(session, passwordRetrievalDto.getCaptcha())) {
-            session.removeAttribute("captchaCode");
-            throw new CustomsException("Invalid captcha");
+    public String getLink(PasswordRetrievalDto passwordRetrievalDto) throws CustomsException {
+        Optional<User> user = userRepository.findByEmail(passwordRetrievalDto.getEmail());
+        if (!user.isPresent()) {
+            throw new CustomsException("Địa chỉ email không đúng");
         }
-        session.removeAttribute("captchaCode");
 
-        String link = "http://localhost:6789/retrieval?email=" + passwordRetrievalDto.getEmail();
+        String originalInput = passwordRetrievalDto.getEmail();
+        String encodedString = Base64.getEncoder().encodeToString(originalInput.getBytes());
 
-        String emailContent = """
-        <div style="text-align: center; font-family: Arial, sans-serif; color: #333;">
-            <p>
-                Cinima.vn đã nhận được yêu cầu thay đổi mật khẩu của quý khách.
-            </p>
-            <p>
-                Xin hãy click vào link "ĐỔI MẬT KHẨU" bên dưới để đổi mật khẩu: (Lưu ý: link chỉ có hiệu lực trong vòng 60 phút.)
-            </p>
-            <a href="%s" style="text-decoration: none;">
-                <button style="background-color: #4CAF50; /* Green */
-                                border: none;
-                                color: white;
-                                padding: 15px 32px;
-                                text-align: center;
-                                text-decoration: none;
-                                display: inline-block;
-                                font-size: 16px;
-                                margin: 4px 2px;
-                                cursor: pointer;
-                                border-radius: 5px;">
-                    Đổi Mật Khẩu
-                </button>
-            </a>
-            <p>
-                Mọi thắc mắc và góp ý vui lòng liên hệ với bộ phận chăm sóc khách hàng:
-            </p>
-            <p>
-                - Hotline: 1900 6017
-            </p>
-            <p>
-                - Giờ làm việc: 8:00 - 22:00
-            </p>
-        </div>
-        """.formatted(link);
+        String verification = verificationService.create(user.get()).getVerificationCode();
+
+        String link = "http://localhost:3000/retrievalpassword?email=" + encodedString;
+
+        String emailContent = String.format("""
+<div style="text-align: center; font-family: Arial, sans-serif; color: #333;">
+    <p>
+        Cinima.vn đã nhận được yêu cầu thay đổi mật khẩu của quý khách.
+    </p>
+    <p>Mã xác nhận: <span style="font-weight: bold;">%s</span></p>
+    <p>
+        Xin hãy click vào link "ĐỔI MẬT KHẨU" bên dưới để đổi mật khẩu: 
+    </p>
+    <a href="%s" style="text-decoration: none;">
+        <button style="background-color: #4CAF50; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 5px;">
+            Đổi Mật Khẩu
+        </button>
+    </a>
+    <p>
+        Mọi thắc mắc và góp ý vui lòng liên hệ với bộ phận chăm sóc khách hàng:
+    </p>
+    <p>
+        - Hotline: 1900 6017
+    </p>
+    <p>
+        - Giờ làm việc: 8:00 - 22:00
+    </p>
+</div>
+""", verification, link);
 
         mailService.sendMail(passwordRetrievalDto.getEmail(), "Yêu cầu thay đổi mật khẩu", emailContent);
-        return "success";
+        return "Bạn hãy đăng nhập email: "+ passwordRetrievalDto.getEmail()+" và làm theo hướng dẫn.";
     }
+
 
 
     @Override
@@ -210,54 +203,81 @@ public class UserServiceImpl implements UserService {
         }
         user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
         userRepository.save(user);
-        return "Change Password Successfully";
+        return "Đổi mật khẩu thành công";
     }
 
     @Override
     public String retrievalPassword(NewPasswordDto newPasswordDto,String email) throws NotFoundException, CustomsException {
-        Optional<User> user = userRepository.findByEmail(email);
-        if (!user.isPresent()) {
-            throw new NotFoundException("Email is incorrect");
+        String encodedString = email;
+
+        byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
+        String decodedString = new String(decodedBytes);
+
+
+        Optional<User> user = userRepository.findByEmail(decodedString);
+        if(!user.isPresent()){
+            throw new CustomsException("Không tìm thấy người dùng");
+        }else if (!verificationService.isExpired(newPasswordDto.getVerification())){
+            throw new CustomsException("Mã xác nhận hết hạn .");
+        }else if(!verificationService.isVerification(newPasswordDto.getVerification(),user.get())){
+            throw new CustomsException("Mã xác nhận không đúng.");
         }
-        if (!newPasswordDto.getPassword().equals(newPasswordDto.getConfirmPassword())){
-            throw new CustomsException("Confirm password was wrong");
+        else if(!newPasswordDto.getPassword().equals(newPasswordDto.getConfirmPassword())){
+            throw new CustomsException("Xác nhận mật khẩu mới không đúng.");
         }
-        user.get().setPassword(passwordEncoder.encode(newPasswordDto.getPassword()));
-        userRepository.save(user.get());
-        return "success";
+        else if(!newPasswordDto.getPassword().equals(newPasswordDto.getConfirmPassword())){
+            throw new CustomsException("Xác nhận mật khẩu mới không đúng.");
+        } else {
+            user.get().setPassword(passwordEncoder.encode(newPasswordDto.getPassword()));
+            userRepository.save(user.get());
+            verificationService.resetVerification(newPasswordDto.getVerification());
+        }
+        return "Đặt lại mật khẩu thành công!";
     }
 
     @Override
-    public CustomerResponse updateCustomer(Long id,Authentication authentication, UpdateUserDto updateUserDto) throws CustomsException, LoginException {
+    public CustomerResponse updateCustomer(Authentication authentication, UpdateUserDto updateUserDto) throws CustomsException, LoginException {
         User user = getUser(authentication);
-        if (!user.getId().equals(id)) {
-            throw new CustomsException("You have no rights");
-        }
         user.setAddress(updateUserDto.getAddress());
         user.setCity(updateUserDto.getCity());
         user.setPhone(updateUserDto.getPhone());
         user.setGender(updateUserDto.getGender());
+        userRepository.save(user);
         return userMapper.toCustomer(user);
     }
 
-    private String sendVerification(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isPresent()) {
-            String verification = verificationService.create(user.get()).getVerificationCode();
-            String content = "Hello " + email + ",\n\n" +
-                    "For security reasons, you are required to use the following One Time Password to log in:\n" +
-                    "\n" + verification +
-                    "\n\nNote: This OTP is set to expire in 5 minutes.\n\n" +
-                    "If you did not request this password reset, please contact us immediately at support@example.com.";
-            mailService.sendMail(email, "Verification", content);
 
-            return "Log in to gmail to get the confirmation code";
-        }
-        return "Email address incorrect";
+    @Override
+    public UserProfileDto uploadAvatar(Authentication authentication, AvatarUploadDto avatarUploadDto) throws LoginException {
+        User user = getUser(authentication);
+        user.setAvatar(uploadFileService.uploadFile(avatarUploadDto.getFile()));
+        userRepository.save(user);
+        return userMapper.toProfile(user);
     }
 
     @Override
-    public Page<CustomerResponse> findAllCustomer(int page, int size, String username) {
+    public String setRole(Authentication authentication, String roleName, Long id) throws LoginException, CustomsException, NotFoundException {
+        User user = getUser(authentication);
+        if (!roleService.hasRoleAdmin(user)){
+            throw new CustomsException("You have no rights ");
+        }
+        Optional<User> staff = userRepository.findById(id);
+        if (!staff.isPresent()) {
+            throw new NotFoundException("User " + id + "not found");
+        }
+        Role role = roleService.findByRoleName(roleName);
+        Set<Role> setRole= new HashSet<>();
+        setRole.add(role);
+        staff.get().setRoles(setRole);
+        userRepository.save(staff.get());
+        return "Success";
+    }
+
+    @Override
+    public Page<CustomerResponse> findAllCustomer(int page,String username) {
+
+        int size =6;
+
         Page<User> customers = userRepository.findAllCustomers(username,roleService.getRoleCustomer(),PageRequest.of(page,size));
         return customers.map(userMapper::toCustomer);
     }
@@ -288,11 +308,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public String register(RegisterRequestDto registerRequestDto,HttpSession session) throws RegisterException {
-//        if (!validateCaptcha(session,registerRequestDto.getCaptcha())) {
-//            throw new RegisterException("Invalid captcha");
-//        }
-//        session.removeAttribute("captchaCode");
+    public String register(RegisterRequestDto registerRequestDto) throws RegisterException {
         if (userRepository.existsByUsername(registerRequestDto.getUsername()))
             throw new RegisterException("Username already exists");
         if (userRepository.existsByEmail(registerRequestDto.getEmail()))
@@ -302,12 +318,8 @@ public class UserServiceImpl implements UserService {
         Set<Role> roles = new HashSet<>();
         roles.add(roleService.getRoleCustomer());
         User user = userMapper.toEntity(registerRequestDto);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setCard(UUID.randomUUID().toString().substring(0, 9));
+        user.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
         user.setRoles(roles);
-        user.setPoint(0);
-        user.setLevel(RankName.COPPER);
-        user.setStatus(true);
         userRepository.save(user);
         String emailContent = """
         <p style="color: red; font-size: 18px;">
@@ -319,27 +331,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto login(LoginRequestDto loginRequestDto,HttpSession session) throws LoginException {
-//        if (!validateCaptcha(session,loginRequestDto.getCaptcha())) {
-//            session.removeAttribute("captchaCode");
-//            throw new LoginException("Invalid captcha");
-//        }
-//        session.removeAttribute("captchaCode");
+    public UserResponseDto login(LoginRequestDto loginRequestDto) throws LoginException {
         Authentication authentication;
         try {
             authentication = authenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDto.getUsername(), loginRequestDto.getPassword()));
         } catch (AuthenticationException ex) {
-            throw new LoginException("username or password invalid");
+            throw new LoginException("Tài khoản hoặc mật khẩu không đúng.");
         }
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         if (!userPrincipal.getUser().getStatus()) {
-            throw new LoginException("Account is locked");
+            throw new LoginException("Tài khoản đã bị khóa.");
         }
         String token = jwtProvider.generateToken(userPrincipal);
-        UserResponseDto userResponse = userMapper.toResponseDto(userPrincipal.getUser());
-        userResponse.setToken(token);
-        userResponse.setSetRoles(userPrincipal.getUser().getRoles().stream().map(item -> item.getRoleName().name()).collect(Collectors.toSet()));
-        return userResponse;
+        return UserResponseDto.builder()
+                .username(userPrincipal.getUser().getUsername())
+                .token(token)
+                .setRoles(userPrincipal.getUser().getRoles().stream().map(item -> item.getRoleName().name()).collect(Collectors.toSet()))
+                .build();
     }
 
     @Override

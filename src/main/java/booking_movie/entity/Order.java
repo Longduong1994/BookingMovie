@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
 import java.time.LocalDate;
@@ -35,7 +34,7 @@ public class Order {
     @Column(columnDefinition = "TIME")
     private LocalTime startTime;
     @Column(columnDefinition = "DATE")
-    private LocalDateTime bookingDate;
+    private LocalDate bookingDate;
     private String code;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "TICKET_CHAIR",

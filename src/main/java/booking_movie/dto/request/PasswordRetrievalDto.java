@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PasswordRetrievalDto {
-    @Pattern(regexp ="^[A-Za-z0-9+_.-]+@(.+)$",message = "Email invalidate")
+    @NotNull(message = "Email không đưuọc để trống")
+    @Pattern(regexp ="^[A-Za-z0-9+_.-]+@(.+)$",message = "Email sai định dạng")
     private String email;
-    @NotNull(message = "Captcha invalid")
-    private String captcha;
 }
