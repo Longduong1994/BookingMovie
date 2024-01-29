@@ -18,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -46,33 +48,23 @@ public class SecurityConfig {
         return http
                 .cors(auth -> auth.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("*"));
-                    config.setAllowedMethods(List.of("*"));
-                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+                    config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","PATCH", "OPTIONS"));
+                    config.setAllowedHeaders(Arrays.asList("*"));
+                    config.setAllowCredentials(true);
                     return config;
                 }))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests((auth) ->
-                        auth.requestMatchers("/api/booking/v1/auth/**").permitAll()
-                                .requestMatchers("/test/**").permitAll()
-                                .requestMatchers("/api/booking/v1/users/**").permitAll()
-                                .requestMatchers("/api/booking/v1/payments/**").permitAll()
-                                .requestMatchers("/api/booking/v1/movie/**").permitAll()
-                                .requestMatchers("/api/booking/v1/category/**").permitAll()
-                                .requestMatchers("/api/booking/v1/orders/**").hasAuthority("ADMIN")
-                                .requestMatchers("/api/booking/v1/room/**").hasAuthority("ADMIN")
-                                .requestMatchers("/api/booking/v1/dish/**").hasAuthority("ADMIN")
-                                .requestMatchers("/api/booking/v1/timeSlot/**").hasAuthority("ADMIN")
-                                .requestMatchers("/api/booking/v1/home/**").hasAuthority("CUSTOMER")
-                                .requestMatchers("/api/booking/v1/admin/**").hasAuthority("ADMIN")
-                                .requestMatchers("/api/booking/v1/staff/**").hasAuthority("EMPLOYER")
+                        auth.requestMatchers("/api/booking/v1/**").permitAll()
                                 .anyRequest().authenticated())
+                .authenticationProvider(authenticationProvider())
                 .exceptionHandling((auth) ->
                         auth.authenticationEntryPoint(jwtEntryPoint))
                 .sessionManagement((auth) ->
-                        auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        auth.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 }

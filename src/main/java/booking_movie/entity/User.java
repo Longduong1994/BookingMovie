@@ -1,6 +1,8 @@
 package booking_movie.entity;
 
 import booking_movie.constants.RankName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 @Table(name = "USERS")
 public class User {
     @Id
@@ -27,8 +30,12 @@ public class User {
     private String email;
 
     private String phone;
-
-    private String dateOfBirth;
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate dateOfBirth;
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate startDate;
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate endDate;
 
     private String card;
 
@@ -37,8 +44,7 @@ public class User {
     private String avatar;
     private String city;
     private String address;
-    private Long gender;
-    private Long theaterId;
+    private String gender;
     private LocalDate createdDate;
 
     @Enumerated(EnumType.STRING)
@@ -52,6 +58,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
 
     private Set<Role> roles;
-
     private Long theater;
+    private String theaterName;
 }

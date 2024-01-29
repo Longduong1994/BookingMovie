@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -19,9 +20,10 @@ public class Verification {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     private String verificationCode;
-    private LocalDate creatAt;
+    private LocalDateTime creatAt;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+    private boolean status;
 
 }
