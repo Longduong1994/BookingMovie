@@ -35,7 +35,7 @@ public class MovieRequestDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
 
-    private Set<Long> formats;
+//    private Set<Long> formats;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate stopDate;
@@ -44,7 +44,7 @@ public class MovieRequestDto {
     private String language;
 
     @NotEmpty(message = "rated is not empty")
-    private String rated;
+//    private String rated;
 
     private Set<Long> genreId;
 }

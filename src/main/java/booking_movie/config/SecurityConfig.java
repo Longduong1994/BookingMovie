@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests((auth) ->
-                        auth.requestMatchers("/api/booking/v1/auth/**").permitAll()
+                        auth.requestMatchers("/api/booking/v1/auth/**", "/api/booking/v1/movie/getAll").permitAll()
 
                                 .anyRequest().authenticated())
                 .exceptionHandling((auth) ->

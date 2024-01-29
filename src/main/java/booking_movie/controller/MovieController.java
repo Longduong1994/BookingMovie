@@ -32,7 +32,7 @@ public class MovieController {
     }
     @GetMapping
     public ResponseEntity<Page<MovieResponseDto>> getAllMovie(@RequestParam(defaultValue = "") String search,
-                                                              @PageableDefault(size = 2, page = 0, sort = "price", direction = Sort.Direction.ASC) Pageable pageable) {
+                                                              @PageableDefault(size = 6, page = 0, sort = "price", direction = Sort.Direction.ASC) Pageable pageable) {
         Page<MovieResponseDto> listMovie = movieService.getAllMovie(search, pageable);
         return ResponseEntity.ok(listMovie);
     }

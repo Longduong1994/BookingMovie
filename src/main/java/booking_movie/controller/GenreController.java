@@ -24,7 +24,7 @@ public class GenreController {
     private final GenreService genreService;
     @GetMapping
     public ResponseEntity<Page<GenreResponseDto>> getAllGenre( @RequestParam(defaultValue = "") String search,
-                                                              @PageableDefault(size = 2, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+                                                              @PageableDefault(size = 6, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         Page<GenreResponseDto> genrePage = genreService.getAllGenre(search, pageable);
         return ResponseEntity.ok(genrePage);
     }
