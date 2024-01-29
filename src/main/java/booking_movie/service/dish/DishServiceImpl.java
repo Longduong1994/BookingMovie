@@ -11,6 +11,7 @@ import booking_movie.mapper.DishMapper;
 import booking_movie.repository.CategoryRepository;
 import booking_movie.repository.DishRepository;
 import booking_movie.service.user.UserService;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -72,11 +73,13 @@ public class DishServiceImpl implements DishService {
 
         boolean isAdminOrManager = user.getRoles().stream()
                 .anyMatch(role -> role.getRoleName().equals(RoleName.ADMIN) || role.getRoleName().equals(RoleName.MANAGER));
-
-        if (isAdminOrManager) {
+        if(dishRepository.existsByTheater(user.getTheater())) {
+          if (isAdminOrManager) {
             return dishRepository.save(dishMapper.dishUpdateRequestDtoInto(dishUpdateRequestDto, user.getUsername()));
+          }
+           throw new DishException("No permissions granted");
         }
-        throw new DishException("No permissions granted");
+        throw new DishException("Not permission delete");
     }
 
     /**
@@ -87,7 +90,10 @@ public class DishServiceImpl implements DishService {
     @Override
     public Page<Dish> findAll(int page, int size, String search,Authentication authentication) throws DishException, UserException {
         User user = userService.userById(authentication);
-        return dishRepository.findAllByIsDeleteAndTheater(false,user.getTheater(),search, PageRequest.of(page,size));
+        if(search.equals("")){
+            return dishRepository.findAllByIsDeleteAndTheater(false,user.getTheater(),PageRequest.of(page,size));
+        }
+        return dishRepository.findAllByIsDeleteAndTheaterAndDishNameContainingIgnoreCase(false,user.getTheater(), PageRequest.of(page,size),search);
     }
 
     /**
