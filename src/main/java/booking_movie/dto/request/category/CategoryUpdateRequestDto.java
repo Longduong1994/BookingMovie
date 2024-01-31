@@ -15,6 +15,6 @@ import java.time.LocalDate;
 public class CategoryUpdateRequestDto {
     @Positive(message = "CategoryId is incorrect syntax")
     private Long id;
-    @NotEmpty
+    @NotEmpty(message = "Tên danh mục không thể để trống")
     private String categoryName;
 }

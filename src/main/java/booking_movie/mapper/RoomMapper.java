@@ -28,12 +28,12 @@ public class RoomMapper {
     }
 
     public Room toEntity(RoomRequestDto roomRequestDto) throws CustomsException {
-        Theater theater  = theaterRepository.findById(roomRequestDto.getTheaterId()).orElseThrow(() -> new CustomsException("Theater Not Found"));
+        Theater theater  = theaterRepository.findById(roomRequestDto.getTheaterId()).orElseThrow(() -> new CustomsException("Rạp chiếu không tồn tại"));
         RoomType roomType = switch (roomRequestDto.getRoomType()) {
             case "2D" -> RoomType.TWO_D;
             case "3D" -> RoomType.THREE_D;
             case "4D" -> RoomType.FOUR_D;
-            default -> throw new CustomsException("RoomType Not Found");
+            default -> throw new CustomsException("Kiểu phòng chiếu không tồn tại");
         };
         return Room.builder()
                 .roomName(roomRequestDto.getRoomName())

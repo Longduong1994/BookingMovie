@@ -9,6 +9,6 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class CategoryRequestDto {
-    @NotEmpty
+    @NotEmpty(message = "Tên thể loại không thể trống")
     private String categoryName;
 }

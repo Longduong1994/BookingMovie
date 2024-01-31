@@ -4,10 +4,12 @@ import booking_movie.dto.request.TimeSlotRequestDto;
 import booking_movie.dto.response.TimeSlotResponseDto;
 import booking_movie.entity.Movie;
 import booking_movie.entity.Room;
+import booking_movie.entity.Theater;
 import booking_movie.entity.TimeSlot;
 import booking_movie.exception.CustomsException;
 import booking_movie.repository.MovieRepository;
 import booking_movie.repository.RoomRepository;
+import booking_movie.repository.TheaterRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,22 +18,28 @@ import org.springframework.stereotype.Component;
 public class TimeSlotMapper {
     private MovieRepository movieRepository ;
     private RoomRepository roomRepository ;
+    private TheaterRepository theaterRepository;
 
     public TimeSlotResponseDto toResponse (TimeSlot timeSlot) {
         return TimeSlotResponseDto.builder()
                 .id(timeSlot.getId())
                 .movieName(timeSlot.getMovie().getMovieName())
                 .roomName(timeSlot.getRoom().getRoomName())
+                .theaterName(timeSlot.getRoom().getTheater().getTheaterName())
                 .startTime(timeSlot.getStartTime())
+                .showDateMovie(timeSlot.getShowDateMovie())
+                .roomType(timeSlot.getRoom().getRoomType().name())
                 .build();
     }
 
     public TimeSlot toEntity(TimeSlotRequestDto timeSlotRequestDto) throws CustomsException {
-        Movie movie = movieRepository.findById(timeSlotRequestDto.getMovieId()).orElseThrow(() -> new CustomsException("Movie Not Found"));
-        Room room = roomRepository.findById(timeSlotRequestDto.getRoomId()).orElseThrow(() -> new CustomsException("Room Not Found"));
+        Movie movie = movieRepository.findById(timeSlotRequestDto.getMovieId()).orElseThrow(() -> new CustomsException("Phim không tồn tại"));
+        Room room = roomRepository.findById(timeSlotRequestDto.getRoomId()).orElseThrow(() -> new CustomsException("Phòng chiếu không tồn tại"));
+        Theater theater = theaterRepository.findById(timeSlotRequestDto.getTheaterId()).orElseThrow(() -> new CustomsException("Rạp chiếu không tồn tại"));
         return TimeSlot.builder()
                 .movie(movie)
                 .room(room)
+                .showDateMovie(timeSlotRequestDto.getShowDateMovie())
                 .startTime(timeSlotRequestDto.getStartTime())
                 .isDeleted(timeSlotRequestDto.getIsDeleted())
                 .build();

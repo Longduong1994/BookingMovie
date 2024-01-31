@@ -72,15 +72,15 @@ public class UserServiceImpl implements UserService {
         User user = getUser(authentication);
         Set<Role> roles = new HashSet<>();
         if (userRepository.existsByEmail(createAccountDto.getEmail())) {
-            throw new RegisterException("Exist Email");
+            throw new RegisterException("Email đã tồn tại");
         }
 
         if (userRepository.existsByUsername(createAccountDto.getUsername())) {
-            throw new RegisterException("Exist UserName");
+            throw new RegisterException("Tên đăng nhập đã tồn tại");
         }
 
         if (userRepository.existsByPhone(createAccountDto.getPhone())) {
-            throw new RegisterException("Exist Phone");
+            throw new RegisterException("Số điện thoại đã tồn tại");
         }
         if (roleService.hasRoleAdmin(user)) {
             if (createAccountDto.getRole().equals("manager")) {
@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
             } else if (createAccountDto.getRole().equals("customer")) {
                 roles.add(roleService.getRoleCustomer());
             } else {
-                throw new NotFoundException("Role not found");
+                throw new NotFoundException("Quyền không tồn tại");
             }
         } else if (roleService.hasRoleManager(user)) {
             if (createAccountDto.getRole().equals("employer")) {
@@ -102,13 +102,13 @@ public class UserServiceImpl implements UserService {
             } else if (createAccountDto.getRole().equals("customer")) {
                 roles.add(roleService.getRoleCustomer());
             } else {
-                throw new NotFoundException("You have no rights");
+                throw new NotFoundException("Bạn không có quyền");
             }
         } else if (roleService.hasRoleEmployer(user)) {
             if (createAccountDto.getRole().equals("customer")) {
                 roles.add(roleService.getRoleCustomer());
             } else {
-                throw new NotFoundException("You have no rights");
+                throw new NotFoundException("Bạn không có quyền");
             }
         }
         String password =createAccountDto.getUsername() + UUID.randomUUID().toString().substring(0, 5);
@@ -127,13 +127,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void registerAdmin(CreateAccountDto createAccount) throws CustomsException {
         if (userRepository.existsByEmail(createAccount.getEmail())) {
-            throw new CustomsException("Exist Email");
+            throw new CustomsException("Email đã tồn tạil");
         }
         if (userRepository.existsByUsername(createAccount.getUsername())) {
-            throw new CustomsException("Exist UserName");
+            throw new CustomsException("Tên đăng nhập đã tồn tại");
         }
         if (userRepository.existsByPhone(createAccount.getPhone())) {
-            throw new CustomsException("Exist Phone");
+            throw new CustomsException("Số điện thoại đã tồn tại");
         }
         Set<Role> roles = new HashSet<>();
             roles.add(roleService.getRoleAdmin());
@@ -196,10 +196,10 @@ public class UserServiceImpl implements UserService {
     public String changePassword(ChangePasswordDto changePasswordDto, Authentication authentication) throws LoginException, CustomsException {
         User user = getUser(authentication);
         if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
-            throw new CustomsException("Old password does not match");
+            throw new CustomsException("Mật khẩu cũ không khớp");
         }
         if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getConfirmNewPassword())){
-            throw new CustomsException("Confirm new password does not match");
+            throw new CustomsException("Xác nhận mật khẩu mới không khớp");
         }
         user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
         userRepository.save(user);
@@ -259,18 +259,18 @@ public class UserServiceImpl implements UserService {
     public String setRole(Authentication authentication, String roleName, Long id) throws LoginException, CustomsException, NotFoundException {
         User user = getUser(authentication);
         if (!roleService.hasRoleAdmin(user)){
-            throw new CustomsException("You have no rights ");
+            throw new CustomsException("Bạn không có quyền ");
         }
         Optional<User> staff = userRepository.findById(id);
         if (!staff.isPresent()) {
-            throw new NotFoundException("User " + id + "not found");
+            throw new NotFoundException("Người dùng với mã " + id + " không tồn tại");
         }
         Role role = roleService.findByRoleName(roleName);
         Set<Role> setRole= new HashSet<>();
         setRole.add(role);
         staff.get().setRoles(setRole);
         userRepository.save(staff.get());
-        return "Success";
+        return "Thành công";
     }
 
     @Override
@@ -310,11 +310,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public String register(RegisterRequestDto registerRequestDto) throws RegisterException {
         if (userRepository.existsByUsername(registerRequestDto.getUsername()))
-            throw new RegisterException("Username already exists");
+            throw new RegisterException("Tên đăng nhập này đã có người dùng");
         if (userRepository.existsByEmail(registerRequestDto.getEmail()))
-            throw new RegisterException("Email already exists");
+            throw new RegisterException("Email này đã có người dùng");
         if (userRepository.existsByPhone(registerRequestDto.getPhone()))
-            throw new RegisterException("Phone already exists");
+            throw new RegisterException("Số điện thoại này đã có người dùng");
         Set<Role> roles = new HashSet<>();
         roles.add(roleService.getRoleCustomer());
         User user = userMapper.toEntity(registerRequestDto);
@@ -326,8 +326,8 @@ public class UserServiceImpl implements UserService {
         Registered successfully
         </p>
         """;
-        mailService.sendMail(registerRequestDto.getEmail(), "RegisterSuccess", emailContent);
-        return "Register successfully";
+        mailService.sendMail(registerRequestDto.getEmail(), "Đăng ký thành công", emailContent);
+        return "Đăng ký tài khoản thành công";
     }
 
     @Override
@@ -354,7 +354,7 @@ public class UserServiceImpl implements UserService {
     public User getUser(Authentication authentication) throws LoginException {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         if (userPrincipal == null) {
-            throw new LoginException("You must log in to use the service");
+            throw new LoginException("Bạn phải đăng nhập để sử dụng dịch vụ");
         }
         return userPrincipal.getUser();
     }
@@ -367,7 +367,7 @@ public class UserServiceImpl implements UserService {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
         if (userPrincipal == null || userPrincipal.getUser() == null) {
-            throw new UserException("User not found");
+            throw new UserException("Người dùng không tồn tại");
         }
 
         return userPrincipal.getUser();

@@ -46,7 +46,7 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public GenreResponseDto findById(Long id) throws CustomsException {
-        Genre genre = genreRepository.findById(id).orElseThrow(() -> new CustomsException("Genre Not Fount"));
+        Genre genre = genreRepository.findById(id).orElseThrow(() -> new CustomsException("Thể loại không tồn tại"));
         return genreMapper.toResponseDto(genre);
     }
 
@@ -55,7 +55,7 @@ public class GenreServiceImpl implements GenreService {
         User user= userService.getUser(authentication);
         List<Genre> genreList = genreRepository.findAllByIsDeleted(false);
         if (genreList.stream().anyMatch(item -> item.getGenreName().equals(genreRequestDto.getGenreName()))) {
-            throw new GenreException("Duplicate genre");
+            throw new GenreException("Tên thể loại đã tồn tại");
         }
         Genre genre = genreMapper.toEntity(genreRequestDto);
         genre.setCreateDttm(dateTimeComponent.now());
@@ -69,7 +69,7 @@ public class GenreServiceImpl implements GenreService {
     public void deleteGenre(Long idGenre) throws GenreException {
         Genre genreToDelete = genreRepository.findGenreByIdAndIsDeleted(idGenre, false);
         if(genreToDelete ==null){
-            throw new GenreException("Genre not found");
+            throw new GenreException("Thể loại không tồn tại");
         }else {
             genreToDelete.setIsDeleted(true);
             genreRepository.save(genreToDelete);
@@ -81,7 +81,7 @@ public class GenreServiceImpl implements GenreService {
         if(genre !=null){
             return genreMapper.toResponseDto(genre);
         }
-        throw new GenreException("Genre not found");
+        throw new GenreException("Thể loại không tồn tại");
     }
     @Override
     public GenreResponseDto updateGenre(GenreRequestDto genreRequestDto,Long idGenre,Authentication authentication) throws GenreException, LoginException {
@@ -95,7 +95,7 @@ public class GenreServiceImpl implements GenreService {
 
             return genreMapper.toResponseDto( genreRepository.save(genreEdit));
         }else {
-            throw new GenreException("Genre not found");
+            throw new GenreException("Thể loại không tồn tại");
         }
 
     }

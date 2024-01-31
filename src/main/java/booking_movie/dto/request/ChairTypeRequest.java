@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class ChairTypeRequest {
-    @NotEmpty(message = "chairType is not empty")
-    @NotBlank(message = "chairType is not blank")
+    @NotEmpty(message = "Kiểu ghế không thể để trống")
+    @NotBlank(message = "Kiểu ghế không chứa khoảng trắng")
     private String chairType ;
 }

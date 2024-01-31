@@ -63,7 +63,7 @@ public class PromotionServiceImpl implements PromotionService {
         if (isAdminOrManager) {
             return promotionMapper.promotionUpdateRequestDtoIntoPromotion(promotionUpdateRequestDto, user.getUsername());
         }
-        throw new PromtionException("no permissions granted");
+        throw new PromtionException("Không có quyền nào được cấp");
     }
 
     /**
@@ -88,7 +88,7 @@ public class PromotionServiceImpl implements PromotionService {
             promotionRepository.save(promotion1);
             return "Delete success";
         }
-        throw new PromtionException("Promotion not found");
+        throw new PromtionException("Không tìm thấy khuyến mãi");
     }
 
     /**

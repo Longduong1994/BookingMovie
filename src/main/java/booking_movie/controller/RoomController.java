@@ -26,6 +26,12 @@ public class RoomController {
         return new ResponseEntity<>(roomService.findAll(search,pageable), HttpStatus.OK);
     }
 
+    @GetMapping("/byIdTheater/{id}")
+    public ResponseEntity<?> getAllByTheaterId(@PathVariable Long id ) throws CustomsException {
+        return new ResponseEntity<>(roomService.findAllByTheaterId(id), HttpStatus.OK);
+    }
+
+
     @GetMapping("/getAll")
     public ResponseEntity<?> getAllNoSearch() {
         return new ResponseEntity<>(roomService.finAllNoSearch(), HttpStatus.OK);

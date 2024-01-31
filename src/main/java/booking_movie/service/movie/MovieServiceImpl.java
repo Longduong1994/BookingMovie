@@ -54,7 +54,7 @@ public class MovieServiceImpl implements MovieService {
         validateMovieRequest(movieRequestDto);
         List<Movie> genreList = movieRepository.findAllByIsDeleted(false);
         if (genreList.stream().anyMatch(item -> item.getMovieName().equals(movieRequestDto.getMovieName()))) {
-            throw new GenreException("Duplicate movie");
+            throw new GenreException("Tên phim đã tồn tại");
         }
         Movie movie=   movieMapper.toEntity(movieRequestDto);
         movie.setCreateUser(user.getUsername());
@@ -88,7 +88,7 @@ public class MovieServiceImpl implements MovieService {
     public void deleteMovie(Long idDelete) throws MovieException {
         Movie movieDelete = movieRepository.findMovieByIdAndIsDeleted(idDelete,false);
         if(movieDelete ==null){
-            throw new MovieException("movie not found");
+            throw new MovieException("Phim không tồn tại");
         }else {
             movieDelete.setIsDeleted(true);
             movieRepository.save(movieDelete);
@@ -101,7 +101,7 @@ public class MovieServiceImpl implements MovieService {
         validateMovieRequest(movieRequestDto);
         Movie movieEdit = movieRepository.findMovieByIdAndIsDeleted(idEdit,false);
         if(movieEdit ==null){
-            throw new MovieException("movie not found");
+            throw new MovieException("Phim không tồn tại");
         }else {
             movieEdit=  movieMapper.toEntity(movieRequestDto);
             movieEdit.setId(idEdit);
@@ -122,7 +122,7 @@ public class MovieServiceImpl implements MovieService {
         if(movie!=null){
             return    movieMapper.toResponseDto(movie) ;
         }else {
-            throw new MovieException("movie not found");
+            throw new MovieException("Phim không tồn tại");
         }
 
 
@@ -131,11 +131,11 @@ public class MovieServiceImpl implements MovieService {
     private void validateMovieRequest(MovieRequestDto movieRequestDto) throws MovieException {
         LocalDateTime currentDate = LocalDateTime.now();
         if (movieRequestDto.getReleaseDate() != null && movieRequestDto.getReleaseDate().isBefore(ChronoLocalDate.from(currentDate))) {
-            throw new MovieException("Release date must be in the present or future");
+            throw new MovieException("Ngày phát hành phải ở hiện tại hoặc tương lai");
         }
 
         if (movieRequestDto.getStopDate() != null && movieRequestDto.getStopDate().isBefore(movieRequestDto.getReleaseDate())) {
-            throw new MovieException("Stop date must be after release date");
+            throw new MovieException("Ngày dừng phải sau ngày phát hành");
         }
     }
     @Scheduled(cron = "0 0 2 * * ?")

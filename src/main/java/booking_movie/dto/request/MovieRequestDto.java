@@ -14,36 +14,40 @@ import java.util.Set;
 @Setter
 @Builder
 public class MovieRequestDto {
-    @NotEmpty(message = "movieName is not empty")
+    @NotEmpty(message = "Tên phim không thể để trống")
     private String movieName;
+    @NotNull(message = "Hình ảnh phim không thể để trống")
     private MultipartFile movieImage;
+    @NotNull(message = "Giá không thể để trống")
     private Double price;
-    @NotEmpty(message = "director is not empty")
+    @NotEmpty(message = "Tên tác giả không thể để trống")
     private String director;
 
-    @NotEmpty(message = "cast is not empty")
+    @NotEmpty(message = "Tên diễn viên không thể để trống")
     private String cast;
 
-    @NotEmpty(message = "description is not empty")
+    @NotEmpty(message = "Mô tả phim không thể để trống")
     private String description;
 
-    @NotNull(message = "runningTime is not null")
-    @Min(value = 45, message = "runningTime must be at least 45 minutes")
-    @Max(value = 240, message = "runningTime must be at most 240 minutes")
+    @NotNull(message = "Thời lượng không thể để trống")
+    @Min(value = 45, message = "Thời lượng ít nhất là 45 phút")
+    @Max(value = 240, message = "Thời lượng không thể nhiều hn 240 phút")
     private Long runningTime;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "Ngày khởi chiếu không thể để trống")
     private LocalDate releaseDate;
 
 //    private Set<Long> formats;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "Ngày kết thúc không thể để trống")
     private LocalDate stopDate;
 
-    @NotEmpty(message = "language is not empty")
+    @NotEmpty(message = "Ngôn ngữ không thể để trống")
     private String language;
 
-    @NotEmpty(message = "rated is not empty")
+    @NotEmpty(message = "Thể loại không thể để trống")
 //    private String rated;
 
     private Set<Long> genreId;

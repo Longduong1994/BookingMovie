@@ -21,17 +21,17 @@ public class RegisterRequestDto {
     private String username;
     @NotEmpty(message = "Không được để trống")
     @NotBlank(message = "Không được có khoảng trắng")
-    @Pattern(regexp ="^(?=.*[A-Za-z])(?=.*\\d).{8,}$",message = "Must be greater than 8 characters with 1 uppercase letter, 1 lowercase letter and 1 number")
+    @Pattern(regexp ="^(?=.*[A-Za-z])(?=.*\\d).{8,}$",message = "Phải lớn hơn 8 ký tự với 1 chữ hoa, 1 chữ thường và 1 số")
     private String password;
     @NotEmpty(message = "Không được để trống")
     @NotBlank(message = "Không được có khoảng trắng")
-    @Pattern(regexp ="^[A-Za-z0-9+_.-]+@(.+)$",message = "Email invalidate")
+    @Pattern(regexp ="^[A-Za-z0-9+_.-]+@(.+)$",message = "Email không đúng định dạng")
     private String email;
     @NotEmpty(message = "Không được để trống")
     @NotBlank(message = "Không được có khoảng trắng")
-    @Pattern(regexp = "^(09|01[2|6|8|9])[0-9]{8}$", message = "Phone number invalid")
+    @Pattern(regexp = "^(09|01[2|6|8|9])[0-9]{8}$", message = "Số điện thoại không đúng định dạng")
     private String phone;
-    @NotNull(message = "The dateOfBirth field cannot be left blank.")
+    @NotNull(message = "Ngày sinh không thể để trống")
     @NotNull(message = "Không được để trống.")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;

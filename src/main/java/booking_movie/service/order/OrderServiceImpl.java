@@ -44,15 +44,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponseDto create(Authentication authentication, OrderRequestDto orderRequestDto) throws LoginException, CustomsException, NotFoundException {
         User user = userService.getUser(authentication);
-        Location location = locationRepository.findById(orderRequestDto.getLocationId()).orElseThrow(() -> new NotFoundException("Location not found"));
-        Theater theater = theaterRepository.findById(orderRequestDto.getTheaterId()).orElseThrow(() -> new NotFoundException("Theater not found"));
-        Room room = roomRepository.findById(orderRequestDto.getRoomId()).orElseThrow(() -> new NotFoundException("Room not found"));
-        Movie movie = movieRepository.findById(orderRequestDto.getMovieId()).orElseThrow(() -> new NotFoundException("Movie not found"));
-        Payment payment = paymentRepository.findById(orderRequestDto.getPaymentId()).orElseThrow(() -> new NotFoundException("Payment not found"));
+        Location location = locationRepository.findById(orderRequestDto.getLocationId()).orElseThrow(() -> new NotFoundException("Vị trí không tồn tại"));
+        Theater theater = theaterRepository.findById(orderRequestDto.getTheaterId()).orElseThrow(() -> new NotFoundException("Rạp chiếu không tồn tại"));
+        Room room = roomRepository.findById(orderRequestDto.getRoomId()).orElseThrow(() -> new NotFoundException("Phòng chiếu không tồn tại"));
+        Movie movie = movieRepository.findById(orderRequestDto.getMovieId()).orElseThrow(() -> new NotFoundException("Phim không tồn tại"));
+        Payment payment = paymentRepository.findById(orderRequestDto.getPaymentId()).orElseThrow(() -> new NotFoundException("Hình thức thanh toàn không tồn tại"));
         Set<Chair> chairSet = orderRequestDto.getChairIds().stream()
                 .map(chair -> {
                     try {
-                        return chairRepository.findById(chair).orElseThrow(() -> new NotFoundException("Chair not found"));
+                        return chairRepository.findById(chair).orElseThrow(() -> new NotFoundException("Ghế không tồn tại"));
                     } catch (NotFoundException e) {
                         throw new RuntimeException(e);
                     }
@@ -132,7 +132,7 @@ public class OrderServiceImpl implements OrderService {
 
              }
          }
-         throw new OrderException("Order not found");
+         throw new OrderException("Đơn đặt hàng không tồn tại");
      }
 
 //     /**

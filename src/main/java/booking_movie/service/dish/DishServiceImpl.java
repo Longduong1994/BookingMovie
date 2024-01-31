@@ -39,11 +39,11 @@ public class DishServiceImpl implements DishService {
     public Dish create(DishRequestDto dishRequestDto, Authentication authentication) throws DishException, UserException {
         User user = userService.userById(authentication);
         if (dishRepository.existsByDishName(dishRequestDto.getDishName())) {
-            throw new DishException("Dish is exist");
+            throw new DishException("Tên sản phầm đã tồn tại");
         }
 
         if (categoryRepository.findById(dishRequestDto.getCategoryId()).isEmpty()) {
-            throw new DishException("Category not found");
+            throw new DishException("Không tồn tại danh mục");
         }
         boolean isAdminOrManager = user.getRoles().stream()
                 .anyMatch(role -> role.getRoleName().equals(RoleName.ADMIN) || role.getRoleName().equals(RoleName.MANAGER));
@@ -52,7 +52,7 @@ public class DishServiceImpl implements DishService {
             dish.setTheater(user.getTheater());
             return dishRepository.save(dish);
         }
-        throw new DishException("No permissions granted");
+        throw new DishException("Không có quyền nào được cấp");
     }
 
     /**
@@ -67,7 +67,7 @@ public class DishServiceImpl implements DishService {
         User user = userService.userById(authentication);
 
         if (dishRepository.existsByDishName(dishUpdateRequestDto.getDishName())) {
-            throw new DishException("Dish is exist");
+            throw new DishException("Tên sản phẩm đã tồn tại");
         }
 
         boolean isAdminOrManager = user.getRoles().stream()
@@ -76,7 +76,7 @@ public class DishServiceImpl implements DishService {
         if (isAdminOrManager) {
             return dishRepository.save(dishMapper.dishUpdateRequestDtoInto(dishUpdateRequestDto, user.getUsername()));
         }
-        throw new DishException("No permissions granted");
+        throw new DishException("Không có quyền nào được cấp");
     }
 
     /**
@@ -103,7 +103,7 @@ public class DishServiceImpl implements DishService {
             dish1.setUpdateTime(LocalDate.now());
             dish1.setUpdateUser(user.getUsername());
             dishRepository.save(dish1);
-            return "Delete success";
+            return "Xoá thành công";
     }
 
     /**
@@ -116,6 +116,6 @@ public class DishServiceImpl implements DishService {
         Optional<Dish> dish = dishRepository.findById(id);
         if (dish.isPresent()){
             return dish.get();
-        }throw new DishException("Dish not found");
+        }throw new DishException("Sản phẩm không tồn tại");
     }
 }

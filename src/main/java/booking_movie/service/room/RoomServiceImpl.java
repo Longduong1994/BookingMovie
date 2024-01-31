@@ -46,6 +46,13 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public List<RoomResponseDto> findAllByTheaterId(Long idTheater) throws CustomsException {
+        Theater theater = theaterRepository.findById(idTheater).orElseThrow(()-> new CustomsException("Rạp chiếu không tồn tại"));
+        List<Room> list = roomRepository.findAllByTheaterIdAndIsDeletedFalse(idTheater);
+        return list.stream().map(item -> roomMapper.toResponse(item)).collect(Collectors.toList());
+    }
+
+    @Override
     public List<RoomResponseDto> finAllNoSearch() {
         List<Room> list = roomRepository.findAll();
         return list.stream().map(item -> roomMapper.toResponse(item)).collect(Collectors.toList());
@@ -53,17 +60,17 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomResponseDto findById(Long id) throws CustomsException {
-        Room room = roomRepository.findById(id).orElseThrow(() -> new CustomsException("Room Not Found")) ;
+        Room room = roomRepository.findById(id).orElseThrow(() -> new CustomsException("Phòng chiếu không tồn tại")) ;
         return roomMapper.toResponse(room);
     }
 
     @Override
     public RoomResponseDto save(Authentication authentication, RoomRequestDto roomRequestDto) throws  CustomsException {
         if (roomRepository.existsByRoomNameAndTheaterId(roomRequestDto.getRoomName(), roomRequestDto.getTheaterId())){
-            throw new CustomsException("Exits RoomName") ;
+            throw new CustomsException("Tên phòng chiếu đã tồn tại") ;
         }
         if (roomRequestDto.getNumberOfSeatsInARow() < 0 && roomRequestDto.getNumberOfSeatsInAColumn() < 0 ) {
-            throw new CustomsException("The number of seats cannot be negative") ;
+            throw new CustomsException("Số ghế không thể âm") ;
         }
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         String string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -97,14 +104,14 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomResponseDto update(Authentication authentication,Long id, RoomUpdateRequestDto roomUpdateRequestDto) throws CustomsException {
-        Room room = roomRepository.findById(id).orElseThrow(() -> new CustomsException("Room Not Found"));
-        Theater theater = theaterRepository.findById(roomUpdateRequestDto.getTheaterId()).orElseThrow(()-> new CustomsException("Theater Not Found"));
+        Room room = roomRepository.findById(id).orElseThrow(() -> new CustomsException("Phòng chiếu không tồn tại"));
+        Theater theater = theaterRepository.findById(roomUpdateRequestDto.getTheaterId()).orElseThrow(()-> new CustomsException("Rạp chiếu không tồn tại"));
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         RoomType roomType = switch (roomUpdateRequestDto.getRoomType()) {
             case "2D" -> RoomType.TWO_D;
             case "3D" -> RoomType.THREE_D;
             case "4D" -> RoomType.FOUR_D;
-            default -> throw new CustomsException("RoomType Not Found");
+            default -> throw new CustomsException("Kiểu phòng chiếu không tồn tại");
         };
         room.setId(id);
         room.setRoomName(roomUpdateRequestDto.getRoomName());
@@ -119,7 +126,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public void isDelete(Authentication authentication,Long id) throws CustomsException {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        Room room = roomRepository.findById(id).orElseThrow(() -> new CustomsException("Room Not Found"));
+        Room room = roomRepository.findById(id).orElseThrow(() -> new CustomsException("Phòng chiếu không tồn tại"));
         room.setIsDeleted(!room.getIsDeleted());
         room.setUpdateTime(LocalDateTime.now());
         room.setUpdateUser(userPrincipal.getUsername());
@@ -136,14 +143,14 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomResponseDto findByMovieAndDateBookingAndLocationAndTypeAndTimeSlot(Long idMovie, DateTimeAndLocationAndTypeAndTimeSlotRequest request) throws CustomsException {
-        Movie movie = movieRepository.findById(idMovie).orElseThrow(()-> new CustomsException("Movie Not Found"));
-        Location location = locationRepository.findById(request.getIdLocation()).orElseThrow(()-> new CustomsException("Location Not Found"));
-        TimeSlot timeSlot = timeSlotRepository.findById(request.getIdTimeSlot()).orElseThrow(()-> new CustomsException("TimeSlot Not Found"));
+        Movie movie = movieRepository.findById(idMovie).orElseThrow(()-> new CustomsException("Phim không tồn tại"));
+        Location location = locationRepository.findById(request.getIdLocation()).orElseThrow(()-> new CustomsException("Vị trí không tồn tại"));
+        TimeSlot timeSlot = timeSlotRepository.findById(request.getIdTimeSlot()).orElseThrow(()-> new CustomsException("Xuất chiếu không tồn tại"));
         RoomType roomType = switch (request.getType()){
             case "2D" -> RoomType.TWO_D;
             case "3D" -> RoomType.THREE_D;
             case "4D" -> RoomType.FOUR_D;
-            default -> throw new  CustomsException(request.getType() + " Not Found");
+            default -> throw new  CustomsException(request.getType() + "  không tồn tại");
         };
         if (request.getDateBooking() == null) {
             request.setDateBooking(LocalDate.now());

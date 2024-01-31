@@ -11,10 +11,9 @@ import lombok.*;
 @Setter
 @Builder
 public class TheaterRequestDto {
-    @NotEmpty(message = "theaterName is not empty")
-    @NotBlank(message = "theaterName is not blank")
+    @NotEmpty(message = "Tên rạp chiếu không thể để trống")
     private String theaterName ;
-    @NotNull(message = "locationId is not null")
+    @NotNull(message = "Mã vị trí không thể để trống")
     private Long locationId ;
     private Boolean isDeleted;
 }
