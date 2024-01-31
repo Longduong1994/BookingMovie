@@ -21,6 +21,13 @@ import org.springframework.web.bind.annotation.*;
 public class LocationController {
     private LocationService locationService ;
 
+
+
+    @GetMapping("/getAll")
+    public ResponseEntity<?> findAll(){
+        return new ResponseEntity<>(locationService.findAll(),HttpStatus.OK);
+    }
+
     /*
     * TODO : param ( search / page / limit / sortBy )
     * */

@@ -24,6 +24,12 @@ public class LocationServiceImpl implements LocationService {
     private LocationRepository locationRepository ;
     private ChairRepository chairRepository ;
     private LocationMapper locationMapper ;
+
+    @Override
+    public List<Location> findAll() {
+        return locationRepository.findAll();
+    }
+
     @Override
     public Page<LocationResponseDto> findAll(String search, Pageable pageable) {
         Page<Location> locationPage ;

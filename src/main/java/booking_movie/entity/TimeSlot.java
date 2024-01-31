@@ -1,6 +1,7 @@
 package booking_movie.entity;
 
 import booking_movie.constants.RoomType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +28,7 @@ public class TimeSlot {
     private Movie movie;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
+    @JsonIgnore
     private Room room;
     @Column(columnDefinition = "TIME")
     private LocalTime startTime;
