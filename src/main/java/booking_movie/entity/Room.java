@@ -1,6 +1,7 @@
 package booking_movie.entity;
 
 import booking_movie.constants.RoomType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,10 +29,12 @@ public class Room {
     public String createUser;
     public String updateUser;
     private Boolean isDeleted;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "theater_id")
+    @JsonIgnore
     private Theater theater;
     @OneToMany(mappedBy = "room")
+    @JsonIgnore
     private Set<TimeSlot> timeSlots ;
 
 }
