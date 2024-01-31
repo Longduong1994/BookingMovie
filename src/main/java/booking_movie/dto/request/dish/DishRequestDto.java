@@ -12,9 +12,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class DishRequestDto {
 
-    @NotNull
+    @NotNull(message = "dishName not found")
     private String dishName;
 
+    @NotNull(message = "Image is required")
     private MultipartFile image;
 
     @Positive(message = "CategoryId is incorrect syntax")

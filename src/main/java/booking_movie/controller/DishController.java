@@ -46,4 +46,8 @@ public class DishController {
     public ResponseEntity<?> deleteDish(Authentication authentication, @PathVariable Long id) throws DishException, UserException {
         return new ResponseEntity<>(dishService.delete(id,authentication),HttpStatus.OK);
     }
+    @GetMapping("/list")
+    public ResponseEntity<?> getAllList(){
+        return new ResponseEntity<>(dishService.findAllList(),HttpStatus.OK);
+    }
 }
