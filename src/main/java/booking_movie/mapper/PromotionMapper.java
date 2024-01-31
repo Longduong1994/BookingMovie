@@ -23,9 +23,11 @@ public class PromotionMapper {
                 .salePrice(promotionRequestDto.getSalePrice())
                 .startDate(promotionRequestDto.getStartDate())
                 .endDate(promotionRequestDto.getEndDate())
+                .createUser(userName)
                 .updateUser(userName)
                 .createTime(LocalDate.now())
                 .updateTime(LocalDate.now())
+                .description(promotionRequestDto.getDescription())
                 .isDelete(false).build();
     }
 
@@ -34,9 +36,8 @@ public class PromotionMapper {
         if (promotion.isPresent()) {
             Promotion promotion1 = promotion.get();
             promotion1.setEventName(promotionUpdateRequestDto.getEventName());
-            promotion1.setEventCode(promotionUpdateRequestDto.getEventCode());
+            promotion1.setDescription(promotionUpdateRequestDto.getDescription());
             promotion1.setSalePrice(promotionUpdateRequestDto.getSalePrice());
-            promotion1.setSalePercent(promotionUpdateRequestDto.getSalePercent());
             promotion1.setStartDate(promotionUpdateRequestDto.getStartDate());
             promotion1.setEndDate(promotionUpdateRequestDto.getEndDate());
             promotion1.setUpdateTime(LocalDate.now());

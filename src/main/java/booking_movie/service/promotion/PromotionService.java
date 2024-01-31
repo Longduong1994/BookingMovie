@@ -8,6 +8,7 @@ import booking_movie.exception.UserException;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PromotionService {
@@ -15,4 +16,6 @@ public interface PromotionService {
     Promotion update(PromotionUpdateRequestDto promotionUpdateRequestDto,Authentication authentication) throws PromtionException, UserException;
     Page<Promotion> findAll(Integer page, Integer size, String search,Authentication authentication) throws PromtionException, UserException;
     String delete(Long id,Authentication authentication) throws PromtionException, UserException;
+    Promotion findById(Long id) throws PromtionException;
+    List <Promotion> findAllList();
 }

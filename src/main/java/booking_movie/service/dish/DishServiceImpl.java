@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,6 +39,9 @@ public class DishServiceImpl implements DishService {
      */
     @Override
     public Dish create(DishRequestDto dishRequestDto, Authentication authentication) throws DishException, UserException {
+        if(dishRequestDto.getImage().isEmpty()){
+            throw new DishException("dsfhdfhđkfhjk");
+        }
         User user = userService.userById(authentication);
         if (dishRepository.existsByDishName(dishRequestDto.getDishName())) {
             throw new DishException("Dish is exist");
@@ -123,5 +127,10 @@ public class DishServiceImpl implements DishService {
         if (dish.isPresent()){
             return dish.get();
         }throw new DishException("Dish not found");
+    }
+
+    @Override
+    public List<Dish> findAllList() {
+        return dishRepository.findAll();
     }
 }
