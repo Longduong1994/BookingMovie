@@ -2,8 +2,6 @@ package booking_movie.dto.response;
 
 import booking_movie.entity.Format;
 import booking_movie.constants.MovieStatus;
-import booking_movie.entity.Format;
-import booking_movie.entity.Genre;
 import lombok.*;
 
 import java.time.LocalDate;
