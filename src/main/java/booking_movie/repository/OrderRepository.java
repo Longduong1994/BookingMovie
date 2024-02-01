@@ -15,4 +15,7 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
 
     @Query("SELECT sum(O.total)FROM Order O JOIN O.user User  where User.id =:user_id AND year (O.createTime)=:year ")
     Double getTotal(@Param("user_id") Long userId,@Param("year") Long year);
+
+    @Query("SELECT SUM(O.total) FROM Order O WHERE O.user = :user AND YEAR(O.createTime) = YEAR(CURRENT_DATE)")
+    Double getTotalUser(@Param("user") User user);
 }

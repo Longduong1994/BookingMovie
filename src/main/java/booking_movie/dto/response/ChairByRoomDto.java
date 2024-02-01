@@ -7,15 +7,18 @@ public class ChairByRoomDto {
     private String chairName;
     private ChairType chairType;
     private String status;
+    private Boolean isDeleted;
+
 
     public ChairByRoomDto() {
     }
 
-    public ChairByRoomDto(Long id, String chairName, ChairType chairType, String status) {
+    public ChairByRoomDto(Long id, String chairName, ChairType chairType, String status, Boolean isDeleted) {
         this.id = id;
         this.chairName = chairName;
         this.chairType = chairType;
         this.status = status;
+        this.isDeleted = isDeleted;
     }
 
     public Long getId() {
@@ -48,5 +51,13 @@ public class ChairByRoomDto {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }

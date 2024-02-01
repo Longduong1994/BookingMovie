@@ -1,5 +1,6 @@
 package booking_movie.controller;
 
+import booking_movie.service.order.OrderService;
 import booking_movie.service.payment.MomoService;
 import booking_movie.service.payment.PayPalService;
 import booking_movie.service.payment.VNPayService;
@@ -29,6 +30,7 @@ public class PaymentController {
     private final PayPalService paypalService;
     private final MomoService momoService;
     private final ZaLoPayService zaLoPayService;
+    private final OrderService orderService;
 
 
 
@@ -94,17 +96,28 @@ public class PaymentController {
 
 
     //VNPay
-    @GetMapping("/pay")
-    public String getPay(@RequestParam(defaultValue = "10000") long price,@RequestParam(defaultValue = "1") Long orderId) throws UnsupportedEncodingException {
-
-        return vnPayService.createPayment(price, orderId);
+    @GetMapping("/createVNPay")
+    public ResponseEntity<?> submitOrder(@RequestParam String total) throws UnsupportedEncodingException {
+        Long amount = Long.parseLong(total);
+        return new ResponseEntity<>(vnPayService.createOrder(amount),HttpStatus.OK);
     }
 
     @GetMapping("payment-callback")
-    public void paymentCallback(@RequestParam Map<String, String> queryParams, HttpServletResponse response) throws IOException {
+    public void paymentCallback(@RequestParam Map<String, String> queryParams,HttpServletResponse response) throws IOException {
+        String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
 
+            if ("00".equals(vnp_ResponseCode)) {
+                // Giao dịch thành công
+                // Thực hiện các xử lý cần thiết, ví dụ: cập nhật CSDL
+
+                response.sendRedirect("http://localhost:3000/booking-success");
+            } else {
+                // Giao dịch thất bại
+                // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL\
+                response.sendRedirect("http://localhost:3000/booking-failed");
+
+            }
     }
-
 
 
     // ZaLoPay
