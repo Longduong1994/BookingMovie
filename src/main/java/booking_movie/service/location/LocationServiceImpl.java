@@ -80,7 +80,7 @@ public class LocationServiceImpl implements LocationService {
     public void isDelete(Authentication authentication,Long id) throws CustomsException {
         Location location = locationRepository.findById(id).orElseThrow(() -> new CustomsException("Vị trí không tồn tại"));
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        location.setIsDelete(!location.getIsDelete());
+        location.setIsDelete(true);
         location.setUpdateTime(LocalDateTime.now());
         location.setUpdateUser(userPrincipal.getUsername());
         locationRepository.save(location);

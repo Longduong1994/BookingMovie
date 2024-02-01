@@ -42,20 +42,38 @@ public class RoomServiceImpl implements RoomService {
         } else  {
             roomPage = roomRepository.findAllByRoomNameContainingIgnoreCaseAndIsDeletedFalse(search, pageable);
         }
-        return roomPage.map(item -> roomMapper.toResponse(item));
+        return roomPage.map(item -> {
+            try {
+                return roomMapper.toResponse(item);
+            } catch (CustomsException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
     public List<RoomResponseDto> findAllByTheaterId(Long idTheater) throws CustomsException {
         Theater theater = theaterRepository.findById(idTheater).orElseThrow(()-> new CustomsException("Rạp chiếu không tồn tại"));
         List<Room> list = roomRepository.findAllByTheaterIdAndIsDeletedFalse(idTheater);
-        return list.stream().map(item -> roomMapper.toResponse(item)).collect(Collectors.toList());
+        return list.stream().map(item -> {
+            try {
+                return roomMapper.toResponse(item);
+            } catch (CustomsException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toList());
     }
 
     @Override
     public List<RoomResponseDto> finAllNoSearch() {
         List<Room> list = roomRepository.findAll();
-        return list.stream().map(item -> roomMapper.toResponse(item)).collect(Collectors.toList());
+        return list.stream().map(item -> {
+            try {
+                return roomMapper.toResponse(item);
+            } catch (CustomsException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -127,7 +145,7 @@ public class RoomServiceImpl implements RoomService {
     public void isDelete(Authentication authentication,Long id) throws CustomsException {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Room room = roomRepository.findById(id).orElseThrow(() -> new CustomsException("Phòng chiếu không tồn tại"));
-        room.setIsDeleted(!room.getIsDeleted());
+        room.setIsDeleted(true);
         room.setUpdateTime(LocalDateTime.now());
         room.setUpdateUser(userPrincipal.getUsername());
         roomRepository.save(room);

@@ -1,6 +1,7 @@
 package booking_movie.controller;
 
 import booking_movie.dto.request.MovieRequestDto;
+import booking_movie.dto.request.MovieUpdateRequestDto;
 import booking_movie.dto.response.MovieResponseDto;
 import booking_movie.exception.LoginException;
 import booking_movie.exception.MovieException;
@@ -59,8 +60,8 @@ public class MovieController {
         return new ResponseEntity<>(movieService.getMovieById(idMovie),HttpStatus.OK) ;
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateMovie(@Valid @PathVariable Long id, @ModelAttribute MovieRequestDto movieRequestDto,Authentication authentication, BindingResult bindingResult) throws MovieException, LoginException {
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateMovie(@Valid @PathVariable Long id, @ModelAttribute MovieUpdateRequestDto movieRequestDto, Authentication authentication, BindingResult bindingResult) throws MovieException, LoginException {
         if (bindingResult.hasErrors()) {
             return handleValidationErrors(bindingResult);
         }

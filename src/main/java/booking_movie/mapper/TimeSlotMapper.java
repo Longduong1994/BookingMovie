@@ -20,15 +20,24 @@ public class TimeSlotMapper {
     private RoomRepository roomRepository ;
     private TheaterRepository theaterRepository;
 
-    public TimeSlotResponseDto toResponse (TimeSlot timeSlot) {
+    public TimeSlotResponseDto toResponse (TimeSlot timeSlot) throws CustomsException {
+        String typeTime = switch (timeSlot.getRoom().getRoomType()) {
+            case TWO_D -> "2D" ;
+            case THREE_D -> "3D";
+            case FOUR_D -> "4D";
+            default -> throw new CustomsException("Kiểu Phòng Không tồn tại") ;
+        };
         return TimeSlotResponseDto.builder()
                 .id(timeSlot.getId())
                 .movieName(timeSlot.getMovie().getMovieName())
+                .movieId(timeSlot.getMovie().getId())
                 .roomName(timeSlot.getRoom().getRoomName())
+                .roomId(timeSlot.getRoom().getId())
                 .theaterName(timeSlot.getRoom().getTheater().getTheaterName())
+                .theaterId(timeSlot.getRoom().getTheater().getId())
                 .startTime(timeSlot.getStartTime())
                 .showDateMovie(timeSlot.getShowDateMovie())
-                .roomType(timeSlot.getRoom().getRoomType().name())
+                .roomType(typeTime)
                 .build();
     }
 

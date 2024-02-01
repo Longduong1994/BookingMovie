@@ -52,7 +52,7 @@ public class RoomController {
         return new ResponseEntity<>(roomService.update(authentication,id,roomUpdateRequestDto), HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> isDelete(Authentication authentication,@PathVariable Long id) throws CustomsException {
         roomService.isDelete(authentication,id);
         String success = "Room Deleted" ;

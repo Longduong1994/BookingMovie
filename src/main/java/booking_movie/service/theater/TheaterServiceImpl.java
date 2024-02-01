@@ -90,7 +90,7 @@ public class TheaterServiceImpl implements TheaterService {
     public void isDelete(Authentication authentication,Long id) throws CustomsException {
         Theater theater = theaterRepository.findById(id).orElseThrow(() -> new CustomsException("Rạp chiếu không tồn tại"));
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        theater.setIsDeleted(!theater.getIsDeleted());
+        theater.setIsDeleted(true);
         theater.setUpdateTime(LocalDateTime.now());
         theater.setUpdateUser(userPrincipal.getUsername());
         theaterRepository.save(theater);

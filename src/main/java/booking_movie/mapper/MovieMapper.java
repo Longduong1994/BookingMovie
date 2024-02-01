@@ -26,6 +26,9 @@ public class MovieMapper {
         Set<String> genreNames = movie.getGenres().stream()
                 .map(Genre::getGenreName)
                 .collect(Collectors.toSet());
+        Set<Long> genreIDs = movie.getGenres().stream()
+                .map(Genre::getId)
+                .collect(Collectors.toSet());
         return MovieResponseDto.builder()
                 .id(movie.getId())
                 .movieImage(movie.getMovieImage())
@@ -41,6 +44,7 @@ public class MovieMapper {
                 .rated(movie.getRated())
                 .movieStatus(movie.getMovieStatus())
                 .genreName(genreNames)
+                .genreId(genreIDs)
                 .build();
     }
     public Movie toEntity(MovieRequestDto movieRequestDto)  {

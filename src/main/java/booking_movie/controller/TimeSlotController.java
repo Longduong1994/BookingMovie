@@ -45,6 +45,13 @@ public class TimeSlotController {
         return new ResponseEntity<>(timeSlotService.update(authentication, id, timeSlotRequestDto), HttpStatus.OK);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> isDelete(Authentication authentication,@PathVariable Long id ) throws CustomsException {
+        timeSlotService.isDelete(authentication, id);
+        String success = "Xoá thành công";
+        return new ResponseEntity<>(success, HttpStatus.OK);
+    }
+
 //    @DeleteMapping()
 //    public ResponseEntity<?> delete() {
 //        timeSlotService.delete();

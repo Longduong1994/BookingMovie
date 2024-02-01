@@ -44,7 +44,7 @@ public class TheaterController {
         return new ResponseEntity<>(theaterService.update(authentication,id, theaterRequestDto), HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> isDelete(Authentication authentication,@PathVariable Long id) throws CustomsException {
         theaterService.isDelete(authentication,id);
         String success = "Theater deleted" ;

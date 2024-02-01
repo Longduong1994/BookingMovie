@@ -13,8 +13,11 @@ import java.time.LocalTime;
 public class TimeSlotResponseDto {
     private Long id ;
     private String movieName ;
+    private Long movieId ;
     private String roomName ;
+    private Long roomId ;
     private String theaterName ;
+    private Long theaterId;
     private LocalTime startTime ;
     private LocalDate showDateMovie;
     private String roomType;

@@ -1,6 +1,7 @@
 package booking_movie.service.movie;
 
 import booking_movie.dto.request.MovieRequestDto;
+import booking_movie.dto.request.MovieUpdateRequestDto;
 import booking_movie.dto.response.MovieResponseDto;
 
 import booking_movie.entity.Movie;
@@ -19,7 +20,7 @@ public interface MovieService {
     MovieResponseDto createMovie(MovieRequestDto movieRequestDto, Authentication authentication) throws MovieException, LoginException;
 
     void deleteMovie(Long idDelete) throws MovieException;
-    MovieResponseDto updateMovie(MovieRequestDto movieRequestDto,Authentication authentication ,Long idEdit) throws MovieException, LoginException;
+    MovieResponseDto updateMovie(MovieUpdateRequestDto movieRequestDto, Authentication authentication , Long idEdit) throws MovieException, LoginException;
 
     MovieResponseDto getMovieById(Long idMovie) throws MovieException;
 }

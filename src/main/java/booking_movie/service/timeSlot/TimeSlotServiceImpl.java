@@ -33,7 +33,13 @@ public class TimeSlotServiceImpl implements TimeSlotService {
         } else {
             page = timeSlotRepository.findAllByStartTimeAndIsDeletedFalse(LocalTime.parse(search), pageable);
         }
-        return page.map(item -> timeSlotMapper.toResponse(item));
+        return page.map(item -> {
+            try {
+                return timeSlotMapper.toResponse(item);
+            } catch (CustomsException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     private TimeSlotRepository timeSlotRepository ;
@@ -46,7 +52,13 @@ public class TimeSlotServiceImpl implements TimeSlotService {
     @Override
     public List<TimeSlotResponseDto> findAllNoSearch() {
         List<TimeSlot> list = timeSlotRepository.findAllByIsDeletedFalse();
-        return list.stream().map(item -> timeSlotMapper.toResponse(item)).collect(Collectors.toList());
+        return list.stream().map(item -> {
+            try {
+                return timeSlotMapper.toResponse(item);
+            } catch (CustomsException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -89,7 +101,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
     public void isDelete(Authentication authentication, Long id) throws CustomsException {
         TimeSlot timeSlot = timeSlotRepository.findById(id).orElseThrow(() -> new CustomsException("Xuất chiếu không tồn tại"));
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        timeSlot.setIsDeleted(!timeSlot.getIsDeleted());
+        timeSlot.setIsDeleted(true);
         timeSlot.setUpdateTime(LocalDateTime.now());
         timeSlot.setUpdateUser(userPrincipal.getUsername());
         timeSlotRepository.save(timeSlot);
@@ -125,6 +137,12 @@ public class TimeSlotServiceImpl implements TimeSlotService {
         }
 
         List<TimeSlot> timeSlot = timeSlotRepository.findAllByIdMovieAndDateBookingAndIdLocationAndTypeAndIdTheater(idMovie, request.getDateBooking(), request.getIdLocation(), roomType);
-       return timeSlot.stream().map(item -> timeSlotMapper.toResponse(item)).collect(Collectors.toList());
+       return timeSlot.stream().map(item -> {
+           try {
+               return timeSlotMapper.toResponse(item);
+           } catch (CustomsException e) {
+               throw new RuntimeException(e);
+           }
+       }).collect(Collectors.toList());
     }
 }

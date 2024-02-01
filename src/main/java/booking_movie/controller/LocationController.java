@@ -63,7 +63,7 @@ public class LocationController {
     /*
      * TODO : param ( id )
      * */
-    @PatchMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> isDelete(Authentication authentication,@PathVariable Long id) throws CustomsException {
         locationService.isDelete(authentication,id) ;
         String success = "Location Deleted" ;
