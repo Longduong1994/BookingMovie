@@ -38,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Category create(CategoryRequestDto categoryRequestDto, Authentication authentication) throws CategoryException, UserException {
         User user = userService.userById(authentication);
         if (categoryRepository.existsByCategoryName(categoryRequestDto.getCategoryName())) {
-            throw new CategoryException("CategoryName already exist");
+            throw new CategoryException("Tên danh mục đã tồn tại");
         }
 
         boolean isAdminOrManager = user.getRoles().stream()
@@ -48,7 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
             category.setTheater(user.getTheater());
             return categoryRepository.save(category);
         }
-        throw new CategoryException("No permissions granted");
+        throw new CategoryException("Không có quyền nào được cấp");
     }
 
     /**
@@ -60,7 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Category update(CategoryUpdateRequestDto categoryUpdateRequestDto, Authentication authentication) throws CategoryException, UserException {
         User user= userService.userById(authentication);
         if (categoryRepository.existsByCategoryName(categoryUpdateRequestDto.getCategoryName())) {
-            throw new CategoryException("CategoryName already exist");
+            throw new CategoryException("Tên danh mục đã tồn tại");
         }
         boolean isAdminOrManager = user.getRoles().stream()
                 .anyMatch(role -> role.getRoleName().equals(RoleName.ADMIN) || role.getRoleName().equals(RoleName.MANAGER));
@@ -68,7 +68,7 @@ public class CategoryServiceImpl implements CategoryService {
             Category category = categoryMapper.categoryUpdateRequestDtoIntoCategory(categoryUpdateRequestDto,user.getUsername());
             return categoryRepository.save(category);
         }
-        throw new CategoryException("no permissions granted");
+        throw new CategoryException("Không có quyền nào được cấp");
     }
 
     /**
@@ -99,10 +99,10 @@ public class CategoryServiceImpl implements CategoryService {
                 c.setUpdateTime(LocalDate.now());
                 c.setUpdateUser(user.getUsername());
                 categoryRepository.save(c);
-                return "Delete success";
+                return "Xoá Thành Công";
             }
         }
-        throw new CategoryException("no permissions granted");
+        throw new CategoryException("Không có quyền nào được cấp");
     }
 
 }

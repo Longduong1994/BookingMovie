@@ -32,8 +32,6 @@ import booking_movie.repository.OrderRepository;
 public class OrderServiceImpl implements OrderService {
 
     private final UserService userService;
-    private final LocationRepository locationRepository;
-    private final TheaterRepository theaterRepository;
     private final MovieRepository movieRepository;
     private final RoomRepository roomRepository;
     private final ChairRepository chairRepository;

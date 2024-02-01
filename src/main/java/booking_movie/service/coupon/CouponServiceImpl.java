@@ -36,7 +36,7 @@ public class CouponServiceImpl implements CouponService{
         String codeNew = randomCode(couponRequestDto,authentication);
         Optional<User> user = userRepository.findById(couponRequestDto.getUser());
         if(user.isEmpty()){
-            throw new Exception("Not found");
+            throw new Exception("Khuyến mãi không tồn tại");
         }
         Coupon coupon = Coupon.builder().code(codeNew)
                 .description(couponRequestDto.getDescription())

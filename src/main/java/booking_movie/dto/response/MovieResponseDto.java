@@ -30,4 +30,5 @@ public class MovieResponseDto {
     private Long runningTime;
     private LocalDate releaseDate;
     private Set<String> genreName;
+    private Set<Long> genreId;
 }

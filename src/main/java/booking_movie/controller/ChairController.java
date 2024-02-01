@@ -39,7 +39,7 @@ public class ChairController {
     }
 
 
-    @PatchMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> isDelete(@Valid Authentication authentication,@PathVariable Long id) throws CustomsException {
         chairService.isDelete(authentication,id);
         String success = "Chair Deleted" ;

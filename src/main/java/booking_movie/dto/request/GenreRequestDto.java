@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GenreRequestDto {
-    @NotEmpty(message = "genreName is not empty")
+    @NotEmpty(message = "Tên thể loại không thể trống")
     private String genreName;
     private Boolean isDeleted =false;
 }

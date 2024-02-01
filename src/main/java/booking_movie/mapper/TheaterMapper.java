@@ -23,7 +23,7 @@ public class TheaterMapper {
     }
 
     public Theater toEntity(TheaterRequestDto theaterRequestDto) throws CustomsException {
-        Location location = locationRepository.findById(theaterRequestDto.getLocationId()).orElseThrow(()-> new CustomsException("Location Not Found"));
+        Location location = locationRepository.findById(theaterRequestDto.getLocationId()).orElseThrow(()-> new CustomsException("Vị trí không tồn tại"));
         return Theater.builder()
                 .theaterName(theaterRequestDto.getTheaterName())
                 .isDeleted(theaterRequestDto.getIsDeleted())

@@ -13,13 +13,12 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class ChairRequest {
-    @NotEmpty(message = "chairName is not empty")
-    @NotBlank(message = "chairName is not blank")
+    @NotEmpty(message = "Tên ghế không thể trống")
     private String chairName ;
-    @NotEmpty(message = "chairType is not empty")
-    @NotBlank(message = "chairType is not blank")
+    @NotEmpty(message = "Kiểu ghế không thể để trống")
+    @NotNull(message = "Chưa thêm kiểu ghế")
     private String chairType ;
-    @NotNull(message = "roomId is not null")
+    @NotNull(message = "Chưa thêm mã phòng chiếu")
     private Long roomId;
     private Boolean isDeleted ;
 }

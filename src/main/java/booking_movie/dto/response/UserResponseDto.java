@@ -15,6 +15,7 @@ import java.util.Set;
 public class UserResponseDto {
     private String username;
     private Set<String> setRoles;
+    private String level;
     private String token;
 
 }

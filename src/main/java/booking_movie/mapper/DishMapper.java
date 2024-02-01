@@ -42,6 +42,6 @@ public class DishMapper {
             dish1.setUpdateTime(LocalDate.now());
             dish1.setUpdateUser(userName);
             return dish1;
-        }throw new DishException("Dish Not found");
+        }throw new DishException("Sản phẩm không tồn tại");
     }
 }

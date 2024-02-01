@@ -14,6 +14,7 @@ import java.util.List;
 public interface LocationService {
     List<Location> findAll();
     Page<LocationResponseDto> findAll(String locationName , Pageable pageable) ;
+    List<LocationResponseDto> finAllNoSearch();
     LocationResponseDto findById (Long id) throws  CustomsException;
 
     LocationResponseDto save (Authentication authentication, LocationRequestDto locationRequestDto) throws CustomsException;

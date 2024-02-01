@@ -26,11 +26,11 @@ public class ChairMapper {
     }
 
     public Chair toEntity(ChairRequest chairRequest) throws CustomsException {
-        Room room = roomRepository.findById(chairRequest.getRoomId()).orElseThrow(()-> new CustomsException("Room Not Found"));
+        Room room = roomRepository.findById(chairRequest.getRoomId()).orElseThrow(()-> new CustomsException("Phòng chiếu không tồn tại"));
         ChairType chairType = switch (chairRequest.getChairType()) {
             case "normal" -> ChairType.NORMAL;
             case "VIP" -> ChairType.VIP;
-            default -> throw new CustomsException(chairRequest.getChairType() + " Not Found");
+            default -> throw new CustomsException(chairRequest.getChairType() + " không tồn tại");
         };
         return Chair.builder()
                 .chairName(chairRequest.getChairName())
