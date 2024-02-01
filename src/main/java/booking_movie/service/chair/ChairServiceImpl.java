@@ -39,13 +39,13 @@ public class ChairServiceImpl implements ChairService{
 
     @Override
     public ChairResponseDto findById(Long id) throws CustomsException {
-        Chair chair = chairRepository.findById(id).orElseThrow(()-> new CustomsException("Chair Not Found")) ;
+        Chair chair = chairRepository.findById(id).orElseThrow(()-> new CustomsException("Ghế không tồn tại")) ;
         return chairMapper.toResponse(chair);
     }
 
     @Override
     public ChairResponseDto changeChairType(Authentication authentication, Long id, ChairTypeRequest chairTypeRequest) throws CustomsException {
-        Chair chair = chairRepository.findById(id).orElseThrow(()-> new CustomsException("Chair Not Found")) ;
+        Chair chair = chairRepository.findById(id).orElseThrow(()-> new CustomsException("Ghế không tồn tại")) ;
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         switch (chairTypeRequest.getChairType()) {
             case "normal":
@@ -55,7 +55,7 @@ public class ChairServiceImpl implements ChairService{
                 chair.setChairType(ChairType.VIP);
                 break;
             default:
-                throw new CustomsException("ChairType Not Found");
+                throw new CustomsException("Kiểu ghế không tồn tại");
         }
         chair.setUpdateTime(LocalDateTime.now());
         chair.setUpdateUser(userPrincipal.getUsername());
@@ -66,8 +66,8 @@ public class ChairServiceImpl implements ChairService{
 
     @Override
     public ChairResponseDto update(Authentication authentication,Long id, ChairRequest chairRequest) throws CustomsException {
-        Chair chair = chairRepository.findById(id).orElseThrow(()-> new CustomsException("Chair Not Found")) ;
-        Room room = roomRepository.findById(chairRequest.getRoomId()).orElseThrow(()-> new CustomsException("Room Not Found")) ;
+        Chair chair = chairRepository.findById(id).orElseThrow(()-> new CustomsException("Ghế không tồn tại")) ;
+        Room room = roomRepository.findById(chairRequest.getRoomId()).orElseThrow(()-> new CustomsException("Phòng chiếu không tồn tại")) ;
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         chair.setId(id);
         chair.setChairName(chairRequest.getChairName());
@@ -79,7 +79,7 @@ public class ChairServiceImpl implements ChairService{
                 chair.setChairType(ChairType.VIP);
                 break;
             default:
-                throw new CustomsException(chairRequest.getChairType() + " Not Found");
+                throw new CustomsException(chairRequest.getChairType() + " không tồn tại");
         }
         chair.setRoom(room);
         chair.setUpdateTime(LocalDateTime.now());
@@ -91,7 +91,7 @@ public class ChairServiceImpl implements ChairService{
 
     @Override
     public void isDelete(Authentication authentication,Long id) throws CustomsException {
-        Chair chair = chairRepository.findById(id).orElseThrow(()-> new CustomsException("Chair Not Found")) ;
+        Chair chair = chairRepository.findById(id).orElseThrow(()-> new CustomsException("Ghế không tồn tại")) ;
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         chair.setIsDeleted(!chair.getIsDeleted());
         chair.setUpdateTime(LocalDateTime.now());
@@ -109,14 +109,14 @@ public class ChairServiceImpl implements ChairService{
 
     @Override
     public List<ChairResponseDto> findByMovieAndDateBookingAndLocationAndTypeAndTimeSlot(Long idMovie, DateTimeAndLocationAndTypeAndTimeSlotRequest request) throws CustomsException {
-        Movie movie = movieRepository.findById(idMovie).orElseThrow(()-> new CustomsException("Movie Not Found"));
-        Location location = locationRepository.findById(request.getIdLocation()).orElseThrow(() -> new CustomsException("Location Not Found"));
-        TimeSlot timeSlot = timeSlotRepository.findById(request.getIdTimeSlot()).orElseThrow(()-> new CustomsException("TimeSlot Not Found"));
+        Movie movie = movieRepository.findById(idMovie).orElseThrow(()-> new CustomsException("Phim không tồn tại"));
+        Location location = locationRepository.findById(request.getIdLocation()).orElseThrow(() -> new CustomsException("Vị trí không tồn tại"));
+        TimeSlot timeSlot = timeSlotRepository.findById(request.getIdTimeSlot()).orElseThrow(()-> new CustomsException("Xuất chiếu không tồn tại"));
         RoomType roomType = switch (request.getType()){
             case "2D" -> RoomType.TWO_D;
             case "3D" -> RoomType.THREE_D;
             case "4D" -> RoomType.FOUR_D;
-            default -> throw new  CustomsException(request.getType() + " Not Found");
+            default -> throw new  CustomsException(request.getType() + " không tồn tại");
         };
         if (request.getDateBooking() == null) {
             request.setDateBooking(LocalDate.now());

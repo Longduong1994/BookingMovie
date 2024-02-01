@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -26,8 +27,10 @@ public class LocationServiceImpl implements LocationService {
     private LocationMapper locationMapper ;
 
     @Override
-    public List<Location> findAll() {
-        return locationRepository.findAll();
+    public List<LocationResponseDto> finAllNoSearch() {
+        List<Location> list = locationRepository.findAll();
+        return list.stream().map(item -> locationMapper.toResponse(item)).collect(Collectors.toList());
+
     }
 
     @Override
@@ -50,7 +53,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public LocationResponseDto save(Authentication authentication, LocationRequestDto locationRequestDto) throws CustomsException {
         if (locationRepository.existsByLocationName(locationRequestDto.getLocationName())){
-            throw new CustomsException("Exits LocationName");
+            throw new CustomsException("Tên vị trí đã tồn tại");
         }
 
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
@@ -64,7 +67,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public LocationResponseDto update(Authentication authentication,Long id, LocationRequestDto locationRequestDto) throws CustomsException {
-        Location location = locationRepository.findById(id).orElseThrow(() -> new CustomsException("Location Not Fount"));
+        Location location = locationRepository.findById(id).orElseThrow(() -> new CustomsException("Vị trí không tồn tại"));
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         location.setId(id);
         location.setLocationName(locationRequestDto.getLocationName());
@@ -76,9 +79,9 @@ public class LocationServiceImpl implements LocationService {
     }
     @Override
     public void isDelete(Authentication authentication,Long id) throws CustomsException {
-        Location location = locationRepository.findById(id).orElseThrow(() -> new CustomsException("Location Not Fount"));
+        Location location = locationRepository.findById(id).orElseThrow(() -> new CustomsException("Vị trí không tồn tại"));
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        location.setIsDelete(!location.getIsDelete());
+        location.setIsDelete(true);
         location.setUpdateTime(LocalDateTime.now());
         location.setUpdateUser(userPrincipal.getUsername());
         locationRepository.save(location);

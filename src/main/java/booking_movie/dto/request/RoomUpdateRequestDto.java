@@ -13,12 +13,13 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class RoomUpdateRequestDto {
-    @NotEmpty(message = "roomName is not empty")
-    @NotBlank(message = "roomName is not blank")
+    @NotEmpty(message = "Tên phòng chiếu không thể để trống")
+    @NotBlank(message = "Tên phòng chiếu không thể để trống")
     private String roomName ;
-    @NotEmpty(message = "roomType is not empty")
-    @NotBlank(message = "roomType is not blank")
+    @NotEmpty(message = "Kiểu phòng chiếu không thể để trống")
+    @NotBlank(message = "Kiểu phòng chiếu không thể để trống")
     private String roomType ;
-    @NotNull(message = "theaterId is not null")
+    @NotNull(message = "Mã rạp chiếu không thể trống")
     private Long theaterId;
+    private Boolean isDelete ;
 }

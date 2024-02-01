@@ -15,22 +15,22 @@ public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
     @Override
     public Role getRoleCustomer() {
-        return roleRepository.findByRoleName(RoleName.CUSTOMER).orElseThrow(()-> new RuntimeException("Role not found"));
+        return roleRepository.findByRoleName(RoleName.CUSTOMER).orElseThrow(()-> new RuntimeException("Quyền không tồn tại"));
     }
 
     @Override
     public Role getRoleManager() {
-        return roleRepository.findByRoleName(RoleName.MANAGER).orElseThrow(()-> new RuntimeException("Role not found"));
+        return roleRepository.findByRoleName(RoleName.MANAGER).orElseThrow(()-> new RuntimeException("Quyền không tồn tại"));
     }
 
     @Override
     public Role getRoleEmployee() {
-        return roleRepository.findByRoleName(RoleName.EMPLOYER).orElseThrow(()-> new RuntimeException("Role not found"));
+        return roleRepository.findByRoleName(RoleName.EMPLOYER).orElseThrow(()-> new RuntimeException("Quyền không tồn tại"));
     }
 
     @Override
     public Role getRoleAdmin() {
-        return roleRepository.findByRoleName(RoleName.ADMIN).orElseThrow(()-> new RuntimeException("Role not found"));
+        return roleRepository.findByRoleName(RoleName.ADMIN).orElseThrow(()-> new RuntimeException("Quyền không tồn tại"));
     }
 
     @Override
@@ -73,6 +73,6 @@ public class RoleServiceImpl implements RoleService {
                 throw new NotFoundException("Chưa có role này");
 
         }
-        return roleRepository.findByRoleName(RoleName.CUSTOMER).orElseThrow(()-> new RuntimeException("Role not found"));
+        return roleRepository.findByRoleName(RoleName.CUSTOMER).orElseThrow(()-> new RuntimeException("Quyền không tồn tại"));
     }
 }

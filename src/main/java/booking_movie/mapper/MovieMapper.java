@@ -26,6 +26,9 @@ public class MovieMapper {
         Set<String> genreNames = movie.getGenres().stream()
                 .map(Genre::getGenreName)
                 .collect(Collectors.toSet());
+        Set<Long> genreIDs = movie.getGenres().stream()
+                .map(Genre::getId)
+                .collect(Collectors.toSet());
         return MovieResponseDto.builder()
                 .id(movie.getId())
                 .movieImage(movie.getMovieImage())
@@ -41,15 +44,16 @@ public class MovieMapper {
                 .rated(movie.getRated())
                 .movieStatus(movie.getMovieStatus())
                 .genreName(genreNames)
+                .genreId(genreIDs)
                 .build();
     }
     public Movie toEntity(MovieRequestDto movieRequestDto)  {
         Set<Genre> genres = movieRequestDto.getGenreId().stream()
                 .map(item -> genreRepository.findGenreByIdAndIsDeleted(item,false))
                 .collect(Collectors.toSet());
-        Set<Format> formats = movieRequestDto.getFormats().stream()
-                .map(item -> formatRepository.findFormatById(item))
-                .collect(Collectors.toSet());
+//        Set<Format> formats = movieRequestDto.getFormats().stream()
+//                .map(item -> formatRepository.findFormatById(item))
+//                .collect(Collectors.toSet());
 
         Movie movie= Movie.builder()
                 .movieName(movieRequestDto.getMovieName())
@@ -62,8 +66,8 @@ public class MovieMapper {
                 .releaseDate(movieRequestDto.getReleaseDate())
                 .stopDate(movieRequestDto.getStopDate())
                 .language(movieRequestDto.getLanguage())
-                .rated(movieRequestDto.getRated())
-                .formats(formats)
+//                .rated(movieRequestDto.getRated())
+//                .formats(formats)
                 .genres(genres)
                 .movieStatus(MovieStatus.SHOWING)
                 .build();

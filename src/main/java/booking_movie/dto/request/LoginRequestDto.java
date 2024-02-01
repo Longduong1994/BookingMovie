@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class LoginRequestDto {
-    @NotEmpty(message = "Username is not empty")
+    @NotEmpty(message = "Tên đăng nhập không thể để trống")
     private String username;
-    @NotEmpty(message = "Password is not empty")
+    @NotEmpty(message = "Mật khẩu không thể để trống")
     private String password;
 //    @NotEmpty(message = "Username is not empty")
 //    @NotBlank(message = "Password is not blank")

@@ -2,6 +2,8 @@ package booking_movie.repository;
 
 import booking_movie.constants.RoomType;
 import booking_movie.entity.TimeSlot;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +16,8 @@ import java.util.List;
 
 @Repository
 public interface TimeSlotRepository extends JpaRepository<TimeSlot , Long> {
+    Page<TimeSlot> findAllByStartTimeAndIsDeletedFalse(LocalTime startTime,Pageable pageable);
+    Page<TimeSlot> findAllByIsDeletedFalse(Pageable pageable);
     List<TimeSlot> findAllByIsDeletedFalse();
     List<TimeSlot> findAllByIsDeletedTrueAndUpdateTimeBefore(LocalDateTime localDateTime);
     List<TimeSlot> findAllByMovieIsDeletedTrueAndUpdateTimeBefore(LocalDateTime localDateTime) ;

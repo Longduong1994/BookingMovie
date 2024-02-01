@@ -5,6 +5,9 @@ import booking_movie.exception.CustomsException;
 import booking_movie.service.timeSlot.TimeSlotService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,8 +20,14 @@ public class TimeSlotController {
     private TimeSlotService timeSlotService ;
 
     @GetMapping()
-    public ResponseEntity<?> getAll(){
-        return new ResponseEntity<>(timeSlotService.findAll(), HttpStatus.OK);
+    public ResponseEntity<?> getAll(@RequestParam(defaultValue = "") String search,
+                                    @PageableDefault(size = 6, page = 0, sort = "id", direction = Sort.Direction.ASC)Pageable pageable) {
+        return new ResponseEntity<>(timeSlotService.findALl(search,pageable), HttpStatus.OK);
+    }
+
+    @GetMapping("/getALl")
+    public ResponseEntity<?> getAllNoSearch(){
+        return new ResponseEntity<>(timeSlotService.findAllNoSearch(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -34,6 +43,13 @@ public class TimeSlotController {
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@Valid Authentication authentication , @PathVariable Long id , @RequestBody TimeSlotRequestDto timeSlotRequestDto) throws CustomsException {
         return new ResponseEntity<>(timeSlotService.update(authentication, id, timeSlotRequestDto), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> isDelete(Authentication authentication,@PathVariable Long id ) throws CustomsException {
+        timeSlotService.isDelete(authentication, id);
+        String success = "Xoá thành công";
+        return new ResponseEntity<>(success, HttpStatus.OK);
     }
 
 //    @DeleteMapping()

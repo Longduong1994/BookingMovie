@@ -12,16 +12,19 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class DishRequestDto {
 
-    @NotNull(message = "dishName not found")
+    @NotEmpty(message = "Tên sản phẩm không thể để trống")
+    private String dishName;
+
+    @NotNull(message = "Chưa thêm ảnh sản phẩm")
     private String dishName;
 
     @NotNull(message = "Image is required")
     private MultipartFile image;
 
-    @Positive(message = "CategoryId is incorrect syntax")
+    @NotNull(message = "Chưa thêm mã danh mục")
     private Long categoryId;
 
-    @Min(value = 0, message = "Price must be greater than or equal to 0")
+    @Min(value = 0, message = "Giá không thể âm")
     private Double price;
 
 }

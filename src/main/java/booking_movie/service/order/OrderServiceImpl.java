@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
     private final RoomRepository roomRepository;
     private final ChairRepository chairRepository;
     private final OrderRepository orderRepository;
-    private final PaymentRepository paymentRepository;
+    
 
     @Transactional
     @Override

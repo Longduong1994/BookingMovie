@@ -1,6 +1,7 @@
 package booking_movie.controller;
 
 import booking_movie.dto.request.MovieRequestDto;
+import booking_movie.dto.request.MovieUpdateRequestDto;
 import booking_movie.dto.response.MovieResponseDto;
 import booking_movie.exception.LoginException;
 import booking_movie.exception.MovieException;
@@ -32,9 +33,14 @@ public class MovieController {
     }
     @GetMapping
     public ResponseEntity<Page<MovieResponseDto>> getAllMovie(@RequestParam(defaultValue = "") String search,
-                                                              @PageableDefault(size = 2, page = 0, sort = "price", direction = Sort.Direction.ASC) Pageable pageable) {
+                                                              @PageableDefault(size = 6, page = 0, sort = "price", direction = Sort.Direction.ASC) Pageable pageable) {
         Page<MovieResponseDto> listMovie = movieService.getAllMovie(search, pageable);
         return ResponseEntity.ok(listMovie);
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAllNoSearch(){
+        return new ResponseEntity<>(movieService.findAll(), HttpStatus.OK);
     }
     @GetMapping("/status")
     public ResponseEntity<Page<MovieResponseDto>> getAllMovieByMovieStatus(@RequestParam(defaultValue = "") String search,
@@ -54,12 +60,12 @@ public class MovieController {
         return new ResponseEntity<>(movieService.getMovieById(idMovie),HttpStatus.OK) ;
     }
 
-    @PutMapping("/{idEdit}")
-    public ResponseEntity<?> updateMovie(@Valid @PathVariable Long idEdit, @ModelAttribute MovieRequestDto movieRequestDto,Authentication authentication, BindingResult bindingResult) throws MovieException, LoginException {
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateMovie(@Valid @PathVariable Long id, @ModelAttribute MovieUpdateRequestDto movieRequestDto, Authentication authentication, BindingResult bindingResult) throws MovieException, LoginException {
         if (bindingResult.hasErrors()) {
             return handleValidationErrors(bindingResult);
         }
-        return new ResponseEntity<>(movieService.updateMovie(movieRequestDto,authentication,idEdit), HttpStatus.OK);
+        return new ResponseEntity<>(movieService.updateMovie(movieRequestDto,authentication,id), HttpStatus.OK);
     }
 
     private ResponseEntity<String> handleValidationErrors(BindingResult bindingResult) {

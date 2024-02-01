@@ -13,8 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @Data
 public class LocationRequestDto {
-    @NotBlank(message = "Location is not blank")
-    @NotEmpty(message = "Location is not empty")
+    @NotEmpty(message = "Tên vị trí không thể trống")
     private String locationName ;
     private Boolean isDelete = false ;
 }

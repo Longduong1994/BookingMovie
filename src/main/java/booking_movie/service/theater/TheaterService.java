@@ -13,6 +13,7 @@ import java.util.List;
 
 public interface TheaterService {
     Page<TheaterResponseDto> findAll(String search , Pageable pageable) ;
+    List<TheaterResponseDto> finAllNoSearch();
 
     TheaterResponseDto findById ( Long id ) throws CustomsException;
 

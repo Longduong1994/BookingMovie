@@ -37,6 +37,11 @@ public class LocationController {
         return new ResponseEntity<>(locationService.findAll(search, pageable), HttpStatus.OK);
     }
 
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAllNoSearch() {
+        return new ResponseEntity<>(locationService.finAllNoSearch(), HttpStatus.OK);
+    }
+
     /*
      * TODO : param ( idLocation )
      * */
@@ -65,7 +70,7 @@ public class LocationController {
     /*
      * TODO : param ( id )
      * */
-    @PatchMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> isDelete(Authentication authentication,@PathVariable Long id) throws CustomsException {
         locationService.isDelete(authentication,id) ;
         String success = "Location Deleted" ;

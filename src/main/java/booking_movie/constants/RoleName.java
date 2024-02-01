@@ -5,4 +5,5 @@ public enum RoleName {
     MANAGER,
     EMPLOYER,
     CUSTOMER,
+
 }
