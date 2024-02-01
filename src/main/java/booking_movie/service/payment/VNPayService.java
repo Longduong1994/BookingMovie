@@ -2,7 +2,11 @@ package booking_movie.service.payment;
 
 
 import booking_movie.config.VNPayConfig;
+import booking_movie.dto.response.PaymentDto;
 import booking_movie.entity.Payment;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
@@ -12,36 +16,35 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.amazonaws.regions.ServiceAbbreviations.Config;
+
 
 @Service
 public class VNPayService {
 
-    public String createPayment(double total, Long contractId) throws UnsupportedEncodingException {
-        String vnp_Version = VNPayConfig.vnp_Version;
-        String vnp_Command = VNPayConfig.vnp_Command;
-        String orderType = "other";
-        double amount = total*100;
-        String bankCode = "NCB";
-
+    public PaymentDto createOrder(Long total) throws UnsupportedEncodingException {
+        String vnp_Version = "2.1.0";
+        String vnp_Command = "pay";
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
         String vnp_IpAddr = "127.0.0.1";
-
         String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
-
+        String orderType = "order-type";
+        String orderInfor = "Thanh toán đơn hàng";
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(amount));
+        vnp_Params.put("vnp_Amount", String.valueOf(total*100));
         vnp_Params.put("vnp_CurrCode", "VND");
 
-        vnp_Params.put("vnp_BankCode", bankCode);
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
+        vnp_Params.put("vnp_OrderInfo", orderInfor);
         vnp_Params.put("vnp_OrderType", orderType);
 
-        vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_ReturnUrl+"?contractId="+contractId);
+        String locate = "vn";
+        vnp_Params.put("vnp_Locale", locate);
+
+        vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_ReturnUrl);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
@@ -65,11 +68,15 @@ public class VNPayService {
                 //Build hash data
                 hashData.append(fieldName);
                 hashData.append('=');
-                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
-                //Build query
-                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
-                query.append('=');
-                query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                try {
+                    hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                    //Build query
+                    query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                    query.append('=');
+                    query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
                 if (itr.hasNext()) {
                     query.append('&');
                     hashData.append('&');
@@ -80,27 +87,46 @@ public class VNPayService {
         String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.secretKey, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
-        return paymentUrl;
+
+        PaymentDto paymentDto = new PaymentDto();
+        paymentDto.setStatus("OK");
+        paymentDto.setMessage("Thanh toán thành công");
+        paymentDto.setURL(paymentUrl);
+        return paymentDto;
     }
 
-    public void result(Map<String,String> queryParams, HttpServletResponse response) throws IOException {
-        String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
-        String contractId = queryParams.get("orderId");
-        if(contractId!= null && !contractId.equals("")) {
-            if ("00".equals(vnp_ResponseCode)) {
-                // Giao dịch thành công
-                // Thực hiện các xử lý cần thiết, ví dụ: cập nhật CSDL
-//                Contract contract = orderRepository.findById(Integer.parseInt(queryParams.get("contractId")))
-//                        .orElseThrow(() -> new NotFoundException("Không tồn tại hợp đồng này của sinh viên"));
-//                contract.setStatus(1);
-//                orderRepository.save(contract);
-                response.sendRedirect("http://localhost:4200/payment-success");
-            } else {
-                // Giao dịch thất bại
-                // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL\
-                response.sendRedirect("http://localhost:4200/payment-failed");
-
+    public int orderReturn(HttpServletRequest request){
+        Map fields = new HashMap();
+        for (Enumeration params = request.getParameterNames(); params.hasMoreElements();) {
+            String fieldName = null;
+            String fieldValue = null;
+            try {
+                fieldName = URLEncoder.encode((String) params.nextElement(), StandardCharsets.US_ASCII.toString());
+                fieldValue = URLEncoder.encode(request.getParameter(fieldName), StandardCharsets.US_ASCII.toString());
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
+            if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                fields.put(fieldName, fieldValue);
+            }
+        }
+
+        String vnp_SecureHash = request.getParameter("vnp_SecureHash");
+        if (fields.containsKey("vnp_SecureHashType")) {
+            fields.remove("vnp_SecureHashType");
+        }
+        if (fields.containsKey("vnp_SecureHash")) {
+            fields.remove("vnp_SecureHash");
+        }
+        String signValue = VNPayConfig.hashAllFields(fields);
+        if (signValue.equals(vnp_SecureHash)) {
+            if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else {
+            return -1;
         }
     }
 }

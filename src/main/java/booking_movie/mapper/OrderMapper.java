@@ -20,7 +20,6 @@ public class OrderMapper {
                 .updateTime(LocalDate.now())
                 .status(Status.WAITING)
                 .createUser(user.getUsername())
-                .theater(orderRequestDto.getTheaterId())
                 .payment(null)
                 .isDelete(false).build();
     }

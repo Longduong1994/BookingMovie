@@ -109,15 +109,18 @@ public class TheaterStartTimeServiceImpl implements TheaterStartTimeService {
     }
 
     @Override
-    public List<ChairByRoomDto> getChairByRoom(Long idRoom,LocalTime startTime) {
+    public List<ChairByRoomDto> getChairByRoom(Long idRoom, LocalTime startTime) {
         List<Object[]> results = theaterStartTimeRepository.getChairsData(startTime, idRoom);
         return results.stream()
                 .map(result -> new ChairByRoomDto(
-                        (Long) result[0],                    // id
-                        (String) result[1],                  // chairName
+                        (Long) result[0],   // id
+                        (String) result[1], // chairName
                         ChairType.valueOf((String) result[2]), // chairType
-                        (String) result[3]))                 // status
+                        (String) result[4], // status
+                        (Boolean) result[3] // isDeleted
+                ))
                 .collect(Collectors.toList());
     }
+
 
 }
