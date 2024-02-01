@@ -18,9 +18,13 @@ public class CouponRequestDto {
     @NotNull(message = "Chưa thêm ngày hiệu lực")
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate effectDate;
+
     @NotNull(message = "Chưa thêm giảm giá")
     private Double salePrice;
+
+    @NotNull(message = "Not null")
     private String description;
+
     @NotNull(message = "Thêm mã khách hàng")
     private Long user;
 }

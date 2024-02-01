@@ -5,11 +5,14 @@ import booking_movie.dto.response.CouponResponseDto;
 import booking_movie.entity.Coupon;
 import booking_movie.entity.Notification;
 import booking_movie.entity.User;
+import booking_movie.exception.UserException;
 import booking_movie.repository.CouponRepository;
 import booking_movie.repository.UserRepository;
 import booking_movie.security.user_principle.UserPrincipal;
 import booking_movie.service.notification.NotificationService;
 import booking_movie.service.notification.NotificationServiceImpl;
+import booking_movie.service.user.UserService;
+import com.amazonaws.services.kms.model.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.security.core.Authentication;
@@ -25,6 +28,7 @@ public class CouponServiceImpl implements CouponService{
     private final CouponRepository couponRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final UserService userService;
 
     /**
      * search coupon by code
@@ -115,5 +119,11 @@ public class CouponServiceImpl implements CouponService{
                 .endDate(c.getEndDate())
                 .status(c.getStatus())
                 .isDelete(c.getIsDelete()).build();
+    }
+
+    @Override
+    public Coupon updateStatus(Long id, Authentication authentication) throws UserException {
+        User user = userService.userById(authentication);
+        return couponRepository.findByIdAndUser(id,user).orElseThrow(()-> new NotFoundException("coupon not found"));
     }
 }
