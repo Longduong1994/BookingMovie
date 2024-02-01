@@ -39,9 +39,6 @@ public class DishServiceImpl implements DishService {
      */
     @Override
     public Dish create(DishRequestDto dishRequestDto, Authentication authentication) throws DishException, UserException {
-        if(dishRequestDto.getImage().isEmpty()){
-            throw new DishException("dsfhdfhđkfhjk");
-        }
         User user = userService.userById(authentication);
         if (dishRepository.existsByDishName(dishRequestDto.getDishName())) {
             throw new DishException("Dish is exist");
