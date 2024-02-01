@@ -44,11 +44,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponseDto create(Authentication authentication, OrderRequestDto orderRequestDto) throws LoginException, CustomsException, NotFoundException {
         User user = userService.getUser(authentication);
-        Location location = locationRepository.findById(orderRequestDto.getLocationId()).orElseThrow(() -> new NotFoundException("Location not found"));
-        Theater theater = theaterRepository.findById(orderRequestDto.getTheaterId()).orElseThrow(() -> new NotFoundException("Theater not found"));
         Room room = roomRepository.findById(orderRequestDto.getRoomId()).orElseThrow(() -> new NotFoundException("Room not found"));
         Movie movie = movieRepository.findById(orderRequestDto.getMovieId()).orElseThrow(() -> new NotFoundException("Movie not found"));
-        Payment payment = paymentRepository.findById(orderRequestDto.getPaymentId()).orElseThrow(() -> new NotFoundException("Payment not found"));
+
         Set<Chair> chairSet = orderRequestDto.getChairIds().stream()
                 .map(chair -> {
                     try {
@@ -62,15 +60,14 @@ public class OrderServiceImpl implements OrderService {
         String code = UUID.randomUUID().toString().substring(0, 12);
         order.setCode(code);
         order.setUser(user);
-        order.setLocationName(location.getLocationName());
-        order.setTheaterName(theater.getTheaterName());
+        order.setLocationName(orderRequestDto.getLocation());
+        order.setTheaterName(orderRequestDto.getTheater());
         order.setRoomName(room.getRoomName());
         order.setImageMovie(movie.getMovieImage());
         order.setMovieName(movie.getMovieName());
         order.setRated(movie.getRated());
         order.setStartTime(orderRequestDto.getStartTime());
         order.setBookingDate(orderRequestDto.getBookingDate());
-        order.setPayment(payment);
         order.setChairs(chairSet);
         order.setTotal(movie.getPrice() * chairSet.size());
 
@@ -92,7 +89,6 @@ public class OrderServiceImpl implements OrderService {
                 .chairs(order.getChairs().stream().map(item -> item.getChairName()).collect(Collectors.toSet()))
                 .theaterName(order.getTheaterName())
                 .roomName(order.getRoomName())
-                .paymentMethod(order.getPayment().getPaymentMethod())
                 .total(order.getTotal())
                 .build();
     }

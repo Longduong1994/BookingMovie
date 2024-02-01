@@ -68,7 +68,7 @@ public interface TheaterStartTimeRepository extends JpaRepository<Ticket, Long> 
 
 
 
-    @Query(value = "SELECT c.id, c.chair_name, c.chair_type, " +
+    @Query(value = "SELECT c.id, c.chair_name, c.chair_type, c.is_deleted, " +  // Added a comma here
             "CASE " +
             "WHEN tk.chair_id IS NOT NULL AND bk.start_time = :startTime THEN 'Đã đặt' " +
             "ELSE 'Trống' " +
