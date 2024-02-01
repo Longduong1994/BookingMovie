@@ -14,8 +14,6 @@ public class DishUpdateRequestDto {
     @NotEmpty
     private String dishName;
 
-    private MultipartFile image;
-
     @Positive(message = "CategoryId is incorrect syntax")
     private Long categoryId;
 

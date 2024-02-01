@@ -16,6 +16,9 @@ public class DishRequestDto {
     private String dishName;
 
     @NotNull(message = "Chưa thêm ảnh sản phẩm")
+    private String dishName;
+
+    @NotNull(message = "Image is required")
     private MultipartFile image;
 
     @NotNull(message = "Chưa thêm mã danh mục")

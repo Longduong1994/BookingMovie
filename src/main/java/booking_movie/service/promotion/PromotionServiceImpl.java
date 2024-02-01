@@ -61,7 +61,7 @@ public class PromotionServiceImpl implements PromotionService {
         boolean isAdminOrManager = user.getRoles().stream()
                 .anyMatch(role -> role.getRoleName().equals(RoleName.ADMIN) || role.getRoleName().equals(RoleName.MANAGER));
         if (isAdminOrManager) {
-            return promotionMapper.promotionUpdateRequestDtoIntoPromotion(promotionUpdateRequestDto, user.getUsername());
+            return promotionRepository.save(promotionMapper.promotionUpdateRequestDtoIntoPromotion(promotionUpdateRequestDto, user.getUsername()));
         }
         throw new PromtionException("Không có quyền nào được cấp");
     }
@@ -91,6 +91,11 @@ public class PromotionServiceImpl implements PromotionService {
         throw new PromtionException("Không tìm thấy khuyến mãi");
     }
 
+    @Override
+    public Promotion findById(Long id) throws PromtionException {
+        return promotionRepository.findById(id).orElseThrow(() -> new PromtionException("Không tìm thấy Promotion với ID: " + id));
+    }
+
     /**
      * random code
      *
@@ -107,5 +112,10 @@ public class PromotionServiceImpl implements PromotionService {
             create(promotionRequestDto, authentication);
         }
         return str.toString();
+    }
+
+    @Override
+    public List<Promotion> findAllList() {
+        return promotionRepository.findAll();
     }
 }

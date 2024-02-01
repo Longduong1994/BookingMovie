@@ -13,11 +13,9 @@ public class PromotionUpdateRequestDto {
     @NotEmpty
     private String eventName;
 
-    private String eventCode;
+    private String description;
 
     private Double salePrice;
-
-    private Integer salePercent;
 
     private LocalDate startDate;
 

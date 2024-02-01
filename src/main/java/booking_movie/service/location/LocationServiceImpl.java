@@ -30,6 +30,7 @@ public class LocationServiceImpl implements LocationService {
     public List<LocationResponseDto> finAllNoSearch() {
         List<Location> list = locationRepository.findAll();
         return list.stream().map(item -> locationMapper.toResponse(item)).collect(Collectors.toList());
+
     }
 
     @Override

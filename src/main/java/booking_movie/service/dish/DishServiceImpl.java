@@ -11,6 +11,7 @@ import booking_movie.mapper.DishMapper;
 import booking_movie.repository.CategoryRepository;
 import booking_movie.repository.DishRepository;
 import booking_movie.service.user.UserService;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -37,6 +39,9 @@ public class DishServiceImpl implements DishService {
      */
     @Override
     public Dish create(DishRequestDto dishRequestDto, Authentication authentication) throws DishException, UserException {
+        if(dishRequestDto.getImage().isEmpty()){
+            throw new DishException("dsfhdfhđkfhjk");
+        }
         User user = userService.userById(authentication);
         if (dishRepository.existsByDishName(dishRequestDto.getDishName())) {
             throw new DishException("Tên sản phầm đã tồn tại");
@@ -72,11 +77,14 @@ public class DishServiceImpl implements DishService {
 
         boolean isAdminOrManager = user.getRoles().stream()
                 .anyMatch(role -> role.getRoleName().equals(RoleName.ADMIN) || role.getRoleName().equals(RoleName.MANAGER));
-
-        if (isAdminOrManager) {
+        if(dishRepository.existsByTheater(user.getTheater())) {
+          if (isAdminOrManager) {
             return dishRepository.save(dishMapper.dishUpdateRequestDtoInto(dishUpdateRequestDto, user.getUsername()));
+          }
+           throw new DishException("No permissions granted");
         }
         throw new DishException("Không có quyền nào được cấp");
+
     }
 
     /**
@@ -87,7 +95,10 @@ public class DishServiceImpl implements DishService {
     @Override
     public Page<Dish> findAll(int page, int size, String search,Authentication authentication) throws DishException, UserException {
         User user = userService.userById(authentication);
-        return dishRepository.findAllByIsDeleteAndTheater(false,user.getTheater(),search, PageRequest.of(page,size));
+        if(search.equals("")){
+            return dishRepository.findAllByIsDeleteAndTheater(false,user.getTheater(),PageRequest.of(page,size));
+        }
+        return dishRepository.findAllByIsDeleteAndTheaterAndDishNameContainingIgnoreCase(false,user.getTheater(), PageRequest.of(page,size),search);
     }
 
     /**
@@ -117,5 +128,10 @@ public class DishServiceImpl implements DishService {
         if (dish.isPresent()){
             return dish.get();
         }throw new DishException("Sản phẩm không tồn tại");
+    }
+
+    @Override
+    public List<Dish> findAllList() {
+        return dishRepository.findAll();
     }
 }

@@ -8,10 +8,13 @@ import booking_movie.exception.UserException;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 
+import java.util.List;
+
 public interface DishService {
     Dish create(DishRequestDto dishRequestDto, Authentication authentication) throws DishException, UserException;
     Dish update(DishUpdateRequestDto dishUpdateRequestDto,Authentication authentication) throws DishException, UserException;
     Page<Dish> findAll(int page, int size, String search,Authentication authentication) throws DishException, UserException;
     String delete(Long id,Authentication authentication) throws DishException, UserException;
     Dish findById(Long id)throws DishException;
+    List<Dish> findAllList();
 }

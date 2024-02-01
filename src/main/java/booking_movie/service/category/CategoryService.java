@@ -8,6 +8,8 @@ import booking_movie.exception.UserException;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 
+import java.util.List;
+
 public interface CategoryService {
 
     /**
@@ -27,7 +29,7 @@ public interface CategoryService {
      *
      * @author huyt97
      */
-    Page<Category> findAll(Integer page, Integer size, String search,Authentication authentication) throws CategoryException, UserException;
+    List<Category> findAll() throws CategoryException, UserException;
 
     /**
      * delete by id

@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -76,9 +77,8 @@ public class CategoryServiceImpl implements CategoryService {
      * @author huyqt97
      */
     @Override
-    public Page<Category> findAll(Integer page, Integer size, String search,Authentication authentication) throws CategoryException, UserException {
-        User user = userService.userById(authentication);
-        return categoryRepository.findAllByIsDeleteAndCategoryName(false,user.getTheater(),search, PageRequest.of(page,size));
+    public List<Category> findAll() throws CategoryException, UserException {
+        return categoryRepository.findAll();
     }
 
     /**
