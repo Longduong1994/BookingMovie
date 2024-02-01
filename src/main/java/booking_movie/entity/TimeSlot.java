@@ -31,11 +31,12 @@ public class TimeSlot {
     @JsonIgnore
     private Room room;
     @Column(columnDefinition = "TIME")
-    private LocalTime startTime;
+    private LocalTime startTime; // gio chieu
+    private LocalDate showDateMovie; // ngay chieu
     public LocalDateTime createTime;
     public LocalDateTime updateTime;
     public String createUser;
     public String updateUser;
     public Boolean isDeleted ;
-    private LocalDate showDateMovie;
+
 }

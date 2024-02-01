@@ -19,6 +19,7 @@ import java.util.List;
 public interface RoomRepository extends JpaRepository<Room, Long> {
     Page<Room> findAllByRoomNameContainingIgnoreCaseAndIsDeletedFalse(String search, Pageable pageable) ;
     Page<Room> findAllByIsDeletedFalse( Pageable pageable) ;
+    List<Room> findAllByTheaterIdAndIsDeletedFalse(Long idTheater);
     List<Room> findAllByIsDeletedTrueAndUpdateTimeBefore(LocalDateTime localDateTime);
     List<Room> findAllByTheaterIsDeletedTrueAndUpdateTimeBefore(LocalDateTime localDateTime);
 

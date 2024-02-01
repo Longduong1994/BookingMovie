@@ -10,18 +10,38 @@ import booking_movie.mapper.TimeSlotMapper;
 import booking_movie.repository.*;
 import booking_movie.security.user_principle.UserPrincipal;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class TimeSlotServiceImpl implements TimeSlotService {
+    @Override
+    public Page<TimeSlotResponseDto> findALl(String search, Pageable pageable) {
+        Page<TimeSlot> page ;
+        if (search.isEmpty()) {
+            page = timeSlotRepository.findAllByIsDeletedFalse(pageable);
+        } else {
+            page = timeSlotRepository.findAllByStartTimeAndIsDeletedFalse(LocalTime.parse(search), pageable);
+        }
+        return page.map(item -> {
+            try {
+                return timeSlotMapper.toResponse(item);
+            } catch (CustomsException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
     private TimeSlotRepository timeSlotRepository ;
     private MovieRepository movieRepository ;
     private TheaterRepository theaterRepository ;
@@ -30,21 +50,27 @@ public class TimeSlotServiceImpl implements TimeSlotService {
     private TimeSlotMapper timeSlotMapper ;
 
     @Override
-    public List<TimeSlotResponseDto> findAll() {
+    public List<TimeSlotResponseDto> findAllNoSearch() {
         List<TimeSlot> list = timeSlotRepository.findAllByIsDeletedFalse();
-        return list.stream().map(item -> timeSlotMapper.toResponse(item)).collect(Collectors.toList());
+        return list.stream().map(item -> {
+            try {
+                return timeSlotMapper.toResponse(item);
+            } catch (CustomsException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toList());
     }
 
     @Override
     public TimeSlotResponseDto findById(Long id) throws CustomsException {
-        TimeSlot timeSlot = timeSlotRepository.findById(id).orElseThrow(() -> new CustomsException("TimeSlot Not Found"));
+        TimeSlot timeSlot = timeSlotRepository.findById(id).orElseThrow(() -> new CustomsException("Xuất chiếu không tồn tại"));
         return timeSlotMapper.toResponse(timeSlot);
     }
 
     @Override
     public TimeSlotResponseDto save(Authentication authentication , TimeSlotRequestDto timeSlotRequestDto) throws CustomsException {
         if (timeSlotRepository.existsByRoomTheaterIdAndRoomIdAndMovieIdAndStartTime(timeSlotRequestDto.getTheaterId(), timeSlotRequestDto.getRoomId(), timeSlotRequestDto.getMovieId(), timeSlotRequestDto.getStartTime())){
-            throw new CustomsException("Exist TimeSlot");
+            throw new CustomsException("Xuất chiếu đã tồn tại");
         }
         TimeSlot timeSlot = timeSlotRepository.save(timeSlotMapper.toEntity(timeSlotRequestDto));
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
@@ -57,9 +83,9 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 
     @Override
     public TimeSlotResponseDto update(Authentication authentication ,Long id, TimeSlotRequestDto timeSlotRequestDto) throws CustomsException {
-        TimeSlot timeSlot = timeSlotRepository.findById(id).orElseThrow(() -> new CustomsException("TimeSlot Not Found"));
-        Movie movie = movieRepository.findById(timeSlotRequestDto.getMovieId()).orElseThrow(() -> new CustomsException("Movie Not Found"));
-        Room room = roomRepository.findById(timeSlotRequestDto.getRoomId()).orElseThrow(() -> new CustomsException("Room Not Found"));
+        TimeSlot timeSlot = timeSlotRepository.findById(id).orElseThrow(() -> new CustomsException("Xuất chiếu không tồn tại"));
+        Movie movie = movieRepository.findById(timeSlotRequestDto.getMovieId()).orElseThrow(() -> new CustomsException("Phim không tồn tại"));
+        Room room = roomRepository.findById(timeSlotRequestDto.getRoomId()).orElseThrow(() -> new CustomsException("Phòng chiếu không tồn tại"));
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         timeSlot.setId(id);
         timeSlot.setMovie(movie);
@@ -73,9 +99,9 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 
     @Override
     public void isDelete(Authentication authentication, Long id) throws CustomsException {
-        TimeSlot timeSlot = timeSlotRepository.findById(id).orElseThrow(() -> new CustomsException("TimeSlot Not Found"));
+        TimeSlot timeSlot = timeSlotRepository.findById(id).orElseThrow(() -> new CustomsException("Xuất chiếu không tồn tại"));
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        timeSlot.setIsDeleted(!timeSlot.getIsDeleted());
+        timeSlot.setIsDeleted(true);
         timeSlot.setUpdateTime(LocalDateTime.now());
         timeSlot.setUpdateUser(userPrincipal.getUsername());
         timeSlotRepository.save(timeSlot);
@@ -97,20 +123,26 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 
     @Override
     public List<TimeSlotResponseDto> findAllByIdMovieAndDateBookingAndIdLocationAndTypeAndIdTheater(Long idMovie, DateTimeAndLocationAndTypeRequest request) throws CustomsException {
-        Movie movie = movieRepository.findById(idMovie).orElseThrow(() -> new CustomsException("Movie Not Found"));
-        Location location = locationRepository.findById(request.getIdLocation()).orElseThrow(()-> new CustomsException("Location Not Found"));
-        Theater theater = theaterRepository.findById(request.getIdLocation()).orElseThrow(() -> new CustomsException("Theater Not Found")) ;
+        Movie movie = movieRepository.findById(idMovie).orElseThrow(() -> new CustomsException("Phim không tồn tại"));
+        Location location = locationRepository.findById(request.getIdLocation()).orElseThrow(()-> new CustomsException("Vị trí không tồn tại"));
+        Theater theater = theaterRepository.findById(request.getIdLocation()).orElseThrow(() -> new CustomsException("Rạp chiếu không tồn tại")) ;
         RoomType roomType = switch (request.getType()) {
             case "2D" -> RoomType.TWO_D;
             case "3D" -> RoomType.THREE_D;
             case "4D" -> RoomType.FOUR_D;
-            default -> throw new CustomsException(request.getType() + " Not Found") ;
+            default -> throw new CustomsException(request.getType() + " Xuất chiếu không tồn tại") ;
         };
         if (request.getDateBooking() == null) {
             request.setDateBooking(LocalDate.now());
         }
 
         List<TimeSlot> timeSlot = timeSlotRepository.findAllByIdMovieAndDateBookingAndIdLocationAndTypeAndIdTheater(idMovie, request.getDateBooking(), request.getIdLocation(), roomType);
-       return timeSlot.stream().map(item -> timeSlotMapper.toResponse(item)).collect(Collectors.toList());
+       return timeSlot.stream().map(item -> {
+           try {
+               return timeSlotMapper.toResponse(item);
+           } catch (CustomsException e) {
+               throw new RuntimeException(e);
+           }
+       }).collect(Collectors.toList());
     }
 }

@@ -37,7 +37,7 @@ public class UploadFileService {
                 FileOutputStream fos = new FileOutputStream(convertedFile)) {
             fos.write(file.getBytes());
         } catch (IOException e) {
-            log.error("Error converting multipartFile to file", e);
+            log.error("Lỗi chuyển đổi multipartFile thành tập tin", e);
         }
         return convertedFile;
     }

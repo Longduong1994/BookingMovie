@@ -4,6 +4,7 @@ import booking_movie.dto.request.GenreRequestDto;
 import booking_movie.dto.response.GenreResponseDto;
 import booking_movie.entity.Genre;
 import booking_movie.entity.User;
+import booking_movie.exception.CustomsException;
 import booking_movie.exception.GenreException;
 import booking_movie.exception.LoginException;
 import booking_movie.mapper.GenreMapper;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -35,12 +37,25 @@ public class GenreServiceImpl implements GenreService {
         }
         return listGenre.map(genreMapper::toResponseDto);
     }
+
+    @Override
+    public List<GenreResponseDto> findAllNoSearch() {
+        List<Genre> list = genreRepository.findAll();
+        return list.stream().map(genreMapper::toResponseDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public GenreResponseDto findById(Long id) throws CustomsException {
+        Genre genre = genreRepository.findById(id).orElseThrow(() -> new CustomsException("Thể loại không tồn tại"));
+        return genreMapper.toResponseDto(genre);
+    }
+
     @Override
     public GenreResponseDto createGenre(GenreRequestDto genreRequestDto, Authentication authentication) throws LoginException {
         User user= userService.getUser(authentication);
         List<Genre> genreList = genreRepository.findAllByIsDeleted(false);
         if (genreList.stream().anyMatch(item -> item.getGenreName().equals(genreRequestDto.getGenreName()))) {
-            throw new GenreException("Duplicate genre");
+            throw new GenreException("Tên thể loại đã tồn tại");
         }
         Genre genre = genreMapper.toEntity(genreRequestDto);
         genre.setCreateDttm(dateTimeComponent.now());
@@ -54,7 +69,7 @@ public class GenreServiceImpl implements GenreService {
     public void deleteGenre(Long idGenre) throws GenreException {
         Genre genreToDelete = genreRepository.findGenreByIdAndIsDeleted(idGenre, false);
         if(genreToDelete ==null){
-            throw new GenreException("Genre not found");
+            throw new GenreException("Thể loại không tồn tại");
         }else {
             genreToDelete.setIsDeleted(true);
             genreRepository.save(genreToDelete);
@@ -66,7 +81,7 @@ public class GenreServiceImpl implements GenreService {
         if(genre !=null){
             return genreMapper.toResponseDto(genre);
         }
-        throw new GenreException("Genre not found");
+        throw new GenreException("Thể loại không tồn tại");
     }
     @Override
     public GenreResponseDto updateGenre(GenreRequestDto genreRequestDto,Long idGenre,Authentication authentication) throws GenreException, LoginException {
@@ -80,7 +95,7 @@ public class GenreServiceImpl implements GenreService {
 
             return genreMapper.toResponseDto( genreRepository.save(genreEdit));
         }else {
-            throw new GenreException("Genre not found");
+            throw new GenreException("Thể loại không tồn tại");
         }
 
     }

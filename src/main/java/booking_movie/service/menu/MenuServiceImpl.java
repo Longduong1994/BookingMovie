@@ -49,9 +49,9 @@ public class MenuServiceImpl implements MenuService {
                     menuRepository.save(menu);
                 }
             }
-            throw new DishException("Dish quantity is not enough ");
+            throw new DishException("Số lượng món ăn không đủ ");
         }
-        throw new UserException("Account no permissions granted");
+        throw new UserException("Tài khoản không được cấp quyền");
     }
 
     /**
@@ -72,7 +72,7 @@ public class MenuServiceImpl implements MenuService {
                 menuRepository.delete(menu1);
             }
         }
-        throw new UserException("Account no permissions granted");
+        throw new UserException("Tài khoản không được cấp quyền");
     }
 
     /**
@@ -86,7 +86,7 @@ public class MenuServiceImpl implements MenuService {
         if (menu.isPresent()) {
             return menu.get();
         }
-        throw new MenuException("Menu not found");
+        throw new MenuException("Menu không tồn tại");
     }
 
     /**

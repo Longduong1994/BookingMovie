@@ -16,20 +16,21 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateAccountDto {
-    @NotEmpty(message = "Username is not empty")
-    @NotBlank(message = "Password is not blank")
+    @NotEmpty(message = "Tên đăng nhập không thể để trống")
+    @NotBlank(message = "Tên đăng nhập không thể để trống")
     private String username;
-    @Pattern(regexp ="^[A-Za-z0-9+_.-]+@(.+)$",message = "Email invalidate")
+    @Pattern(regexp ="^[A-Za-z0-9+_.-]+@(.+)$",message = "Email không đúng định dạng")
     private String email;
-    @Pattern(regexp = "^(09|01[2|6|8|9])[0-9]{8}$", message = "Phone number invalid")
+    @Pattern(regexp = "^(09|01[2|6|8|9])[0-9]{8}$", message = "Số điện thoại không đúng định dạng")
     private String phone;
-    @NotNull(message = "The dateOfBirth field cannot be left blank.")
+    @NotNull(message = "Ngày sinh không thể để trống")
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dateOfBirth;
-    @NotEmpty(message = "Username is not empty")
-    @NotBlank(message = "Password is not blank")
+    @NotEmpty(message = "Quyền đăng người dùng không thể để trống")
+    @NotBlank(message = "Quyền đăng người dùng không thể để trống")
     private String role;
-    @NotNull(message = "Gender is not empty")
+    @NotNull(message = "Giới tính không thể để trống")
     private String gender;
+    @NotNull(message = "Mã rạp chiếu không thể để trống")
     private Long theaterId;
 }

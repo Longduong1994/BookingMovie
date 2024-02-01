@@ -19,11 +19,22 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class RoomController {
     private RoomService roomService ;
-
     @GetMapping()
+
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "") String search ,
                                     @PageableDefault(size = 6, page = 0, sort = "id" , direction = Sort.Direction.ASC)Pageable pageable) {
         return new ResponseEntity<>(roomService.findAll(search,pageable), HttpStatus.OK);
+    }
+
+    @GetMapping("/byIdTheater/{id}")
+    public ResponseEntity<?> getAllByTheaterId(@PathVariable Long id ) throws CustomsException {
+        return new ResponseEntity<>(roomService.findAllByTheaterId(id), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAllNoSearch() {
+        return new ResponseEntity<>(roomService.finAllNoSearch(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -41,7 +52,7 @@ public class RoomController {
         return new ResponseEntity<>(roomService.update(authentication,id,roomUpdateRequestDto), HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> isDelete(Authentication authentication,@PathVariable Long id) throws CustomsException {
         roomService.isDelete(authentication,id);
         String success = "Room Deleted" ;
