@@ -39,7 +39,7 @@ public class User {
 
     private String card;
 
-    private Integer point;
+    private Long point;
 
     private String avatar;
     private String city;

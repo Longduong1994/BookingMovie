@@ -5,6 +5,7 @@ import booking_movie.dto.response.CouponResponseDto;
 import booking_movie.entity.Coupon;
 import booking_movie.entity.Notification;
 import booking_movie.entity.User;
+import booking_movie.exception.NotFoundException;
 import booking_movie.repository.CouponRepository;
 import booking_movie.repository.UserRepository;
 import booking_movie.security.user_principle.UserPrincipal;
@@ -25,6 +26,24 @@ public class CouponServiceImpl implements CouponService{
     private final CouponRepository couponRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+
+    @Override
+    public String checkCoupon(String code) throws NotFoundException {
+        Optional<Coupon> coupon = couponRepository.findByCode(code);
+        if (!coupon.isPresent()){
+            throw new NotFoundException("Hhông tìm thấy mã.");
+        }
+        if (coupon.get().getStatus()==true){
+            throw new NotFoundException("Mã đã sử dụng.");
+        }
+        LocalDate endDate = coupon.get().getEndDate();
+        if (endDate.isBefore(LocalDate.now())) {
+            throw new NotFoundException("Mã hết hạn sử dụng.");
+        }
+        coupon.get().setStatus(true);
+        couponRepository.save(coupon.get());
+        return "Áp dụng thành công";
+    }
 
     /**
      * search coupon by code

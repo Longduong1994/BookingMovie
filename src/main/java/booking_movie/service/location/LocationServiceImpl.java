@@ -34,6 +34,11 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
+    public List<Location> findAll() {
+        return locationRepository.findAll();
+    }
+
+    @Override
     public Page<LocationResponseDto> findAll(String search, Pageable pageable) {
         Page<Location> locationPage ;
         if (search.isEmpty()) {

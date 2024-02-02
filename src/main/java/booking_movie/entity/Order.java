@@ -57,7 +57,7 @@ public class Order {
 
     private Double moviePrice;
 
-    private Double total;
+    private Long total;
 
     @Enumerated(EnumType.STRING)
     private Status status;

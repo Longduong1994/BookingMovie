@@ -14,8 +14,12 @@ public interface OrderService {
 
     OrderResponseDto create(Authentication authentication, OrderRequestDto orderRequestDto) throws LoginException, CustomsException, NotFoundException;
 
+    Order findByCode(String code);
+    OrderResponseDto findByOrderId(Long id) throws NotFoundException;
 
-//     Order create(OrderRequestDto orderRequestDto, Authentication authentication) throws OrderException, UserException;
+    void deleteOrder(Long id);
+
+    //     Order create(OrderRequestDto orderRequestDto, Authentication authentication) throws OrderException, UserException;
 //     Order update(Authentication authentication) throws OrderException, UserException;
-     Order findById(Long id)throws OrderException;
+    Order findById(Long id) throws OrderException;
 }

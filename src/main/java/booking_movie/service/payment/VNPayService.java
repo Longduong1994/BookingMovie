@@ -22,14 +22,14 @@ import static com.amazonaws.regions.ServiceAbbreviations.Config;
 @Service
 public class VNPayService {
 
-    public PaymentDto createOrder(Long total) throws UnsupportedEncodingException {
+    public PaymentDto createOrder(Long total,String orderCode) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
         String vnp_IpAddr = "127.0.0.1";
         String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
         String orderType = "order-type";
-        String orderInfor = "Thanh toán đơn hàng";
+        String orderInfor = orderCode;
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);

@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order,Long> {
     Optional<Order> findByUserAndStatus(User user, Status status);
 
+    Optional<Order> findByCode(String code);
+
     @Query("SELECT sum(O.total)FROM Order O JOIN O.user User  where User.id =:user_id AND year (O.createTime)=:year ")
     Double getTotal(@Param("user_id") Long userId,@Param("year") Long year);
 }

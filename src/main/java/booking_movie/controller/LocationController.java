@@ -23,7 +23,7 @@ public class LocationController {
 
 
 
-    @GetMapping("/getAll")
+        @GetMapping("/getLocation")
     public ResponseEntity<?> findAll(){
         return new ResponseEntity<>(locationService.findAll(),HttpStatus.OK);
     }

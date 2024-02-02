@@ -33,6 +33,6 @@ public class RegisterRequestDto {
     private String phone;
     @NotNull(message = "Ngày sinh không thể để trống")
     @NotNull(message = "Không được để trống.")
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 }
