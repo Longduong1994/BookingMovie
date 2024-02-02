@@ -20,7 +20,7 @@ public class CustomerResponse {
     private String phone;
     private LocalDate dateOfBirth;
     private LocalDate createdAt;
-    private Integer point;
+    private Long point;
     private String avatar;
     private String city;
     private String address;

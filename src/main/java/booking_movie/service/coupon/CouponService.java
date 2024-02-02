@@ -4,6 +4,7 @@ import booking_movie.dto.request.CouponRequestDto;
 import booking_movie.dto.response.CouponResponseDto;
 import booking_movie.entity.Coupon;
 import booking_movie.exception.UserException;
+import booking_movie.exception.NotFoundException;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
@@ -24,5 +25,12 @@ public interface CouponService {
     /* Todo 12/01/2024 */
     List<CouponResponseDto> findAllByUser(Authentication authentication);
 
+
     Coupon updateStatus(Long id, Authentication authentication) throws UserException;
+
+    /**
+     *
+     */
+
+    String checkCoupon(String code) throws NotFoundException;
 }

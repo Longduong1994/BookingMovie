@@ -17,9 +17,7 @@ public class MenuMapper {
     private final OrderService orderService;
     public Menu menuRequestDtoIntoMenu(MenuRequestDto menuRequestDto) throws DishException, OrderException {
         return Menu.builder()
-                .id(menuRequestDto.getId())
                 .dish(dishService.findById(menuRequestDto.getDishId()))
-                .order(orderService.findById(menuRequestDto.getOrderId()))
                 .quantity(menuRequestDto.getQuantity()).build();
     }
     public MenuResponseDto menuIntoMenuResponseDto(Menu menu){

@@ -13,7 +13,7 @@ import org.springframework.security.core.Authentication;
 import java.util.List;
 
 public interface MenuService {
-    String push(MenuRequestDto menuRequestDto,Authentication authentication) throws UserException, DishException, OrderException, MenuException;
+    String push(List<MenuRequestDto> listMenuRequestDto,Long orderId) throws UserException, DishException, OrderException, MenuException;
     String sell(MenuRequestDto menuRequestDto,Authentication authentication) throws UserException, DishException, OrderException, MenuException;
     Menu findById(Long id) throws MenuException;
     List<MenuResponseDto> findAllByOrder(Long orderId) throws OrderException;
