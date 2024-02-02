@@ -39,6 +39,39 @@ public class OrderServiceImpl implements OrderService {
     private final ChairRepository chairRepository;
     private final OrderRepository orderRepository;
 
+    @Override
+    public OrderResponseDto findByOrderId(Long id) throws NotFoundException {
+        Optional<Order> orderFind = orderRepository.findById(id);
+        if (!orderFind.isPresent()) {
+            throw new NotFoundException("Không tìm thấy đơn hàng");
+        }
+        Order order = orderFind.get();
+        return OrderResponseDto.builder()
+                .id(order.getId())
+                .movieName(order.getMovieName())
+                .code(order.getCode())
+                .movieImage(order.getImageMovie())
+                .startTime(order.getStartTime())
+                .bookingDate(order.getBookingDate())
+                .rated(order.getRated())
+                .locationName(order.getLocationName())
+                .chairs(order.getChairs().stream().map(item -> item.getChairName()).collect(Collectors.toSet()))
+                .theaterName(order.getTheaterName())
+                .roomName(order.getRoomName())
+                .total(order.getTotal())
+                .build();
+    }
+
+    @Override
+    public Order findByCode(String code) {
+        Optional<Order> order = orderRepository.findByCode(code);
+        return order.get();
+    }
+
+    @Override
+    public void deleteOrder(Long id) {
+        orderRepository.deleteById(id);
+    }
 
     @Transactional
     @Override
@@ -60,6 +93,7 @@ public class OrderServiceImpl implements OrderService {
         String code = UUID.randomUUID().toString().substring(0, 12);
         order.setCode(code);
         order.setUser(user);
+        order.setTotal(orderRequestDto.getTotal());
         order.setLocationName(orderRequestDto.getLocation());
         order.setTheaterName(orderRequestDto.getTheater());
         order.setRoomName(room.getRoomName());
@@ -69,7 +103,6 @@ public class OrderServiceImpl implements OrderService {
         order.setStartTime(orderRequestDto.getStartTime());
         order.setBookingDate(orderRequestDto.getBookingDate());
         order.setChairs(chairSet);
-        order.setTotal(movie.getPrice() * chairSet.size());
 
 
         //  menu
@@ -81,6 +114,7 @@ public class OrderServiceImpl implements OrderService {
         return OrderResponseDto.builder()
                 .id(order.getId())
                 .movieName(order.getMovieName())
+                .code(order.getCode())
                 .movieImage(order.getImageMovie())
                 .startTime(order.getStartTime())
                 .bookingDate(order.getBookingDate())
