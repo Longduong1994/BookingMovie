@@ -21,7 +21,7 @@ public interface CouponRepository extends JpaRepository<Coupon,Long> {
      *
      * @author huyqt97
      */
-    List<Coupon> findAllByUser(User user);
+    List<Coupon> findAllByUserAndStatus(User user,Boolean status);
 
-    Optional<Coupon> findByIdAndUser(Long id,User user);
+    Optional<Coupon> findByIdAndUserAndStatus(Long id,User user,Boolean status);
 }

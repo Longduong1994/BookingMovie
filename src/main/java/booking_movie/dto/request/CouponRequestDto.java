@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Builder
 public class CouponRequestDto {
     @NotNull(message = "Chưa thêm ngày hiệu lực")
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDate effectDate;
 
     @NotNull(message = "Chưa thêm giảm giá")

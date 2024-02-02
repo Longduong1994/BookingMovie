@@ -30,7 +30,7 @@ public class Coupon {
 
     private LocalDate endDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "users_id")
     private User user;
 

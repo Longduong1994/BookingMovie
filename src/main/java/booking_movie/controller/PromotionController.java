@@ -20,7 +20,7 @@ public class PromotionController {
 
     @PostMapping
 //    @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<?> createPromotion(@Valid @RequestBody PromotionRequestDto promotionRequestDto, Authentication authentication) throws PromtionException, UserException {
+    public ResponseEntity<?> createPromotion(Authentication authentication,@Valid @ModelAttribute PromotionRequestDto promotionRequestDto) throws PromtionException, UserException {
         return new ResponseEntity<>(promotionService.create(promotionRequestDto,authentication), HttpStatus.OK);
     }
     @GetMapping("/{id}")

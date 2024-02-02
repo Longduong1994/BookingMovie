@@ -17,7 +17,7 @@ public class CouponController {
     private CouponService couponService;
     @GetMapping
     public ResponseEntity<?> getAllByUser(Authentication authentication){
-        return new ResponseEntity<>(couponService.findAllByUser(authentication), HttpStatus.OK);
+        return new ResponseEntity<>(couponService.findAllByUser(authentication,false), HttpStatus.OK);
     }
     @PostMapping
     public ResponseEntity<?> addCoupon(Authentication authentication,@Valid @RequestBody CouponRequestDto couponRequestDto) throws Exception {

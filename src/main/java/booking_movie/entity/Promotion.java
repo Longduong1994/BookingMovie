@@ -21,6 +21,8 @@ public class Promotion {
 
     private String eventName;
 
+    private String image;
+
     private String eventCode;
 
     private String description;
