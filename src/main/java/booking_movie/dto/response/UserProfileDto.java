@@ -22,5 +22,5 @@ public class UserProfileDto {
     private String address;
     private String gender;
     private String level;
-    private Integer point;
+    private Long point;
 }

@@ -1,5 +1,10 @@
 package booking_movie.controller;
 
+import booking_movie.entity.Order;
+import booking_movie.entity.User;
+import booking_movie.repository.OrderRepository;
+import booking_movie.repository.PaymentRepository;
+import booking_movie.repository.UserRepository;
 import booking_movie.service.order.OrderService;
 import booking_movie.service.payment.MomoService;
 import booking_movie.service.payment.PayPalService;
@@ -31,6 +36,9 @@ public class PaymentController {
     private final MomoService momoService;
     private final ZaLoPayService zaLoPayService;
     private final OrderService orderService;
+    private final PaymentRepository paymentRepository;
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
 
 
 
@@ -97,21 +105,32 @@ public class PaymentController {
 
     //VNPay
     @GetMapping("/createVNPay")
-    public ResponseEntity<?> submitOrder(@RequestParam String total) throws UnsupportedEncodingException {
+    public ResponseEntity<?> submitOrder(@RequestParam String total,
+                                         @RequestParam String orderCode) throws UnsupportedEncodingException {
         Long amount = Long.parseLong(total);
-        return new ResponseEntity<>(vnPayService.createOrder(amount),HttpStatus.OK);
+        return new ResponseEntity<>(vnPayService.createOrder(amount,orderCode),HttpStatus.OK);
     }
 
     @GetMapping("payment-callback")
     public void paymentCallback(@RequestParam Map<String, String> queryParams,HttpServletResponse response) throws IOException {
         String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
+        String orderCode = queryParams.get("vnp_OrderInfo");
+        Order order = orderService.findByCode(orderCode);
+        User user = order.getUser();
+        Optional<booking_movie.entity.Payment> payment = paymentRepository.findById(2L);
 
             if ("00".equals(vnp_ResponseCode)) {
                 // Giao dịch thành công
                 // Thực hiện các xử lý cần thiết, ví dụ: cập nhật CSDL
-
-                response.sendRedirect("http://localhost:3000/booking-success");
+                order.setPayment(payment.get());
+                orderRepository.save(order);
+                Long points = order.getTotal() / 10000;
+                user.setPoint(points);
+                userRepository.save(user);
+                String redirectUrl = "http://localhost:3000/paymentSuccess?orderId=" + order.getId();
+                response.sendRedirect(redirectUrl);
             } else {
+                orderService.deleteOrder(order.getId());
                 // Giao dịch thất bại
                 // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL\
                 response.sendRedirect("http://localhost:3000/booking-failed");

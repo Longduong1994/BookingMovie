@@ -11,6 +11,7 @@ import booking_movie.exception.OrderException;
 import booking_movie.exception.UserException;
 import booking_movie.mapper.MenuMapper;
 import booking_movie.repository.MenuRepository;
+import booking_movie.repository.OrderRepository;
 import booking_movie.service.order.OrderService;
 import booking_movie.service.user.UserService;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ public class MenuServiceImpl implements MenuService {
     private final MenuRepository menuRepository;
     private final UserService userService;
     private final MenuMapper menuMapper;
+    private final OrderRepository orderRepository;
     private final OrderService orderService;
 
     /**
@@ -35,23 +37,17 @@ public class MenuServiceImpl implements MenuService {
      * @author huyqt97
      */
     @Override
-    public String push(MenuRequestDto menuRequestDto, Authentication authentication) throws UserException, DishException, OrderException, MenuException {
-        User user = userService.userById(authentication);
-        Menu menu = menuMapper.menuRequestDtoIntoMenu(menuRequestDto);
-        if (menu.getOrder().getUser().equals(user)) {
-            if (menu.getDish().getStatus()) {
-                if (menu.getId() != null) {
-                    Menu menu1 = findById(menu.getId());
-                    menu1.setQuantity(menu1.getQuantity() + 1);
-                    menuRepository.save(menu1);
-                } else {
-                    menu.setQuantity(1);
-                    menuRepository.save(menu);
-                }
-            }
-            throw new DishException("Số lượng món ăn không đủ ");
+    public String push(List<MenuRequestDto> listMenuRequestDto,Long orderId) throws UserException, DishException, OrderException, MenuException {
+        Optional<Order> order = orderRepository.findById(orderId);
+        if (!order.isPresent()) {
+            throw new UserException("Đơn hàng không tồn tại");
         }
-        throw new UserException("Tài khoản không được cấp quyền");
+        for (MenuRequestDto menuRequestDto : listMenuRequestDto) {
+            Menu menu = menuMapper.menuRequestDtoIntoMenu(menuRequestDto);
+            menu.setOrder(order.get());
+            menuRepository.save(menu);
+        }
+        return "thêm đồ ăn thành công";
     }
 
     /**
@@ -97,8 +93,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<MenuResponseDto> findAllByOrder(Long orderId) throws OrderException {
         List<MenuResponseDto> menuResponseDtoList = new ArrayList<>();
-        Order order = orderService.findById(orderId);
-        for (Menu m : menuRepository.findAllByOrder(order)) {
+        for (Menu m : menuRepository.findAllByOrder(orderId)) {
             menuResponseDtoList.add(menuMapper.menuIntoMenuResponseDto(m));
         }
         return menuResponseDtoList;

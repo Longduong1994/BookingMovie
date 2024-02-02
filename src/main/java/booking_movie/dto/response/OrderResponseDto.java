@@ -17,6 +17,7 @@ import java.util.Set;
 public class OrderResponseDto {
     private Long id;
     private String theaterName;
+    private String code;
     private String locationName;
     private String roomName;
     private String movieName;
@@ -28,5 +29,5 @@ public class OrderResponseDto {
     private String promotion;
     private String coupon;
     private String paymentMethod;
-    private Double total;
+    private Long total;
 }
