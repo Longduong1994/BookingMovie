@@ -3,7 +3,6 @@ package booking_movie.controller;
 import booking_movie.dto.request.dish.DishRequestDto;
 import booking_movie.dto.request.dish.DishUpdateRequestDto;
 import booking_movie.entity.Dish;
-import booking_movie.entity.User;
 import booking_movie.exception.DishException;
 import booking_movie.exception.UserException;
 import booking_movie.service.dish.DishService;

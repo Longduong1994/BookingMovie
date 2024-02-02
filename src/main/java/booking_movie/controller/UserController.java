@@ -78,5 +78,9 @@ public class UserController {
 
         return new ResponseEntity<>(userService.setRole(authentication,roleName,id),HttpStatus.OK);
     }
-
+// tổng số người dùng
+    @GetMapping("/count-customer")
+    private ResponseEntity<?> sumCustomer(){
+        return new ResponseEntity<>(userService.sumCustomer(),HttpStatus.OK);
+    }
 }

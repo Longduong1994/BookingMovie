@@ -28,6 +28,7 @@ public class LocationController {
         return new ResponseEntity<>(locationService.findAll(),HttpStatus.OK);
     }
 
+
     /*
     * TODO : param ( search / page / limit / sortBy )
     * */

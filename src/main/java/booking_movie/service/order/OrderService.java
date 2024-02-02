@@ -4,11 +4,12 @@ import booking_movie.dto.request.OrderRequestDto;
 
 import booking_movie.dto.response.OrderResponseDto;
 import booking_movie.entity.Order;
-import booking_movie.exception.CustomsException;
-import booking_movie.exception.LoginException;
-import booking_movie.exception.NotFoundException;
-import booking_movie.exception.OrderException;
+import booking_movie.exception.*;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public interface OrderService {
 
@@ -21,5 +22,14 @@ public interface OrderService {
 
     //     Order create(OrderRequestDto orderRequestDto, Authentication authentication) throws OrderException, UserException;
 //     Order update(Authentication authentication) throws OrderException, UserException;
+
+     Order findById(Long id)throws OrderException;
+     Double sumTotalSpending(Authentication authentication) throws UserException;
+     Page<Order> findAllByUser(Integer page,Integer size,Authentication authentication) throws UserException;
+     Page<Order> findAllLocalDate(Integer page, Integer size, LocalDate localDate);
+     Page<Order> findAll(Integer page, Integer size);
+     Double sumTotalRevenue();
+     Double sumTotalCurrentYear();
     Order findById(Long id) throws OrderException;
+
 }

@@ -2,7 +2,6 @@ package booking_movie.service.location;
 
 import booking_movie.dto.request.LocationRequestDto;
 import booking_movie.dto.response.LocationResponseDto;
-import booking_movie.entity.Location;
 import booking_movie.exception.CustomsException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +11,6 @@ import java.util.List;
 
 
 public interface LocationService {
-    List<Location> findAll();
     Page<LocationResponseDto> findAll(String locationName , Pageable pageable) ;
     List<LocationResponseDto> finAllNoSearch();
     LocationResponseDto findById (Long id) throws  CustomsException;
