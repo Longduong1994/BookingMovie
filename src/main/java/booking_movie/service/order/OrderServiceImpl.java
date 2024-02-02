@@ -9,9 +9,14 @@ import booking_movie.repository.*;
 import booking_movie.service.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -148,5 +153,35 @@ public class OrderServiceImpl implements OrderService {
     public Double sumTotalSpending(Authentication authentication) throws UserException {
          User user = userService.userById(authentication);
         return orderRepository.getTotalUser(user);
+    }
+
+    @Override
+    public Page<Order> findAllByUser(Integer page,Integer size,Authentication authentication) throws UserException {
+         User user = userService.userById(authentication);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        return orderRepository.findAllByUser(user, pageRequest);
+    }
+
+    @Override
+    public Page<Order> findAllLocalDate(Integer page, Integer size, LocalDate localDate) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        return orderRepository.findAllByBookingDate(localDate,pageRequest);
+    }
+
+    @Override
+    public Page<Order> findAll(Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        return orderRepository.findAll(pageRequest);
+    }
+
+    @Override
+    public Double sumTotalRevenue() {
+        return orderRepository.sumTotalRevenue();
+    }
+
+    @Override
+    public Double sumTotalCurrentYear(){
+         Year year1 = Year.now();
+        return orderRepository.sumTotalYear(year1);
     }
 }

@@ -41,4 +41,5 @@ public interface UserService {
     CustomerResponse updateCustomer(Authentication authentication, UpdateUserDto updateUserDto) throws CustomsException, LoginException;
     String getLink(PasswordRetrievalDto passwordRetrievalDto) throws CustomsException;
     String retrievalPassword(NewPasswordDto newPasswordDto,String email) throws NotFoundException, CustomsException;
+    Integer sumCustomer();
 }

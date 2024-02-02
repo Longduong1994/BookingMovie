@@ -23,4 +23,5 @@ public interface MovieService {
     MovieResponseDto updateMovie(MovieUpdateRequestDto movieRequestDto, Authentication authentication , Long idEdit) throws MovieException, LoginException;
 
     MovieResponseDto getMovieById(Long idMovie) throws MovieException;
+
 }

@@ -98,7 +98,9 @@ public class CouponServiceImpl implements CouponService{
         User user = userPrincipal.getUser();
         List<CouponResponseDto> couponList = new ArrayList<>();
         if(user!= null){
-            for (Coupon c: couponRepository.findAllByUser(user)) {
+            List<Coupon> userCoupons = couponRepository.findAllByUser(user);
+            for (int i = userCoupons.size() - 1; i >= 0; i--) {
+                Coupon c = userCoupons.get(i);
                 CouponResponseDto couponResponseDto = mapper(c);
                 couponList.add(couponResponseDto);
             }
