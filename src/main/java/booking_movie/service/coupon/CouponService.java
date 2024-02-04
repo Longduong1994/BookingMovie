@@ -16,7 +16,7 @@ public interface CouponService {
      * @author huyqt97
      */
     /* Todo 12/01/2024 */
-    CouponResponseDto create(CouponRequestDto couponRequestDto, Authentication authentication) throws Exception;
+    String create(CouponRequestDto couponRequestDto, Authentication authentication) throws Exception;
     /**
      * List coupon by user
      *
@@ -33,4 +33,5 @@ public interface CouponService {
      */
 
     String checkCoupon(String code) throws NotFoundException;
+    List<Coupon> showCoupon(Authentication authentication, Long id) throws UserException;
 }

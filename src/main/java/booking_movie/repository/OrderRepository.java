@@ -2,7 +2,9 @@ package booking_movie.repository;
 
 
 import booking_movie.constants.Status;
+import booking_movie.entity.Movie;
 import booking_movie.entity.Order;
+import booking_movie.entity.Theater;
 import booking_movie.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +28,18 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
     Double getTotalUser(@Param("user") User user);
     Page<Order> findAllByUser(User user, Pageable pageable);
     Page<Order> findAllByBookingDate(LocalDate localDate, Pageable pageable);
-    @Query("SELECT SUM(O.menuPrice + O.moviePrice) FROM Order O")
+    @Query("SELECT SUM(O.total) FROM Order O")
     Double sumTotalRevenue();
     @Query("SELECT SUM(o.total) FROM Order o WHERE YEAR(o.bookingDate) = :year")
     Double sumTotalYear(@Param("year") Integer year);
+    @Query("SELECT O FROM Order O JOIN O.user U WHERE " +
+            "(:searchUser IS NULL OR :searchUser = '' OR U.username LIKE %:searchUser%) " +
+            "AND (:searchYear IS NULL OR :searchYear = 0 OR YEAR(O.bookingDate) = :searchYear) " +
+            "AND (:searchMovie IS NULL OR :searchMovie = '' OR O.movieName = :searchMovie) " +
+            "AND (:searchTheater IS NULL OR :searchTheater = '' OR O.theaterName = :searchTheater)")
+    Page<Order> findAllInAdmin(@Param("searchUser") String searchUser,
+                               @Param("searchYear") Integer searchYear,
+                               @Param("searchMovie") String searchMovie,
+                               @Param("searchTheater") String searchTheater,
+                               Pageable pageable);
 }

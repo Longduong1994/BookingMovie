@@ -22,10 +22,15 @@ public class CouponController {
     }
     @PostMapping
     public ResponseEntity<?> addCoupon(Authentication authentication,@Valid @RequestBody CouponRequestDto couponRequestDto) throws Exception {
+        System.out.println(couponRequestDto);
         return new ResponseEntity<>(couponService.create(couponRequestDto,authentication),HttpStatus.OK);
     }
     @PatchMapping("{id}")
     public  ResponseEntity<?> useCoupon(@PathVariable("id") Long id,Authentication authentication) throws UserException, NotFoundException {
         return new ResponseEntity<>(couponService.updateStatus(id, authentication), HttpStatus.OK);
+    }
+    @GetMapping("/show-customer/{id}")
+    private ResponseEntity<?> get(Authentication authentication,@PathVariable("id") Long id) throws UserException {
+        return new ResponseEntity<>(couponService.showCoupon(authentication,id),HttpStatus.OK);
     }
 }

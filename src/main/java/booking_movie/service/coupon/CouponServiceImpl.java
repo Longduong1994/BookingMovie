@@ -1,6 +1,7 @@
 package booking_movie.service.coupon;
 
 import booking_movie.dto.request.CouponRequestDto;
+import booking_movie.dto.request.UserId;
 import booking_movie.dto.response.CouponResponseDto;
 import booking_movie.entity.Coupon;
 import booking_movie.entity.Notification;
@@ -31,10 +32,10 @@ public class CouponServiceImpl implements CouponService{
     @Override
     public String checkCoupon(String code) throws NotFoundException {
         Optional<Coupon> coupon = couponRepository.findByCode(code);
-        if (!coupon.isPresent()){
+        if (coupon.isEmpty()){
             throw new NotFoundException("Hhông tìm thấy mã.");
         }
-        if (coupon.get().getStatus()==true){
+        if (coupon.get().getStatus()){
             throw new NotFoundException("Mã đã sử dụng.");
         }
         LocalDate endDate = coupon.get().getEndDate();
@@ -52,27 +53,26 @@ public class CouponServiceImpl implements CouponService{
      * @author huyqt97
      */
     @Override
-    public CouponResponseDto create(CouponRequestDto couponRequestDto, Authentication authentication) throws Exception {
+    public String create(CouponRequestDto couponRequestDto, Authentication authentication) throws Exception {
         String codeNew = randomCode(couponRequestDto,authentication);
-        Optional<User> user = userRepository.findById(couponRequestDto.getUser());
-        if(user.isEmpty()){
-            throw new Exception("Khuyến mãi không tồn tại");
+        Set<User> users = new HashSet<>();
+        for (UserId id : couponRequestDto.getListUserId()) {
+        Optional<User> user = userRepository.findById(id.getId());
+                Coupon coupon = Coupon.builder().code(codeNew)
+                        .description(couponRequestDto.getDescription())
+                        .endDate(couponRequestDto.getEffectDate())
+                        .salePrice(couponRequestDto.getSalePrice())
+                        .isDelete(false)
+                        .user(user.orElseThrow(()-> new Exception("Người dùng " + id.getId())))
+                        .status(true).build();
+                couponRepository.save(coupon);
+        users.add(user.get());
         }
-        Coupon coupon = Coupon.builder().code(codeNew)
-                .description(couponRequestDto.getDescription())
-                .endDate(couponRequestDto.getEffectDate())
-                .salePrice(couponRequestDto.getSalePrice())
-                .isDelete(false)
-                .user(user.get())
-                .status(true).build();
-        Coupon c = couponRepository.save(coupon);
         String message ="\"Bạn nhận được 1 voucher giá trị \"+couponRequestDto.getSalePrice() +\"." +
                 " Có hiệu lực từ ngày "+ LocalDate.now()+" đến "+couponRequestDto.getEffectDate()+" ." +
                 " Mã của bạn là :"+codeNew +" ."+
                 " Chương trình áp lục cho tất cả các phim . Chào bạn !!!\"";
 
-        Set<User> users = new HashSet<>();
-        users.add(user.get());
 
         Notification notification = new Notification();
         notification.setTitle(couponRequestDto.getDescription());
@@ -81,8 +81,7 @@ public class CouponServiceImpl implements CouponService{
         notification.setRead(true);
         notification.setUsers(users);
         notificationService.create(notification);
-
-        return mapper(c);
+        return "Thành công!";
     }
 
     /**
@@ -143,6 +142,13 @@ public class CouponServiceImpl implements CouponService{
     @Override
     public Coupon updateStatus(Long id, Authentication authentication) throws UserException, NotFoundException {
         User user = userService.userById(authentication);
-        return couponRepository.findByIdAndUserAndStatus(id,user,false).orElseThrow(()-> new NotFoundException("coupon not found"));
+        return couponRepository.findByIdAndUserAndStatus(id,user,true).orElseThrow(()-> new NotFoundException("coupon not found"));
+    }
+
+    @Override
+    public List<Coupon> showCoupon(Authentication authentication, Long id) throws UserException {
+        userService.userById(authentication);
+        User user = userRepository.findById(id).orElseThrow(()-> new UserException("Người cần tìm không tồn tại!"));
+        return couponRepository.findAllByUserAndStatus(user,true);
     }
 }

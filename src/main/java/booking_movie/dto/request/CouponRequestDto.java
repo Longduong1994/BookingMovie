@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * @author huyqt97
@@ -25,6 +26,5 @@ public class CouponRequestDto {
     @NotNull(message = "Not null")
     private String description;
 
-    @NotNull(message = "Thêm mã khách hàng")
-    private Long user;
+    private List<UserId> listUserId;
 }

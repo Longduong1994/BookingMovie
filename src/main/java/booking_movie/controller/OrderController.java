@@ -12,6 +12,7 @@ import booking_movie.service.order.OrderService;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
+import org.apache.http.auth.AUTH;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,6 +84,18 @@ public class OrderController {
     @GetMapping("/sumYear")
     private ResponseEntity<?> getSumYear(Authentication authentication) throws UserException {
         return new ResponseEntity<>(orderService.sumTotalCurrentYear(authentication),HttpStatus.OK);
+    }
+
+    @GetMapping("/select-in-admin")
+    private ResponseEntity<?> getAllInAdmin(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "") String searchUser,
+            @RequestParam(defaultValue = "") Integer searchYear,
+            @RequestParam(defaultValue = "") String searchMovie,
+            @RequestParam(defaultValue = "") String searchTheater,
+            Authentication authentication) throws UserException {
+
+        return new ResponseEntity<>(orderService.findAllInAdmin(page, searchUser, searchYear, searchMovie, searchTheater, authentication), HttpStatus.OK);
     }
 
 }

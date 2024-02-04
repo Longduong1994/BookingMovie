@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ public class OrderServiceImpl implements OrderService {
     private final RoomRepository roomRepository;
     private final ChairRepository chairRepository;
     private final OrderRepository orderRepository;
+    private final TheaterRepository theaterRepository;
 
     @Override
     public OrderResponseDto findByOrderId(Long id) throws NotFoundException {
@@ -227,5 +229,12 @@ public class OrderServiceImpl implements OrderService {
          }else {
              return (double) 0;
          }
+    }
+
+    @Override
+    public Page<Order> findAllInAdmin(Integer page, String searchUser, Integer searchYear, String searchMovie, String searchTheater, Authentication authentication) throws UserException {
+        userService.userById(authentication);
+        Pageable pageable = PageRequest.of(page, 6, Sort.Direction.DESC, "createTime");
+        return orderRepository.findAllInAdmin(searchUser, searchYear, searchMovie, searchTheater, pageable);
     }
 }

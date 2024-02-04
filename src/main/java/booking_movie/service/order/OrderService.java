@@ -30,4 +30,5 @@ public interface OrderService {
      Page<Order> findAll(Integer page, Integer size);
      Double sumTotalRevenue(Authentication authentication) throws UserException;
      Double sumTotalCurrentYear(Authentication authentication) throws UserException;
+     Page<Order> findAllInAdmin(Integer page,String searchUser,Integer searchYear,String searchMovie, String searchTheater,Authentication authentication) throws UserException;
 }
