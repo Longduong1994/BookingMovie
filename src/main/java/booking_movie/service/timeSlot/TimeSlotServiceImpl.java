@@ -69,7 +69,11 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 
     @Override
     public TimeSlotResponseDto save(Authentication authentication , TimeSlotRequestDto timeSlotRequestDto) throws CustomsException {
-        if (timeSlotRepository.existsByRoomTheaterIdAndRoomIdAndMovieIdAndStartTime(timeSlotRequestDto.getTheaterId(), timeSlotRequestDto.getRoomId(), timeSlotRequestDto.getMovieId(), timeSlotRequestDto.getStartTime())){
+        if (timeSlotRepository.existsByRoomTheaterIdAndRoomIdAndMovieIdAndStartTimeAndShowDateMovie(timeSlotRequestDto.getTheaterId(),
+                                                                                                    timeSlotRequestDto.getRoomId(),
+                                                                                                    timeSlotRequestDto.getMovieId(),
+                                                                                                    timeSlotRequestDto.getStartTime(),
+                                                                                                    timeSlotRequestDto.getShowDateMovie())){
             throw new CustomsException("Xuất chiếu đã tồn tại");
         }
         TimeSlot timeSlot = timeSlotRepository.save(timeSlotMapper.toEntity(timeSlotRequestDto));

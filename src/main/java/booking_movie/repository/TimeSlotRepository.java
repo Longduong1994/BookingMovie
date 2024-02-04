@@ -24,6 +24,8 @@ public interface TimeSlotRepository extends JpaRepository<TimeSlot , Long> {
     List<TimeSlot> findAllByRoomIsDeletedTrueAndUpdateTimeBefore(LocalDateTime localDateTime) ;
 
     Boolean existsByRoomTheaterIdAndRoomIdAndMovieIdAndStartTime(Long idTheater, Long idRoom, Long idMovie, LocalTime localTime) ;
+    Boolean existsByRoomTheaterIdAndRoomIdAndMovieIdAndStartTimeAndShowDateMovie(Long idTheater, Long idRoom, Long idMovie, LocalTime startTime, LocalDate showDateMovie);
+
 
     @Query("SELECT ts FROM TimeSlot ts join ts.movie m JOIN ts.room r join ts.room.theater t join ts.room.theater.location l where ts.movie.id = :idMovie and ts.movie.stopDate >= :dateBooking and ts.room.theater.location.id = :idLocation and ts.room.roomType = :type  and m.isDeleted = false and ts.isDeleted = false and r.isDeleted = false and t.isDeleted = false and l.isDelete = false ")
     List<TimeSlot> findAllByIdMovieAndDateBookingAndIdLocationAndTypeAndIdTheater(@Param("idMovie")Long idMovie ,

@@ -29,10 +29,10 @@ public class RegisterRequestDto {
     private String email;
     @NotEmpty(message = "Không được để trống")
     @NotBlank(message = "Không được có khoảng trắng")
-    @Pattern(regexp = "^(09|01[2|6|8|9])[0-9]{8}$", message = "Số điện thoại không đúng định dạng")
+    @Pattern(regexp = "^(09|03[2|6|8|9])[0-9]{8}$", message = "Số điện thoại không đúng định dạng")
     private String phone;
     @NotNull(message = "Ngày sinh không thể để trống")
     @NotNull(message = "Không được để trống.")
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 }

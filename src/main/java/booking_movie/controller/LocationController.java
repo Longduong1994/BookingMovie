@@ -23,9 +23,9 @@ public class LocationController {
 
 
 
-    @GetMapping("/getAll")
+    @GetMapping("/getAllLocation")
     public ResponseEntity<?> findAll(){
-        return new ResponseEntity<>(locationService.findAll(),HttpStatus.OK);
+        return new ResponseEntity<>(locationService.finAllNoSearch(),HttpStatus.OK);
     }
 
     /*
