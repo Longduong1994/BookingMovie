@@ -23,10 +23,12 @@ public class LocationController {
 
 
 
-    @GetMapping("/getAllLocation")
+
+    @GetMapping("/getLocation")
     public ResponseEntity<?> findAll(){
         return new ResponseEntity<>(locationService.finAllNoSearch(),HttpStatus.OK);
     }
+
 
     /*
     * TODO : param ( search / page / limit / sortBy )

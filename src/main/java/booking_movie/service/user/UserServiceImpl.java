@@ -373,4 +373,8 @@ public class UserServiceImpl implements UserService {
         return userPrincipal.getUser();
     }
 
+    @Override
+    public Integer sumCustomer() {
+        return userRepository.countUsersWithRole("CUSTOMER");
+    }
 }

@@ -3,7 +3,6 @@ package booking_movie.dto.request.dish;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,8 +13,6 @@ public class DishRequestDto {
 
     @NotEmpty(message = "Tên sản phẩm không thể để trống")
     private String dishName;
-
-
     @NotNull(message = "Image is required")
     private MultipartFile image;
 

@@ -34,6 +34,7 @@ public class OrderRequestDto {
     private LocalDate bookingDate;
     @NotNull(message = "Không được để trống.")
     private Set<Long> chairIds;
+    private Long total;
     private String promotion;
     private String coupon;
     private Long paymentId;

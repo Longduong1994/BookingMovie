@@ -44,8 +44,8 @@ public class MovieController {
     }
     @GetMapping("/status")
     public ResponseEntity<Page<MovieResponseDto>> getAllMovieByMovieStatus(@RequestParam(defaultValue = "") String search,
-                                                                           @RequestParam(defaultValue = "showing") String status,
-                                                                           @PageableDefault(size = 2, page = 0, sort = "price", direction = Sort.Direction.ASC) Pageable pageable) throws MovieException {
+                                                                           @RequestParam(defaultValue = "") String status,
+                                                                           @PageableDefault(size = 8, page = 0, sort = "price", direction = Sort.Direction.ASC) Pageable pageable) throws MovieException {
         Page<MovieResponseDto> listMovie = movieService.getAllMovieByMovieStatus(search, pageable,status);
         return ResponseEntity.ok(listMovie);
     }

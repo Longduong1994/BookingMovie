@@ -4,17 +4,19 @@ package booking_movie.service.order;
 import booking_movie.dto.request.OrderRequestDto;
 import booking_movie.dto.response.OrderResponseDto;
 import booking_movie.entity.*;
-import booking_movie.exception.CustomsException;
-import booking_movie.exception.LoginException;
-import booking_movie.exception.NotFoundException;
-import booking_movie.exception.OrderException;
+import booking_movie.exception.*;
 import booking_movie.repository.*;
 import booking_movie.service.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -37,6 +39,39 @@ public class OrderServiceImpl implements OrderService {
     private final ChairRepository chairRepository;
     private final OrderRepository orderRepository;
 
+    @Override
+    public OrderResponseDto findByOrderId(Long id) throws NotFoundException {
+        Optional<Order> orderFind = orderRepository.findById(id);
+        if (!orderFind.isPresent()) {
+            throw new NotFoundException("Không tìm thấy đơn hàng");
+        }
+        Order order = orderFind.get();
+        return OrderResponseDto.builder()
+                .id(order.getId())
+                .movieName(order.getMovieName())
+                .code(order.getCode())
+                .movieImage(order.getImageMovie())
+                .startTime(order.getStartTime())
+                .bookingDate(order.getBookingDate())
+                .rated(order.getRated())
+                .locationName(order.getLocationName())
+                .chairs(order.getChairs().stream().map(item -> item.getChairName()).collect(Collectors.toSet()))
+                .theaterName(order.getTheaterName())
+                .roomName(order.getRoomName())
+                .total(order.getTotal())
+                .build();
+    }
+
+    @Override
+    public Order findByCode(String code) {
+        Optional<Order> order = orderRepository.findByCode(code);
+        return order.get();
+    }
+
+    @Override
+    public void deleteOrder(Long id) {
+        orderRepository.deleteById(id);
+    }
 
     @Transactional
     @Override
@@ -58,6 +93,7 @@ public class OrderServiceImpl implements OrderService {
         String code = UUID.randomUUID().toString().substring(0, 12);
         order.setCode(code);
         order.setUser(user);
+        order.setTotal(orderRequestDto.getTotal());
         order.setLocationName(orderRequestDto.getLocation());
         order.setTheaterName(orderRequestDto.getTheater());
         order.setRoomName(room.getRoomName());
@@ -67,7 +103,6 @@ public class OrderServiceImpl implements OrderService {
         order.setStartTime(orderRequestDto.getStartTime());
         order.setBookingDate(orderRequestDto.getBookingDate());
         order.setChairs(chairSet);
-        order.setTotal(movie.getPrice() * chairSet.size());
 
 
         //  menu
@@ -79,6 +114,7 @@ public class OrderServiceImpl implements OrderService {
         return OrderResponseDto.builder()
                 .id(order.getId())
                 .movieName(order.getMovieName())
+                .code(order.getCode())
                 .movieImage(order.getImageMovie())
                 .startTime(order.getStartTime())
                 .bookingDate(order.getBookingDate())
@@ -147,4 +183,39 @@ public class OrderServiceImpl implements OrderService {
 //     }
 
 
+    @Override
+    public Double sumTotalSpending(Authentication authentication) throws UserException {
+         User user = userService.userById(authentication);
+        return orderRepository.getTotalUser(user);
+    }
+
+    @Override
+    public Page<Order> findAllByUser(Integer page,Integer size,Authentication authentication) throws UserException {
+         User user = userService.userById(authentication);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        return orderRepository.findAllByUser(user, pageRequest);
+    }
+
+    @Override
+    public Page<Order> findAllLocalDate(Integer page, Integer size, LocalDate localDate) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        return orderRepository.findAllByBookingDate(localDate,pageRequest);
+    }
+
+    @Override
+    public Page<Order> findAll(Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        return orderRepository.findAll(pageRequest);
+    }
+
+    @Override
+    public Double sumTotalRevenue() {
+        return orderRepository.sumTotalRevenue();
+    }
+
+    @Override
+    public Double sumTotalCurrentYear(){
+         Year year1 = Year.now();
+        return orderRepository.sumTotalYear(year1);
+    }
 }
