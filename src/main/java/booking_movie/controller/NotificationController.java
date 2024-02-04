@@ -1,7 +1,9 @@
 package booking_movie.controller;
 
 import booking_movie.dto.request.DeleteNotification;
+import booking_movie.exception.CustomsException;
 import booking_movie.exception.LoginException;
+import booking_movie.exception.NotFoundException;
 import booking_movie.service.notification.NotificationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,8 +18,8 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @GetMapping
-    public ResponseEntity<?> findAll(Authentication authentication,@RequestParam(defaultValue = "5") int page) throws LoginException {
-        return new ResponseEntity<>(notificationService.getNotification(authentication,page),HttpStatus.OK);
+    public ResponseEntity<?> findAll(Authentication authentication) throws LoginException {
+        return new ResponseEntity<>(notificationService.getNotification(authentication),HttpStatus.OK);
     }
 
     @PatchMapping("/delete")
@@ -30,5 +32,10 @@ public class NotificationController {
         return new ResponseEntity<>(notificationService.deleteByRead(authentication), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> read(@PathVariable String id) throws CustomsException, NotFoundException {
+        Long notificationId = Long.parseLong(id);
+        return new ResponseEntity<>(notificationService.changeStatusRead(notificationId),HttpStatus.OK);
+    }
 
 }

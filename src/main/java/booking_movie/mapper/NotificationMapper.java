@@ -10,7 +10,7 @@ public class NotificationMapper {
      return    NotificationResponse.builder()
                 .id(notification.getId())
                 .title(notification.getTitle())
-                .message(notification.getTitle())
+                .message(notification.getMessage())
                 .read(notification.isRead())
                 .createdAt(notification.getCreatedAt())
                 .build();

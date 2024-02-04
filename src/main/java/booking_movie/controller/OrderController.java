@@ -59,6 +59,21 @@ public class OrderController {
         return new ResponseEntity<>(orderService.sumTotalRevenue(authentication),HttpStatus.OK);
     }
 
+
+//    tổng danh thu theo năm hiện tại
+    @GetMapping("/total-current-year")
+    private ResponseEntity<?> totalCurrentYear(){
+        return new ResponseEntity<>(orderService.sumTotalCurrentYear(),HttpStatus.OK);
+    };
+
+
+    @GetMapping("/spending")
+    public ResponseEntity<?> spending(Authentication authentication,@RequestParam(defaultValue = "2024") String year) throws LoginException {
+        Long yearLong = Long.parseLong(year);
+        return new ResponseEntity<>(orderService.spendingByYear(yearLong,authentication),HttpStatus.OK);
+    }
+
+
     @PostMapping("/createMenu")
     public ResponseEntity<?> createMenu(@Valid @RequestBody List<MenuRequestDto> listMenuRequestDto,  @RequestParam Long orderId) {
         try {

@@ -95,7 +95,8 @@ public class MenuServiceImpl implements MenuService {
         List<MenuResponseDto> menuResponseDtoList = new ArrayList<>();
         for (Menu m : menuRepository.findAllByOrder(orderId)) {
             menuResponseDtoList.add(menuMapper.menuIntoMenuResponseDto(m));
-        }
+        }      
         return menuResponseDtoList;
     }
+
 }

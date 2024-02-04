@@ -33,6 +33,11 @@ import booking_movie.repository.OrderRepository;
 @Service
 @AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
+    @Override
+    public Long spendingByYear(Long year, Authentication authentication) throws LoginException {
+        User user  = userService.getUser(authentication);
+        return orderRepository.getTotalSumByUserIdAndYear(user.getId(), year);
+    }
 
     private final UserService userService;
     private final MovieRepository movieRepository;
@@ -60,6 +65,7 @@ public class OrderServiceImpl implements OrderService {
                 .chairs(order.getChairs().stream().map(item -> item.getChairName()).collect(Collectors.toSet()))
                 .theaterName(order.getTheaterName())
                 .roomName(order.getRoomName())
+                .paymentMethod(order.getPayment().getPaymentMethod())
                 .total(order.getTotal())
                 .build();
     }
@@ -101,7 +107,9 @@ public class OrderServiceImpl implements OrderService {
         order.setRoomName(room.getRoomName());
         order.setImageMovie(movie.getMovieImage());
         order.setMovieName(movie.getMovieName());
+        order.setCreateTime(LocalDate.now());
         order.setRated(movie.getRated());
+        order.setPoint(orderRequestDto.getPoint());
         order.setStartTime(orderRequestDto.getStartTime());
         order.setBookingDate(orderRequestDto.getBookingDate());
         order.setChairs(chairSet);

@@ -36,6 +36,7 @@ public class Order {
     @Column(columnDefinition = "DATE")
     private LocalDate bookingDate;
     private String code;
+    private Long point;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "TICKET_CHAIR",
             joinColumns = @JoinColumn(name = "ticket_id"),
