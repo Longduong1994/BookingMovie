@@ -12,6 +12,7 @@ import booking_movie.entity.User;
 import booking_movie.exception.GenreException;
 import booking_movie.exception.LoginException;
 import booking_movie.exception.MovieException;
+import booking_movie.exception.UserException;
 import booking_movie.mapper.MovieMapper;
 import booking_movie.repository.GenreRepository;
 import booking_movie.repository.MovieRepository;
@@ -171,6 +172,16 @@ public class MovieServiceImpl implements MovieService {
                     movie.setMovieStatus(MovieStatus.STOPPED);
                 }
             }
+        }
+    }
+
+    @Override
+    public Double countMovie(Authentication authentication) throws UserException {
+        userService.userById(authentication);
+        if(movieRepository.countMovie()!= null){
+        return movieRepository.countMovie();
+        }else {
+            return (double) 0;
         }
     }
 }

@@ -26,7 +26,7 @@ public interface CouponService {
     List<CouponResponseDto> findAllByUser(Authentication authentication);
 
 
-    Coupon updateStatus(Long id, Authentication authentication) throws UserException;
+    Coupon updateStatus(Long id, Authentication authentication) throws UserException, NotFoundException;
 
     /**
      *

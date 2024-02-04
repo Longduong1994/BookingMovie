@@ -17,7 +17,7 @@ public class UsersMapper {
                 .username(registerRequestDto.getUsername())
                 .email(registerRequestDto.getEmail())
                 .phone(registerRequestDto.getPhone())
-                .point(0)
+                .point(0L)
                 .dateOfBirth(registerRequestDto.getDateOfBirth())
                 .createdDate(LocalDate.now())
                 .level(RankName.COPPER)

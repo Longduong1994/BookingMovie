@@ -28,8 +28,6 @@ public interface OrderService {
      Page<Order> findAllByUser(Integer page,Integer size,Authentication authentication) throws UserException;
      Page<Order> findAllLocalDate(Integer page, Integer size, LocalDate localDate);
      Page<Order> findAll(Integer page, Integer size);
-     Double sumTotalRevenue();
-     Double sumTotalCurrentYear();
-    Order findById(Long id) throws OrderException;
-
+     Double sumTotalRevenue(Authentication authentication) throws UserException;
+     Double sumTotalCurrentYear(Authentication authentication) throws UserException;
 }

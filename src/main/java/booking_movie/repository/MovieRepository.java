@@ -4,6 +4,7 @@ import booking_movie.entity.Movie;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -17,5 +18,6 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     Movie findMovieByIdAndIsDeleted(Long idMovie,Boolean isDeleted );
     Page<Movie> findAllByMovieNameContainingIgnoreCaseAndIsDeletedAndMovieStatus(
             Pageable pageable, String movieName, Boolean isDeleted, MovieStatus movieStatus);
-
+    @Query("SELECT COUNT(M) FROM Movie M")
+    Double countMovie();
 }
