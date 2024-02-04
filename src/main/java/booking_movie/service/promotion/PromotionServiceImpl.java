@@ -10,6 +10,7 @@ import booking_movie.exception.PromtionException;
 import booking_movie.exception.UserException;
 import booking_movie.mapper.PromotionMapper;
 import booking_movie.repository.PromotionRepository;
+import booking_movie.repository.UserRepository;
 import booking_movie.service.notification.NotificationService;
 import booking_movie.service.user.UserService;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ public class PromotionServiceImpl implements PromotionService {
     private final PromotionMapper promotionMapper;
     private final UserService userService;
     private final NotificationService notificationService;
+    private final UserRepository userRepository;
 
     /**
      * create promotion
@@ -38,13 +40,15 @@ public class PromotionServiceImpl implements PromotionService {
     public Promotion create(PromotionRequestDto promotionRequestDto, Authentication authentication) throws PromtionException, UserException {
         User user = userService.userById(authentication);
         String code = randomCode(promotionRequestDto, authentication);
-        String message = "Chào xuân 2024";
+        String message = promotionRequestDto.getDescription();
+        List<User> users = userRepository.findAll();
 
         Notification notification = new Notification();
-        notification.setTitle(promotionRequestDto.getDescription());
+        notification.setTitle(promotionRequestDto.getEventName());
         notification.setMessage(message);
         notification.setCreatedAt(LocalDate.now());
         notification.setRead(false);
+        notification.setUsers(users);
         notificationService.create(notification);
         return promotionRepository.save(promotionMapper.promotionRequestDtoIntoPromotion(promotionRequestDto, user.getUsername(),code));
 
