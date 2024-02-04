@@ -3,6 +3,7 @@ package booking_movie.service.coupon;
 import booking_movie.dto.request.CouponRequestDto;
 import booking_movie.dto.response.CouponResponseDto;
 import booking_movie.entity.Coupon;
+import booking_movie.exception.LoginException;
 import booking_movie.exception.UserException;
 import booking_movie.exception.NotFoundException;
 import org.springframework.security.core.Authentication;
@@ -26,11 +27,14 @@ public interface CouponService {
     List<CouponResponseDto> findAllByUser(Authentication authentication);
 
 
+    List<CouponResponseDto> findAllByUserAndStatus(Authentication authentication) throws LoginException;
+
+
     Coupon updateStatus(Long id, Authentication authentication) throws UserException, NotFoundException;
 
     /**
      *
      */
 
-    String checkCoupon(String code) throws NotFoundException;
+    Double checkCoupon(String code) throws NotFoundException;
 }

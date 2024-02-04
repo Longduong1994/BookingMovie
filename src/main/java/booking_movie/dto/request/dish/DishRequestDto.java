@@ -13,7 +13,6 @@ public class DishRequestDto {
 
     @NotEmpty(message = "Tên sản phẩm không thể để trống")
     private String dishName;
-
     @NotNull(message = "Image is required")
     private MultipartFile image;
 

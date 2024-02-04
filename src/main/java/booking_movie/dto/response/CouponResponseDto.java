@@ -21,6 +21,7 @@ public class CouponResponseDto {
     private String code;
     private String description;
     private LocalDate endDate;
+    private Double sale;
     private String user;
     private Boolean status;
     private Boolean isDelete;

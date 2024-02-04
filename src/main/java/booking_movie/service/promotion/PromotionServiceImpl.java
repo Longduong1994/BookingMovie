@@ -44,7 +44,7 @@ public class PromotionServiceImpl implements PromotionService {
         notification.setTitle(promotionRequestDto.getDescription());
         notification.setMessage(message);
         notification.setCreatedAt(LocalDate.now());
-        notification.setRead(true);
+        notification.setRead(false);
         notificationService.create(notification);
         return promotionRepository.save(promotionMapper.promotionRequestDtoIntoPromotion(promotionRequestDto, user.getUsername(),code));
 

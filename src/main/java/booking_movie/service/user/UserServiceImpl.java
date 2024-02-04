@@ -4,8 +4,8 @@ package booking_movie.service.user;
 
 import java.time.Instant;
 import java.util.Base64;
-
 import booking_movie.constants.RoleName;
+import booking_movie.constants.RankName;
 import booking_movie.dto.request.*;
 import booking_movie.dto.response.*;
 import booking_movie.entity.Role;
@@ -16,6 +16,7 @@ import booking_movie.exception.NotFoundException;
 import booking_movie.exception.RegisterException;
 import booking_movie.exception.UserException;
 import booking_movie.mapper.UsersMapper;
+import booking_movie.repository.OrderRepository;
 import booking_movie.repository.UserRepository;
 import booking_movie.service.mail.MailService;
 import booking_movie.security.jwt.JwtProvider;
@@ -51,7 +52,28 @@ public class UserServiceImpl implements UserService {
     private final JwtProvider jwtProvider;
     private final VerificationService verificationService;
     private final UploadFileService uploadFileService;
+    private final OrderRepository orderRepository;
 
+    @Override
+    public String checkSumTotal(User user) {
+        if(orderRepository.getTotalSumByUserId(user.getId())>100000000){
+            user.setLevel(RankName.DIAMOND);
+            userRepository.save(user);
+        }else if(orderRepository.getTotalSumByUserId(user.getId())>50000000){
+            user.setLevel(RankName.PLATINUM);
+            userRepository.save(user);
+        }
+        else if(orderRepository.getTotalSumByUserId(user.getId())>20000000){
+            user.setLevel(RankName.GOLD);
+            userRepository.save(user);
+        }else if(orderRepository.getTotalSumByUserId(user.getId())>2000000){
+            user.setLevel(RankName.SILVER);
+            userRepository.save(user);
+        }else {
+            return "constant";
+        }
+        return "upgrade";
+    }
 
     @Override
     public String changeStatus(Long id,Authentication authentication) throws LoginException {
@@ -240,9 +262,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public CustomerResponse updateCustomer(Authentication authentication, UpdateUserDto updateUserDto) throws CustomsException, LoginException {
         User user = getUser(authentication);
+        String phone;
+        if (updateUserDto.getPhone() == null){
+            phone = user.getPhone();
+        }else{
+            phone = updateUserDto.getPhone();
+        }
         user.setAddress(updateUserDto.getAddress());
         user.setCity(updateUserDto.getCity());
-        user.setPhone(updateUserDto.getPhone());
+        user.setPhone(phone);
         user.setGender(updateUserDto.getGender());
         userRepository.save(user);
         return userMapper.toCustomer(user);
@@ -312,11 +340,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public String register(RegisterRequestDto registerRequestDto) throws RegisterException {
         if (userRepository.existsByUsername(registerRequestDto.getUsername()))
-            throw new RegisterException("Tên đăng nhập này đã có người dùng");
+            throw new RegisterException("Tên đăng nhập này đã có người sử dụng.");
         if (userRepository.existsByEmail(registerRequestDto.getEmail()))
-            throw new RegisterException("Email này đã có người dùng");
+            throw new RegisterException("Email này đã có người sử dụng.");
         if (userRepository.existsByPhone(registerRequestDto.getPhone()))
-            throw new RegisterException("Số điện thoại này đã có người dùng");
+            throw new RegisterException("Số điện thoại này đã có người sử dụng.");
         Set<Role> roles = new HashSet<>();
         roles.add(roleService.getRoleCustomer());
         User user = userMapper.toEntity(registerRequestDto);

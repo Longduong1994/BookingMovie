@@ -10,6 +10,7 @@ import booking_movie.service.payment.MomoService;
 import booking_movie.service.payment.PayPalService;
 import booking_movie.service.payment.VNPayService;
 import booking_movie.service.payment.ZaLoPayService;
+import booking_movie.service.user.UserService;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
@@ -39,6 +40,7 @@ public class PaymentController {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
 
 
@@ -117,23 +119,23 @@ public class PaymentController {
         String orderCode = queryParams.get("vnp_OrderInfo");
         Order order = orderService.findByCode(orderCode);
         User user = order.getUser();
-        Optional<booking_movie.entity.Payment> payment = paymentRepository.findById(2L);
+        Optional<booking_movie.entity.Payment> payment = paymentRepository.findById(1L);
 
             if ("00".equals(vnp_ResponseCode)) {
                 // Giao dịch thành công
                 // Thực hiện các xử lý cần thiết, ví dụ: cập nhật CSDL
                 order.setPayment(payment.get());
                 orderRepository.save(order);
-                Long points = order.getTotal() / 10000;
-                user.setPoint(points);
+                user.setPoint(user.getPoint() + order.getTotal()/1000 - order.getPoint());
                 userRepository.save(user);
+                userService.checkSumTotal(user);
                 String redirectUrl = "http://localhost:3000/paymentSuccess?orderId=" + order.getId();
                 response.sendRedirect(redirectUrl);
             } else {
                 orderService.deleteOrder(order.getId());
                 // Giao dịch thất bại
                 // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL\
-                response.sendRedirect("http://localhost:3000/booking-failed");
+                response.sendRedirect("http://localhost:3000/");
 
             }
     }
