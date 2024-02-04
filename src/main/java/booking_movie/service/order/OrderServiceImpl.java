@@ -217,13 +217,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Double sumTotalRevenue() {
+    public Double sumTotalRevenue(Authentication authentication) throws UserException {
+         User user = userService.userById(authentication);
+         if(orderRepository.sumTotalRevenue()!= null){
         return orderRepository.sumTotalRevenue();
+         }else {
+             return (double) 0;
+         }
     }
 
     @Override
-    public Double sumTotalCurrentYear(){
-         Year year1 = Year.now();
-        return orderRepository.sumTotalYear(year1);
+    public Double sumTotalCurrentYear(Authentication authentication) throws UserException {
+         userService.userById(authentication);
+        Integer currentYear = Year.now().getValue();
+         if(orderRepository.sumTotalYear(currentYear)!= null) {
+             return orderRepository.sumTotalYear(currentYear);
+         }else {
+             return (double) 0;
+         }
     }
 }

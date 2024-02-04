@@ -12,7 +12,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.Date;
 import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order,Long> {
@@ -27,14 +26,15 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
     Double getTotalUser(@Param("user") User user);
     Page<Order> findAllByUser(User user, Pageable pageable);
     Page<Order> findAllByBookingDate(LocalDate localDate, Pageable pageable);
-    @Query("SELECT SUM (O.total) FROM Order O")
+    @Query("SELECT SUM(O.menuPrice + O.moviePrice) FROM Order O")
     Double sumTotalRevenue();
     @Query("SELECT SUM(o.total) FROM Order o WHERE YEAR(o.bookingDate) = :year")
-    Double sumTotalYear(@Param("year") Year year);
+    Double sumTotalYear(@Param("year") Integer year);
 
     @Query(value = "SELECT COALESCE(SUM(o.total), 0) FROM booking_movie o WHERE o.user_id = ?1", nativeQuery = true)
     Double getTotalSumByUserId(Long userId);
 
     @Query(value = "SELECT COALESCE(SUM(o.total), 0) FROM booking_movie o WHERE o.user_id = ?1 AND YEAR(o.create_time) = ?2", nativeQuery = true)
     Long getTotalSumByUserIdAndYear(Long userId, Long year);
+
 }

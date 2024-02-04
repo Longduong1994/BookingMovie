@@ -2,9 +2,11 @@ package booking_movie.controller;
 
 import booking_movie.dto.request.*;
 import booking_movie.dto.response.CustomerResponse;
+import booking_movie.entity.User;
 import booking_movie.exception.CustomsException;
 import booking_movie.exception.LoginException;
 import booking_movie.exception.NotFoundException;
+import booking_movie.exception.UserException;
 import booking_movie.service.user.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -80,7 +82,7 @@ public class UserController {
     }
 // tổng số người dùng
     @GetMapping("/count-customer")
-    private ResponseEntity<?> sumCustomer(){
-        return new ResponseEntity<>(userService.sumCustomer(),HttpStatus.OK);
+    private ResponseEntity<?> sumCustomer(Authentication authentication) throws UserException {
+        return new ResponseEntity<>(userService.sumCustomer(authentication),HttpStatus.OK);
     }
 }

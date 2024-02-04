@@ -5,6 +5,7 @@ import booking_movie.dto.request.MovieUpdateRequestDto;
 import booking_movie.dto.response.MovieResponseDto;
 import booking_movie.exception.LoginException;
 import booking_movie.exception.MovieException;
+import booking_movie.exception.UserException;
 import booking_movie.service.movie.MovieService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -74,5 +75,10 @@ public class MovieController {
             errorMessages.append(error.getDefaultMessage()).append("\n");
         }
         return new ResponseEntity<>(errorMessages.toString(), HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/count-movie")
+    private ResponseEntity<?> count(Authentication authentication) throws UserException {
+        return new ResponseEntity<>(movieService.countMovie(authentication),HttpStatus.OK);
     }
 }

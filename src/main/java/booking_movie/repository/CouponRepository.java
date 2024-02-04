@@ -23,10 +23,14 @@ public interface CouponRepository extends JpaRepository<Coupon,Long> {
      *
      * @author huyqt97
      */
-    List<Coupon> findAllByUser(User user);
+    List<Coupon> findAllByUserAndStatus(User user,Boolean status);
+
+
+    Optional<Coupon> findByIdAndUserAndStatus(Long id,User user,Boolean status);
 
     Optional<Coupon> findByIdAndUser(Long id,User user);
     @Query(value = "SELECT * FROM coupon WHERE users_id = :userId AND status = 'false' AND end_date > :date", nativeQuery = true)
     List<Coupon> findByUserAndStatusAndEndDate(Long userId, LocalDate date);
+
 
 }

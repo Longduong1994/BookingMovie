@@ -93,9 +93,9 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<MenuResponseDto> findAllByOrder(Long orderId) throws OrderException {
         List<MenuResponseDto> menuResponseDtoList = new ArrayList<>();
-            for (Menu menu : menuRepository.findAllByOrder(orderId)) {
-                menuResponseDtoList.add(menuMapper.menuIntoMenuResponseDto(menu));
-            }
+        for (Menu m : menuRepository.findAllByOrder(orderId)) {
+            menuResponseDtoList.add(menuMapper.menuIntoMenuResponseDto(m));
+        }      
         return menuResponseDtoList;
     }
 

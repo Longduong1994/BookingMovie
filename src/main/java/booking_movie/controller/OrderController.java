@@ -52,11 +52,12 @@ public class OrderController {
         }
     }
     
-//  tổng danh thu theo rạp
-    @GetMapping("/total-revenue")
-    private ResponseEntity<?> totalRevenue(){
-        return new ResponseEntity<>(orderService.sumTotalRevenue(),HttpStatus.OK);
+//  tổng danh thu hệ thống
+    @GetMapping("/total")
+    private ResponseEntity<?> totalRevenue(Authentication authentication) throws UserException {
+        return new ResponseEntity<>(orderService.sumTotalRevenue(authentication),HttpStatus.OK);
     }
+
 
 //    tổng danh thu theo năm hiện tại
     @GetMapping("/total-current-year")
@@ -92,6 +93,11 @@ public class OrderController {
     public ResponseEntity<?> getMenu(@PathVariable String id) throws NotFoundException, OrderException {
         Long orderId = Long.parseLong(id);
         return new ResponseEntity<>(menuService.findAllByOrder(orderId),HttpStatus.OK);
+    }
+
+    @GetMapping("/sumYear")
+    private ResponseEntity<?> getSumYear(Authentication authentication) throws UserException {
+        return new ResponseEntity<>(orderService.sumTotalCurrentYear(authentication),HttpStatus.OK);
     }
 
 }

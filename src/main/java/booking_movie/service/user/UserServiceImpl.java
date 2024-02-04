@@ -4,7 +4,7 @@ package booking_movie.service.user;
 
 import java.time.Instant;
 import java.util.Base64;
-
+import booking_movie.constants.RoleName;
 import booking_movie.constants.RankName;
 import booking_movie.dto.request.*;
 import booking_movie.dto.response.*;
@@ -404,7 +404,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Integer sumCustomer() {
-        return userRepository.countUsersWithRole("CUSTOMER");
+    public Integer sumCustomer(Authentication authentication) throws UserException {
+        User user = userById(authentication);
+        return userRepository.countUsersWithRole(RoleName.CUSTOMER);
     }
 }

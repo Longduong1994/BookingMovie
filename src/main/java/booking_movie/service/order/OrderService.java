@@ -25,6 +25,8 @@ public interface OrderService {
      Page<Order> findAllByUser(Integer page,Integer size,Authentication authentication) throws UserException;
      Page<Order> findAllLocalDate(Integer page, Integer size, LocalDate localDate);
      Page<Order> findAll(Integer page, Integer size);
+     Double sumTotalRevenue(Authentication authentication) throws UserException;
+     Double sumTotalCurrentYear(Authentication authentication) throws UserException;
      Double sumTotalRevenue();
      Double sumTotalCurrentYear();
      Long spendingByYear(Long year,Authentication authentication) throws LoginException;

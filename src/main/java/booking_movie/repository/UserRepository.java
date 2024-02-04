@@ -34,5 +34,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT DISTINCT u FROM User u JOIN u.roles r WHERE r.roleName = :roleName ")
     Page<User> findAllByRoles(@Param("roleName") RoleName roleName , Pageable pageable) ;
     @Query("SELECT COUNT(U) FROM User U JOIN U.roles R WHERE R.roleName = :roleName")
-    Integer countUsersWithRole(@Param("roleName") String roleName);
+    Integer countUsersWithRole(@Param("roleName") RoleName roleName);
 }

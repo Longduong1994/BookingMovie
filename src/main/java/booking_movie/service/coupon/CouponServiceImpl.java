@@ -116,7 +116,7 @@ public class CouponServiceImpl implements CouponService{
         User user = userPrincipal.getUser();
         List<CouponResponseDto> couponList = new ArrayList<>();
         if(user!= null){
-            List<Coupon> userCoupons = couponRepository.findAllByUser(user);
+            List<Coupon> userCoupons = couponRepository.findAllByUserAndStatus(user,false);
             for (int i = userCoupons.size() - 1; i >= 0; i--) {
                 Coupon c = userCoupons.get(i);
                 CouponResponseDto couponResponseDto = mapper(c);
@@ -147,12 +147,13 @@ public class CouponServiceImpl implements CouponService{
                 .user(c.getUser().getUsername())
                 .sale(c.getSalePrice())
                 .status(c.getStatus())
+                .user(c.getUser().getUsername())
                 .isDelete(c.getIsDelete()).build();
     }
 
     @Override
     public Coupon updateStatus(Long id, Authentication authentication) throws UserException, NotFoundException {
         User user = userService.userById(authentication);
-        return couponRepository.findByIdAndUser(id,user).orElseThrow(()-> new NotFoundException("coupon not found"));
+        return couponRepository.findByIdAndUserAndStatus(id,user,false).orElseThrow(()-> new NotFoundException("coupon not found"));
     }
 }

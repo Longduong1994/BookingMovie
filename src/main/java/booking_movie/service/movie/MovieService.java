@@ -7,6 +7,7 @@ import booking_movie.dto.response.MovieResponseDto;
 import booking_movie.entity.Movie;
 import booking_movie.exception.LoginException;
 import booking_movie.exception.MovieException;
+import booking_movie.exception.UserException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -24,4 +25,5 @@ public interface MovieService {
 
     MovieResponseDto getMovieById(Long idMovie) throws MovieException;
 
+    Double countMovie(Authentication authentication) throws UserException;
 }
