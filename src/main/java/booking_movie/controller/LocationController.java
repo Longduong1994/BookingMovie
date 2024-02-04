@@ -26,12 +26,7 @@ public class LocationController {
 
     @GetMapping("/getLocation")
     public ResponseEntity<?> findAll(){
-<<<<<<< HEAD
-
             return new ResponseEntity<>(locationService.findAll(),HttpStatus.OK);
-=======
-        return new ResponseEntity<>(locationService.finAllNoSearch(),HttpStatus.OK);
->>>>>>> 9f127b1fb7190fb813506cf495e156e1eee20a1a
     }
 
 
