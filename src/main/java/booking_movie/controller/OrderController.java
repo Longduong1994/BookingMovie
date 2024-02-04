@@ -65,6 +65,13 @@ public class OrderController {
     };
 
 
+    @GetMapping("/spending")
+    public ResponseEntity<?> spending(Authentication authentication,@RequestParam(defaultValue = "2024") String year) throws LoginException {
+        Long yearLong = Long.parseLong(year);
+        return new ResponseEntity<>(orderService.spendingByYear(yearLong,authentication),HttpStatus.OK);
+    }
+
+
     @PostMapping("/createMenu")
     public ResponseEntity<?> createMenu(@Valid @RequestBody List<MenuRequestDto> listMenuRequestDto,  @RequestParam Long orderId) {
         try {

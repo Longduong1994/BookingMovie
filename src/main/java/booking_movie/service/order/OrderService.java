@@ -20,9 +20,6 @@ public interface OrderService {
 
     void deleteOrder(Long id);
 
-    //     Order create(OrderRequestDto orderRequestDto, Authentication authentication) throws OrderException, UserException;
-//     Order update(Authentication authentication) throws OrderException, UserException;
-
      Order findById(Long id)throws OrderException;
      Double sumTotalSpending(Authentication authentication) throws UserException;
      Page<Order> findAllByUser(Integer page,Integer size,Authentication authentication) throws UserException;
@@ -30,6 +27,6 @@ public interface OrderService {
      Page<Order> findAll(Integer page, Integer size);
      Double sumTotalRevenue();
      Double sumTotalCurrentYear();
-    Order findById(Long id) throws OrderException;
+     Long spendingByYear(Long year,Authentication authentication) throws LoginException;
 
 }

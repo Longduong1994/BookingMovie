@@ -26,6 +26,7 @@ public interface UserService {
     UserResponseDto login(LoginRequestDto loginRequestDto) throws LoginException;
     String createAccount(CreateAccountDto createAccountDto, Authentication authentication) throws LoginException, RegisterException, NotFoundException;
     User getUser(Authentication authentication) throws LoginException;
+    String checkSumTotal(User user);
     String changeStatus(Long id,Authentication authentication) throws LoginException;
     /**
      * find By id user

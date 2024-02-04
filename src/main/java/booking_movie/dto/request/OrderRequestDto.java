@@ -35,6 +35,7 @@ public class OrderRequestDto {
     @NotNull(message = "Không được để trống.")
     private Set<Long> chairIds;
     private Long total;
+    private Long point;
     private String promotion;
     private String coupon;
     private Long paymentId;

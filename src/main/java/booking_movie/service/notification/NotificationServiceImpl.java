@@ -4,7 +4,9 @@ import booking_movie.dto.request.DeleteNotification;
 import booking_movie.dto.response.NotificationResponse;
 import booking_movie.entity.Notification;
 import booking_movie.entity.User;
+import booking_movie.exception.CustomsException;
 import booking_movie.exception.LoginException;
+import booking_movie.exception.NotFoundException;
 import booking_movie.mapper.NotificationMapper;
 import booking_movie.repository.NotificationRepository;
 import booking_movie.service.user.UserService;
@@ -15,7 +17,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
@@ -24,11 +30,21 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationMapper notificationMapper;
 
     @Override
-    public Page<NotificationResponse> getNotification(Authentication authentication, int page) throws LoginException {
-        int size=5;
+    public List<NotificationResponse> getNotification(Authentication authentication) throws LoginException {
         User user = userService.getUser(authentication);
-        Page<Notification> notifications = notificationRepository.findByUserId(user.getId(), PageRequest.of(page,size));
-        return notifications.map(notificationMapper::toResponse);
+        List<Notification> notifications = notificationRepository.findByUserId(user.getId());
+        return notifications.stream().map(notificationMapper::toResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public String changeStatusRead(Long id) throws NotFoundException, CustomsException {
+        Optional<Notification> notification = notificationRepository.findById(id);
+        if (!notification.isPresent()) {
+            throw new NotFoundException("Không tìm thấy thông báo.");
+        }
+        notification.get().setRead(true);
+        notificationRepository.save(notification.get());
+        return "Đã đọc thông báo";
     }
 
     @Override

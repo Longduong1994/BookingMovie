@@ -31,4 +31,10 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
     Double sumTotalRevenue();
     @Query("SELECT SUM(o.total) FROM Order o WHERE YEAR(o.bookingDate) = :year")
     Double sumTotalYear(@Param("year") Year year);
+
+    @Query(value = "SELECT COALESCE(SUM(o.total), 0) FROM booking_movie o WHERE o.user_id = ?1", nativeQuery = true)
+    Double getTotalSumByUserId(Long userId);
+
+    @Query(value = "SELECT COALESCE(SUM(o.total), 0) FROM booking_movie o WHERE o.user_id = ?1 AND YEAR(o.create_time) = ?2", nativeQuery = true)
+    Long getTotalSumByUserIdAndYear(Long userId, Long year);
 }

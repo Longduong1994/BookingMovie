@@ -5,22 +5,21 @@ import booking_movie.dto.response.CouponResponseDto;
 import booking_movie.entity.Coupon;
 import booking_movie.entity.Notification;
 import booking_movie.entity.User;
+import booking_movie.exception.LoginException;
 import booking_movie.exception.UserException;
 import booking_movie.exception.NotFoundException;
 import booking_movie.repository.CouponRepository;
 import booking_movie.repository.UserRepository;
 import booking_movie.security.user_principle.UserPrincipal;
 import booking_movie.service.notification.NotificationService;
-import booking_movie.service.notification.NotificationServiceImpl;
 import booking_movie.service.user.UserService;
-import com.amazonaws.services.kms.model.NotFoundException;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -32,7 +31,7 @@ public class CouponServiceImpl implements CouponService{
     private final UserService userService;
 
     @Override
-    public String checkCoupon(String code) throws NotFoundException {
+    public Double checkCoupon(String code) throws NotFoundException {
         Optional<Coupon> coupon = couponRepository.findByCode(code);
         if (!coupon.isPresent()){
             throw new NotFoundException("Hhông tìm thấy mã.");
@@ -46,7 +45,7 @@ public class CouponServiceImpl implements CouponService{
         }
         coupon.get().setStatus(true);
         couponRepository.save(coupon.get());
-        return "Áp dụng thành công";
+            return coupon.get().getSalePrice();
     }
 
     /**
@@ -81,7 +80,7 @@ public class CouponServiceImpl implements CouponService{
         notification.setTitle(couponRequestDto.getDescription());
         notification.setMessage(message);
         notification.setCreatedAt(LocalDate.now());
-        notification.setRead(true);
+        notification.setRead(false);
         notification.setUsers(users);
         notificationService.create(notification);
 
@@ -127,6 +126,13 @@ public class CouponServiceImpl implements CouponService{
         return couponList;
     }
 
+    @Override
+    public List<CouponResponseDto> findAllByUserAndStatus(Authentication authentication) throws LoginException {
+        User user = userService.getUser(authentication);
+        LocalDate endDate = LocalDate.now();
+        return couponRepository.findByUserAndStatusAndEndDate(user.getId(),endDate).stream().map(c->mapper(c)).collect(Collectors.toList());
+    }
+
     /**
      * convert Coupon into CouponResponseDto
      *
@@ -138,12 +144,14 @@ public class CouponServiceImpl implements CouponService{
                 .code(c.getCode())
                 .description(c.getDescription())
                 .endDate(c.getEndDate())
+                .user(c.getUser().getUsername())
+                .sale(c.getSalePrice())
                 .status(c.getStatus())
                 .isDelete(c.getIsDelete()).build();
     }
 
     @Override
-    public Coupon updateStatus(Long id, Authentication authentication) throws UserException {
+    public Coupon updateStatus(Long id, Authentication authentication) throws UserException, NotFoundException {
         User user = userService.userById(authentication);
         return couponRepository.findByIdAndUser(id,user).orElseThrow(()-> new NotFoundException("coupon not found"));
     }
