@@ -135,7 +135,7 @@ public class PaymentController {
                 orderService.deleteOrder(order.getId());
                 // Giao dịch thất bại
                 // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL\
-                response.sendRedirect("http://localhost:3000/");
+                response.sendRedirect("http://localhost:3000/error");
 
             }
     }
